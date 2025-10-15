@@ -27,8 +27,10 @@ def handle_event():
 
 
 def reset_world():
-    pass
-
+    global world
+    world=[]
+    map_1=village()
+    world.append(map_1)
 
 def update_world():
     pass
