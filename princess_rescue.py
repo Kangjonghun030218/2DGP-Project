@@ -1,7 +1,12 @@
 from pico2d import *
 import random
 
+class village:
+    def __int__(self):
+        self.image=load_image('map_1.png')
 
+    def draw(self):
+        self.image.draw(400,300)
 
 
 
