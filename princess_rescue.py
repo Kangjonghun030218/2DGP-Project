@@ -5,6 +5,7 @@ class Village:
     def __init__(self):
         self.image=load_image('map_1.png')
 
+
     def draw(self):
         self.image.draw(400,300)
     def update(self):
@@ -15,10 +16,16 @@ class Knight:
         self.y=200
         self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.frame=0
+        self.speed=0
+        self.direct = "stop"
+
     def draw(self):
-        self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
+        if self.direct=="stop":
+            self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
+
     def update(self):
         self.frame=(self.frame+1)%5
+
 
 
 
