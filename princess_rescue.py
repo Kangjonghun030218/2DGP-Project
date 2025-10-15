@@ -9,12 +9,14 @@ class Village:
         self.image.draw(400,300)
 class Knight:
     def __init__(self):
-        self.x,self.y=400,30
+        self.x=400
+        self.y=200
         self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.frame=0
     def draw(self):
-        self.image.clip_draw(self.frame*64,0,64,13,self.x,self.y)
-
+        self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
+    def update(self):
+        pass
 
 
 
