@@ -10,10 +10,14 @@ class Village:
 class Knight:
     def __init__(self):
         self.x,self.y=400,30
-        self.image=load_image('Swordsman_lvl1_Idle_with_shadow')
+        self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.frame=0
     def draw(self):
-        self.image.clip_draw(self.frame*64,13,64,13,self.x,self.y)
+        self.image.clip_draw(self.frame*64,0,64,13,self.x,self.y)
+
+
+
+
 running=True
 
 
@@ -34,8 +38,10 @@ def reset_world():
     global world
     world=[]
     map_1=Village()
-    world.append(map_1)
+    knight=Knight()
 
+    world.append(map_1)
+    world.append(knight)
 def update_world():
     for object in world:
         object.draw()
