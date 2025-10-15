@@ -1,13 +1,12 @@
 from pico2d import *
 import random
 
-class village:
-    def __int__(self):
+class Village:
+    def __init__(self):
         self.image=load_image('map_1.png')
 
     def draw(self):
         self.image.draw(400,300)
-
 
 
 running=True
@@ -29,11 +28,13 @@ def handle_event():
 def reset_world():
     global world
     world=[]
-    map_1=village()
+    map_1=Village()
     world.append(map_1)
 
 def update_world():
-    pass
+    for object in world:
+        object.draw()
+    update_canvas()
 
 
 def render_world():
