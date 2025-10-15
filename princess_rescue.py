@@ -18,13 +18,16 @@ class Knight:
         self.frame=0
         self.speed=0
         self.direct = "stop"
+        self.face_dirX=1
+        self.face_dirY=1
 
     def draw(self):
         if self.direct=="stop":
             self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
 
     def update(self):
-        self.frame=(self.frame+1)%5
+        self.frame=(self.frame+1)%12
+
 
 
 
@@ -70,5 +73,5 @@ while running:
     handle_event()
     update_world()
     render_world()
-    delay(0.5)
+    delay(0.1)
 
