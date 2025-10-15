@@ -7,8 +7,13 @@ class Village:
 
     def draw(self):
         self.image.draw(400,300)
-
-
+class Knight:
+    def __init__(self):
+        self.x,self.y=400,30
+        self.image=load_image('Swordsman_lvl1_Idle_with_shadow')
+        self.frame=0
+    def draw(self):
+        self.image.clip_draw(self.frame*64,13,64,13,self.x,self.y)
 running=True
 
 
