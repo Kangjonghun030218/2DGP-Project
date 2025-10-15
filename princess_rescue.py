@@ -7,6 +7,8 @@ class Village:
 
     def draw(self):
         self.image.draw(400,300)
+    def update(self):
+        pass
 class Knight:
     def __init__(self):
         self.x=400
@@ -16,7 +18,7 @@ class Knight:
     def draw(self):
         self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
     def update(self):
-        pass
+        self.frame=(self.frame+1)%5
 
 
 
@@ -46,18 +48,20 @@ def reset_world():
     world.append(knight)
 def update_world():
     for object in world:
-        object.draw()
-    update_canvas()
+        object.update()
 
 
 def render_world():
-    pass
+    clear_canvas()
+    for object in world:
+        object.draw()
+    update_canvas()
 
 open_canvas()
 reset_world()
 while running:
     handle_event()
-    reset_world()
     update_world()
     render_world()
+    delay(0.5)
 
