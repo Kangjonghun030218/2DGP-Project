@@ -16,7 +16,7 @@ class Knight:
         self.y=200
         self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.frame=0
-        self.speed=0
+        self.speed=5
         self.direct = "stop"
         self.face_dirX=1
         self.face_dirY=1
@@ -27,6 +27,32 @@ class Knight:
 
     def update(self):
         self.frame=(self.frame+1)%12
+        if self.direct == "left":
+            self.x -= self.speed
+        elif self.direct == "right":
+            self.x += self.speed
+        elif self.direct == "up":
+            self.y += self.speed
+        elif self.direct == "down":
+            self.y -= self.speed
+
+    def handle_event(self, event):
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_LEFT:
+                self.direct = "left"
+            elif event.key == SDLK_RIGHT:
+                self.direct = "right"
+            elif event.key == SDLK_UP:
+                self.direct = "up"
+            elif event.key == SDLK_DOWN:
+                self.direct = "down"
+
+        elif event.type == SDL_KEYUP:
+            if (event.key == SDLK_LEFT and self.direct == "left") or \
+                    (event.key == SDLK_RIGHT and self.direct == "right") or \
+                    (event.key == SDLK_UP and self.direct == "up") or \
+                    (event.key == SDLK_DOWN and self.direct == "down"):
+                self.direct = "stop"
 
 
 
@@ -43,8 +69,13 @@ def handle_event():
     for event in events:
         if event.type==SDL_QUIT:
             running=False
+
         elif event.type==SDL_KEYDOWN and event.key==SDLK_ESCAPE:
             running=False
+        else:
+            for obj in world:
+                if isinstance(obj, Knight):
+                    obj.handle_event(event)
 
 
 
