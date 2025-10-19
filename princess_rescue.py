@@ -17,27 +17,41 @@ class Knight:
         self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.frame=0
         self.speed=5
-        self.direct = "stop"
+        self.state = "idle"
+        self.direct = "down"
+
+        # 방향별 clip_y 좌표 지정 (예시)
+        self.clip_y_table = {
+            'down': 192,
+            'left': 128,
+            'right': 64,
+            'up': 0
+        }
         self.face_dirX=1
         self.face_dirY=1
 
     def draw(self):
-        if self.direct=="stop":
-            self.image.clip_draw(self.frame*64, 196,64,64,self.x,self.y)
+        clip_y = self.clip_y_table[self.direct]
+        self.image.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
 
     def update(self):
-        self.frame=(self.frame+1)%12
-        if self.direct == "left":
-            self.x -= self.speed
-        elif self.direct == "right":
-            self.x += self.speed
-        elif self.direct == "up":
-            self.y += self.speed
-        elif self.direct == "down":
-            self.y -= self.speed
+        if self.direct =='up':
+            self.frame=(self.frame+1)%4
+        else:
+            self.frame=(self.frame+1)%12
+        if self.state == "move":
+            if self.direct == "left":
+                self.x -= self.speed
+            elif self.direct == "right":
+                self.x += self.speed
+            elif self.direct == "up":
+                self.y += self.speed
+            elif self.direct == "down":
+                self.y -= self.speed
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
+            self.state = "move"
             if event.key == SDLK_LEFT:
                 self.direct = "left"
             elif event.key == SDLK_RIGHT:
@@ -48,11 +62,8 @@ class Knight:
                 self.direct = "down"
 
         elif event.type == SDL_KEYUP:
-            if (event.key == SDLK_LEFT and self.direct == "left") or \
-                    (event.key == SDLK_RIGHT and self.direct == "right") or \
-                    (event.key == SDLK_UP and self.direct == "up") or \
-                    (event.key == SDLK_DOWN and self.direct == "down"):
-                self.direct = "stop"
+            if event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
+                self.state = "idle"
 
 
 
