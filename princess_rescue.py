@@ -15,6 +15,7 @@ class Knight:
         self.x=400
         self.y=200
         self.image=load_image('Swordsman_lvl1_Idle_with_shadow.png')
+        self.image2=load_image('Swordsman_lvl1_Walk_with_shadow.png')
         self.frame=0
         self.speed=5
         self.state = "idle"
@@ -32,11 +33,16 @@ class Knight:
 
     def draw(self):
         clip_y = self.clip_y_table[self.direct]
-        self.image.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+        if self.state=='idle':
+            self.image.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+        elif self.state=='move':
+            self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
 
     def update(self):
-        if self.direct =='up':
+        if self.direct =='up'and self.state=='idle':
             self.frame=(self.frame+1)%4
+        elif self.state=='move':
+            self.frame=(self.frame+1)%6
         else:
             self.frame=(self.frame+1)%12
         if self.state == "move":
