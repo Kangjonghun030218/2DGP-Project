@@ -20,11 +20,13 @@ class Knight:
         self.image = load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
         self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
+        self.image4= load_image('Swordsman_lvl1_Attack_with_shadow.png')
         self.frame = 0
         self.speed = 5
         self.state = "idle"
         self.direct = "down"
         self.r_key_pressed = False
+        self.a_key_pressed = False
 
 
         self.clip_y_table = {
@@ -44,6 +46,8 @@ class Knight:
             self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
         elif self.state == 'run':
             self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+        elif self.state=='attack':
+            self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
 
     def update(self):
         if self.direct == 'up' and self.state == 'idle':
@@ -72,6 +76,8 @@ class Knight:
                 self.y += self.speed * 2
             elif self.direct == "down":
                 self.y -= self.speed * 2
+        elif self.state=='attack':
+            self.frame= (self.frame + 1) % 8
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
@@ -80,9 +86,12 @@ class Knight:
                 if self.state == 'move':
                     self.state = 'run'
                     self.frame = 0
+            elif event.key == SDLK_a:
+                self.a_key_pressed= True
+                self.state = 'attack'
+                self.frame = 0
 
-
-            elif event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
+            elif self.state!='attack' and event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
                 if self.state == 'idle':
                     self.frame = 0
 
@@ -106,7 +115,7 @@ class Knight:
                 if self.state == 'run':
                     self.state = 'move'
                     self.frame = 0
-            elif event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
+            elif self.state != 'attack' and event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
                 self.state = "idle"
                 self.frame = 0
 
