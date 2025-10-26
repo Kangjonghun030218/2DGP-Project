@@ -20,15 +20,15 @@ class Knight:
         self.image = load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
         self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
-        self.image4= load_image('Swordsman_lvl1_Attack_with_shadow.png')
+        self.image4 = load_image('Swordsman_lvl1_Attack_with_shadow.png')
         self.frame = 0
         self.speed = 5
         self.state = "idle"
         self.direct = "down"
         self.r_key_pressed = False
         self.a_key_pressed = False
-
-
+        self.dir_x = 0
+        self.dir_y = 0
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -46,81 +46,89 @@ class Knight:
             self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
         elif self.state == 'run':
             self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
-        elif self.state=='attack':
+        elif self.state == 'attack':
             self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
 
     def update(self):
+        if self.state == 'attack':
+            self.frame = (self.frame + 1)
+            if self.frame >= 8:
+                self.state = 'idle'
+                self.frame = 0
+            return
+
+        if self.dir_x == 0 and self.dir_y == 0:
+            if self.state != 'idle':
+                self.frame = 0
+            self.state = 'idle'
+        else:
+            if self.r_key_pressed:
+                if self.state != 'run':
+                    self.frame = 0
+                self.state = 'run'
+            else:
+                if self.state != 'move':
+                    self.frame = 0
+                self.state = 'move'
+
+        if self.dir_x > 0:
+            self.direct = 'right'
+        elif self.dir_x < 0:
+            self.direct = 'left'
+        elif self.dir_y > 0:
+            self.direct = 'up'
+        elif self.dir_y < 0:
+            self.direct = 'down'
+
         if self.direct == 'up' and self.state == 'idle':
             self.frame = (self.frame + 1) % 4
         elif self.state == 'move':
             self.frame = (self.frame + 1) % 6
         elif self.state == 'run':
             self.frame = (self.frame + 1) % 8
-        else:
+        elif self.state == 'idle':
             self.frame = (self.frame + 1) % 12
-        if self.state == "move":
-            if self.direct == "left":
-                self.x -= self.speed
-            elif self.direct == "right":
-                self.x += self.speed
-            elif self.direct == "up":
-                self.y += self.speed
-            elif self.direct == "down":
-                self.y -= self.speed
-        if self.state == 'run':
-            if self.direct == "left":
-                self.x -= self.speed * 2
-            elif self.direct == "right":
-                self.x += self.speed * 2
-            elif self.direct == "up":
-                self.y += self.speed * 2
-            elif self.direct == "down":
-                self.y -= self.speed * 2
-        elif self.state=='attack':
-            self.frame= (self.frame + 1)
-            if self.frame>=8:
-                self.state='idle'
-                self.frame=0
+
+        current_speed = 0
+        if self.state == 'move':
+            current_speed = self.speed
+        elif self.state == 'run':
+            current_speed = self.speed * 2
+
+        self.x += self.dir_x * current_speed
+        self.y += self.dir_y * current_speed
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_r:
                 self.r_key_pressed = True
-                if self.state == 'move':
-                    self.state = 'run'
-                    self.frame = 0
             elif event.key == SDLK_a:
-                self.a_key_pressed= True
-                self.state = 'attack'
-                self.frame = 0
-
-            elif self.state!='attack' and event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
-                if self.state == 'idle':
+                if self.state != 'attack':
+                    self.a_key_pressed = True
+                    self.state = 'attack'
                     self.frame = 0
-
-                if self.r_key_pressed:
-                    self.state = 'run'
-                else:
-                    self.state = 'move'
-
-                if event.key == SDLK_LEFT:
-                    self.direct = "left"
-                elif event.key == SDLK_RIGHT:
-                    self.direct = "right"
-                elif event.key == SDLK_UP:
-                    self.direct = "up"
-                elif event.key == SDLK_DOWN:
-                    self.direct = "down"
+            elif event.key == SDLK_LEFT:
+                self.dir_x -= 1
+            elif event.key == SDLK_RIGHT:
+                self.dir_x += 1
+            elif event.key == SDLK_DOWN:
+                self.dir_y -= 1
+            elif event.key == SDLK_UP:
+                self.dir_y += 1
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_r:
                 self.r_key_pressed = False
-                if self.state == 'run':
-                    self.state = 'move'
-                    self.frame = 0
-            elif self.state != 'attack' and event.key in (SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN):
-                self.state = "idle"
-                self.frame = 0
+            elif event.key == SDLK_a:
+                self.a_key_pressed = False
+            elif event.key == SDLK_LEFT:
+                self.dir_x += 1
+            elif event.key == SDLK_RIGHT:
+                self.dir_x -= 1
+            elif event.key == SDLK_DOWN:
+                self.dir_y += 1
+            elif event.key == SDLK_UP:
+                self.dir_y -= 1
 
 
 running = True
@@ -169,5 +177,4 @@ while running:
     handle_event()
     update_world()
     render_world()
-    delay(0.1)
-
+    delay(0.05)
