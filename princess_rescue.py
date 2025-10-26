@@ -77,7 +77,10 @@ class Knight:
             elif self.direct == "down":
                 self.y -= self.speed * 2
         elif self.state=='attack':
-            self.frame= (self.frame + 1) % 8
+            self.frame= (self.frame + 1)
+            if self.frame>=8:
+                self.state='idle'
+                self.frame=0
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
