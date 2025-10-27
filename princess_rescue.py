@@ -4,13 +4,16 @@ import random
 
 class Village:
     def __init__(self):
+        self.x=400
+        self.y=300
         self.image = load_image('map_1.png')
 
     def draw(self):
-        self.image.draw(400, 300)
+        self.image.draw(self.x, self.y)
 
-    def update(self):
-        pass
+    def update(self, move_x=0, move_y=0):
+        self.x -= move_x
+        self.y -= move_y
 
 
 class Knight:
