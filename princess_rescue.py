@@ -223,7 +223,7 @@ def reset_world():
     world.append(npc)
     world.append(knight)
 
-
+#
 def update_world():
     global world, cam_x, cam_y
 
