@@ -132,15 +132,15 @@ class Knight:
 
 
 class NPC:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self):
         self.image1 = load_image('Old_woman_idle.png')
-
+        self.image2= load_image('Old_man_idle.png')
         self.frame = 0
 
     def draw(self):
-        self.image1.clip_draw(self.frame * 48, 0, 48, 48, self.x, self.y)
+        self.image1.clip_draw(self.frame * 48, 0, 48, 48, 550, 200)
+        self.image2.clip_draw(self.frame * 48, 0, 48, 48, 50, 230)
+
 
     def update(self):
         self.frame = (self.frame + 1) % 4
@@ -169,7 +169,7 @@ def reset_world():
     world = []
     map_1 = Village()
     knight = Knight()
-    npc=NPC(600,200)
+    npc=NPC()
 
 
     world.append(map_1)
