@@ -48,7 +48,7 @@ class Knight:
         }
         self.face_dirX = 1
         self.face_dirY = 1
-
+#
     def draw(self):
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
