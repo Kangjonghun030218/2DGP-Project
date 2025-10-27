@@ -135,12 +135,15 @@ class NPC:
     def __init__(self):
         self.image1 = load_image('Old_woman_idle.png')
         self.image2= load_image('Old_man_idle.png')
+        self.image3= load_image('Man_idle.png')
+        self.image4=load_image('Boy_idle.png')
         self.frame = 0
 
     def draw(self):
         self.image1.clip_draw(self.frame * 48, 0, 48, 48, 550, 200)
         self.image2.clip_draw(self.frame * 48, 0, 48, 48, 50, 230)
-
+        self.image3.clip_draw(self.frame * 48, 0, 48, 48, 150, 400)
+        self.image4.clip_draw(self.frame * 48, 0, 48, 48, 300, 100)
 
     def update(self):
         self.frame = (self.frame + 1) % 4
