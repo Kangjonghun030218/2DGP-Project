@@ -163,10 +163,10 @@ class NPC:
         self.image4 = load_image('Boy_idle.png')
         self.frame = 0
 
-        self.world_x1, self.world_y1 = 550+600, 200+150
+        self.world_x1, self.world_y1 = 550+600, 200+200
         self.world_x2, self.world_y2 = 50+600, 230+150
-        self.world_x3, self.world_y3 = 150+600, 400+150
-        self.world_x4, self.world_y4 = 300+600, 100+150
+        self.world_x3, self.world_y3 = 150+600, 400+200
+        self.world_x4, self.world_y4 = 300+550, 100+250
 
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
@@ -223,7 +223,6 @@ def reset_world():
     world.append(npc)
     world.append(knight)
 
-#
 def update_world():
     global world, cam_x, cam_y
 
