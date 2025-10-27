@@ -1,12 +1,15 @@
 from pico2d import *
 import random
 
+CANVAS_WIDTH = 800
+CANVAS_HEIGHT = 600
+
 
 class Village:
     def __init__(self):
-        self.x=400
-        self.y=300
         self.image = load_image('map_1.png')
+        self.x = 400
+        self.y = 300
 
     def draw(self):
         self.image.draw(self.x, self.y)
@@ -18,8 +21,9 @@ class Village:
 
 class Knight:
     def __init__(self):
-        self.x = 400
-        self.y = 200
+        self.x = CANVAS_WIDTH // 2
+        self.y = CANVAS_HEIGHT // 2
+
         self.image = load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
         self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
@@ -32,6 +36,10 @@ class Knight:
         self.a_key_pressed = False
         self.dir_x = 0
         self.dir_y = 0
+
+        self.move_x = 0
+        self.move_y = 0
+
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -58,6 +66,8 @@ class Knight:
             if self.frame >= 8:
                 self.state = 'idle'
                 self.frame = 0
+            self.move_x = 0
+            self.move_y = 0
             return
 
         if self.dir_x == 0 and self.dir_y == 0:
@@ -98,8 +108,8 @@ class Knight:
         elif self.state == 'run':
             current_speed = self.speed * 2
 
-        self.x += self.dir_x * current_speed
-        self.y += self.dir_y * current_speed
+        self.move_x = self.dir_x * current_speed
+        self.move_y = self.dir_y * current_speed
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
@@ -137,26 +147,40 @@ class Knight:
 class NPC:
     def __init__(self):
         self.image1 = load_image('Old_woman_idle.png')
-        self.image2= load_image('Old_man_idle.png')
-        self.image3= load_image('Man_idle.png')
-        self.image4=load_image('Boy_idle.png')
+        self.image2 = load_image('Old_man_idle.png')
+        self.image3 = load_image('Man_idle.png')
+        self.image4 = load_image('Boy_idle.png')
         self.frame = 0
-        self.x1,self.y1=550,200
-        self.x2,self.y2=50,230
-        self.x3,self.y3=150,400
-        self.x4,self.y4=300,100
+
+        self.x1, self.y1 = 550, 200
+        self.x2, self.y2 = 50, 230
+        self.x3, self.y3 = 150, 400
+        self.x4, self.y4 = 300, 100
 
     def draw(self):
         self.image1.clip_draw(self.frame * 48, 0, 48, 48, self.x1, self.y1)
         self.image2.clip_draw(self.frame * 48, 0, 48, 48, self.x2, self.y2)
         self.image3.clip_draw(self.frame * 48, 0, 48, 48, self.x3, self.y3)
-        self.image4.clip_draw(self.frame * 48, 0, 48, 48,  self.x4, self.y4)
+        self.image4.clip_draw(self.frame * 48, 0, 48, 48, self.x4, self.y4)
 
-    def update(self):
+    def update(self, move_x=0, move_y=0):
         self.frame = (self.frame + 1) % 4
+
+        self.x1 -= move_x
+        self.y1 -= move_y
+
+        self.x2 -= move_x
+        self.y2 -= move_y
+
+        self.x3 -= move_x
+        self.y3 -= move_y
+
+        self.x4 -= move_x
+        self.y4 -= move_y
 
 
 running = True
+world = []
 
 
 def handle_event():
@@ -179,16 +203,33 @@ def reset_world():
     world = []
     map_1 = Village()
     knight = Knight()
-    npc=NPC()
-
+    npc = NPC()
 
     world.append(map_1)
-    world.append(knight)
     world.append(npc)
+    world.append(knight)
+
 
 def update_world():
-    for object in world:
-        object.update()
+    knight = None
+    for obj in world:
+        if isinstance(obj, Knight):
+            knight = obj
+            break
+
+    if knight:
+        knight.update()
+
+        move_x = knight.move_x
+        move_y = knight.move_y
+
+        for obj in world:
+            if obj is knight:
+                continue
+            obj.update(move_x, move_y)
+    else:
+        for obj in world:
+            obj.update()
 
 
 def render_world():
@@ -198,7 +239,7 @@ def render_world():
     update_canvas()
 
 
-open_canvas()
+open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 reset_world()
 while running:
     handle_event()
