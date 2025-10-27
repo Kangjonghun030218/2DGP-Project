@@ -4,38 +4,32 @@ import random
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 
+cam_x, cam_y = 0, 0
+
 
 class Village:
     def __init__(self):
         self.image = load_image('map_1.png')
-        self.x = 400
-        self.y = 300
+
         self.width = self.image.w
         self.height = self.image.h
-        self.actual_delta_x = 0
-        self.actual_delta_y = 0
 
-    def draw(self):
-        self.image.draw(self.x, self.y)
+        self.world_x = self.width // 2
+        self.world_y = self.height // 2
 
-    def update(self, move_x=0, move_y=0):
-        old_x, old_y = self.x, self.y
-        self.x -= move_x
-        self.y -= move_y
-        min_x = CANVAS_WIDTH - self.width // 2
-        max_x = self.width // 2
-        min_y = CANVAS_HEIGHT - self.height // 2
-        max_y = self.height // 2
-        self.x = max(min_x, min(self.x, max_x))
-        self.y = max(min_y, min(self.y, max_y))
-        self.actual_delta_x = self.x - old_x
-        self.actual_delta_y = self.y - old_y
+    def draw(self, cam_x, cam_y):
+        screen_x = self.world_x - cam_x
+        screen_y = self.world_y - cam_y
+        self.image.draw(screen_x, screen_y)
+
+    def update(self):
+        pass
 
 
 class Knight:
     def __init__(self):
-        self.x = CANVAS_WIDTH // 2
-        self.y = CANVAS_HEIGHT // 2
+        self.world_x = 1000
+        self.world_y = 350
 
         self.image = load_image('Swordsman_lvl1_Idle_with_shadow.png')
         self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
@@ -50,9 +44,6 @@ class Knight:
         self.dir_x = 0
         self.dir_y = 0
 
-        self.move_x = 0
-        self.move_y = 0
-
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -62,25 +53,26 @@ class Knight:
         self.face_dirX = 1
         self.face_dirY = 1
 
-    def draw(self):
+    def draw(self, cam_x, cam_y):
+        screen_x = self.world_x - cam_x
+        screen_y = self.world_y - cam_y
+
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
-            self.image.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+            self.image.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'move':
-            self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+            self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'run':
-            self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+            self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'attack':
-            self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, self.x, self.y)
+            self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
-    def update(self):
+    def update(self, map_width=800, map_height=600):
         if self.state == 'attack':
             self.frame = (self.frame + 1)
             if self.frame >= 8:
                 self.state = 'idle'
                 self.frame = 0
-            self.move_x = 0
-            self.move_y = 0
             return
 
         if self.dir_x == 0 and self.dir_y == 0:
@@ -121,8 +113,14 @@ class Knight:
         elif self.state == 'run':
             current_speed = self.speed * 2
 
-        self.move_x = self.dir_x * current_speed
-        self.move_y = self.dir_y * current_speed
+        self.world_x += self.dir_x * current_speed
+        self.world_y += self.dir_y * current_speed
+
+        half_width = 32
+        half_height = 32
+
+        self.world_x = max(half_width, min(self.world_x, map_width - half_width))
+        self.world_y = max(half_height, min(self.world_y, map_height - half_height))
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
@@ -165,31 +163,31 @@ class NPC:
         self.image4 = load_image('Boy_idle.png')
         self.frame = 0
 
-        self.x1, self.y1 = 550, 200
-        self.x2, self.y2 = 50, 230
-        self.x3, self.y3 = 150, 400
-        self.x4, self.y4 = 300, 100
+        self.world_x1, self.world_y1 = 550+600, 200+150
+        self.world_x2, self.world_y2 = 50+600, 230+150
+        self.world_x3, self.world_y3 = 150+600, 400+150
+        self.world_x4, self.world_y4 = 300+600, 100+150
 
-    def draw(self):
-        self.image1.clip_draw(self.frame * 48, 0, 48, 48, self.x1, self.y1)
-        self.image2.clip_draw(self.frame * 48, 0, 48, 48, self.x2, self.y2)
-        self.image3.clip_draw(self.frame * 48, 0, 48, 48, self.x3, self.y3)
-        self.image4.clip_draw(self.frame * 48, 0, 48, 48, self.x4, self.y4)
+    def draw(self, cam_x, cam_y):
+        screen_x1 = self.world_x1 - cam_x
+        screen_y1 = self.world_y1 - cam_y
 
-    def update(self, move_x=0, move_y=0):
+        screen_x2 = self.world_x2 - cam_x
+        screen_y2 = self.world_y2 - cam_y
+
+        screen_x3 = self.world_x3 - cam_x
+        screen_y3 = self.world_y3 - cam_y
+
+        screen_x4 = self.world_x4 - cam_x
+        screen_y4 = self.world_y4 - cam_y
+
+        self.image1.clip_draw(self.frame * 48, 0, 48, 48, screen_x1, screen_y1)
+        self.image2.clip_draw(self.frame * 48, 0, 48, 48, screen_x2, screen_y2)
+        self.image3.clip_draw(self.frame * 48, 0, 48, 48, screen_x3, screen_y3)
+        self.image4.clip_draw(self.frame * 48, 0, 48, 48, screen_x4, screen_y4)
+
+    def update(self):
         self.frame = (self.frame + 1) % 4
-
-        self.x1 -= move_x
-        self.y1 -= move_y
-
-        self.x2 -= move_x
-        self.y2 -= move_y
-
-        self.x3 -= move_x
-        self.y3 -= move_y
-
-        self.x4 -= move_x
-        self.y4 -= move_y
 
 
 running = True
@@ -212,7 +210,10 @@ def handle_event():
 
 
 def reset_world():
-    global world
+    global world, cam_x, cam_y
+
+    cam_x, cam_y = 0, 0
+
     world = []
     map_1 = Village()
     knight = Knight()
@@ -224,31 +225,50 @@ def reset_world():
 
 
 def update_world():
+    global world, cam_x, cam_y
+
     knight = None
+    village = None
+
     for obj in world:
         if isinstance(obj, Knight):
             knight = obj
-            break
+        elif isinstance(obj, Village):
+            village = obj
 
-    if knight:
-        knight.update()
-
-        move_x = knight.move_x
-        move_y = knight.move_y
-
+    if knight and village:
         for obj in world:
             if obj is knight:
-                continue
-            obj.update(move_x, move_y)
+                obj.update(village.width, village.height)
+            else:
+                obj.update()
     else:
         for obj in world:
             obj.update()
 
+    if knight and village:
+        target_cam_x = knight.world_x - CANVAS_WIDTH // 2
+        target_cam_y = knight.world_y - CANVAS_HEIGHT // 2
+
+        min_cam_x = 0
+        max_cam_x = village.width - CANVAS_WIDTH
+
+        min_cam_y = 0
+        max_cam_y = village.height - CANVAS_HEIGHT
+
+        cam_x = max(min_cam_x, min(target_cam_x, max_cam_x))
+        cam_y = max(min_cam_y, min(target_cam_y, max_cam_y))
+
+        if max_cam_x < 0: cam_x = 0
+        if max_cam_y < 0: cam_y = 0
+
 
 def render_world():
+    global world, cam_x, cam_y
+
     clear_canvas()
     for object in world:
-        object.draw()
+        object.draw(cam_x, cam_y)
     update_canvas()
 
 
