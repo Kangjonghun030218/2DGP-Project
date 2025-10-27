@@ -10,13 +10,26 @@ class Village:
         self.image = load_image('map_1.png')
         self.x = 400
         self.y = 300
+        self.width = self.image.w
+        self.height = self.image.h
+        self.actual_delta_x = 0
+        self.actual_delta_y = 0
 
     def draw(self):
         self.image.draw(self.x, self.y)
 
     def update(self, move_x=0, move_y=0):
+        old_x, old_y = self.x, self.y
         self.x -= move_x
         self.y -= move_y
+        min_x = CANVAS_WIDTH - self.width // 2
+        max_x = self.width // 2
+        min_y = CANVAS_HEIGHT - self.height // 2
+        max_y = self.height // 2
+        self.x = max(min_x, min(self.x, max_x))
+        self.y = max(min_y, min(self.y, max_y))
+        self.actual_delta_x = self.x - old_x
+        self.actual_delta_y = self.y - old_y
 
 
 class Knight:
@@ -48,7 +61,7 @@ class Knight:
         }
         self.face_dirX = 1
         self.face_dirY = 1
-#
+
     def draw(self):
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
