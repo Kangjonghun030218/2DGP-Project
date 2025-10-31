@@ -7,7 +7,7 @@ CANVAS_HEIGHT = 600
 cam_x, cam_y = 0, 0
 
 
-class Village:
+class GameMap:
     def __init__(self,map_number=1):
         self.image = load_image('map_1.png')
         self.image2= load_image('map_2.png')
@@ -231,7 +231,7 @@ def reset_world(map_number=1):
     cam_x, cam_y = 0, 0
 
     world = []
-    map_to_load = Village(map_number)
+    map_to_load = GameMap(map_number)
     world.append(map_to_load)
 
     if map_number == 1:
@@ -245,33 +245,33 @@ def update_world():
     global world, cam_x, cam_y
 
     knight = None
-    village = None
+    game_map = None
 
     for obj in world:
         if isinstance(obj, Knight):
             knight = obj
-        elif isinstance(obj, Village):
-            village = obj
+        elif isinstance(obj, GameMap):
+            game_map = obj
 
-    if knight and village:
+    if knight and GameMap:
         for obj in world:
             if obj is knight:
-                obj.update(village.width, village.height)
+                obj.update(game_map.width, game_map.height)
             else:
                 obj.update()
     else:
         for obj in world:
             obj.update()
 
-    if knight and village:
+    if knight and game_map:
         target_cam_x = knight.world_x - CANVAS_WIDTH // 2
         target_cam_y = knight.world_y - CANVAS_HEIGHT // 2
 
         min_cam_x = 0
-        max_cam_x = village.width - CANVAS_WIDTH
+        max_cam_x = game_map.width - CANVAS_WIDTH
 
         min_cam_y = 0
-        max_cam_y = village.height - CANVAS_HEIGHT
+        max_cam_y = game_map.height - CANVAS_HEIGHT
 
         cam_x = max(min_cam_x, min(target_cam_x, max_cam_x))
         cam_y = max(min_cam_y, min(target_cam_y, max_cam_y))
