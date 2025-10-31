@@ -6,7 +6,6 @@ CANVAS_HEIGHT = 600
 
 cam_x, cam_y = 0, 0
 game_mode = 'play'
-world_map_image = None
 knight = None
 game_map = None
 
@@ -284,7 +283,7 @@ def update_world():
 
 
 def render_world():
-    global world, cam_x, cam_y, game_mode, world_map_image, knight, game_map
+    global world, cam_x, cam_y, game_mode, knight, game_map
 
     clear_canvas()
 
@@ -293,20 +292,17 @@ def render_world():
             object.draw(cam_x, cam_y)
 
     elif game_mode == 'map_view':
-        world_map_image.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
-
-        if knight and world_map_image:
-            screen_x = (knight.world_x / world_map_image.w) * CANVAS_WIDTH
-            screen_y = (knight.world_y / world_map_image.h) * CANVAS_HEIGHT
-
-            clip_y_down = 192
-            knight.image.clip_draw(0, clip_y_down, 64, 64, screen_x, screen_y, 100, 100)
-
+        if game_map:
+            game_map.image.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
+            if knight:
+                 screen_x = (knight.world_x / game_map.width) * CANVAS_WIDTH
+                 screen_y = (knight.world_y / game_map.height) * CANVAS_HEIGHT
+                 clip_y_down = 192
+                 knight.image.clip_draw(0, clip_y_down, 64, 64, screen_x, screen_y, 100, 100)
     update_canvas()
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
-world_map_image = load_image('map_2.png')
 reset_world(1)
 
 while running:
