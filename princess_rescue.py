@@ -207,6 +207,7 @@ class Monster:
         self.world_x1 = x
         self.world_y1 = y
         self.image1 = load_image('orc1_idle_with_shadow.png')
+        self.image2 = load_image('orc1_run_with_shadow.png')
         self.frame = 0
 
         self.state = 'idle'
@@ -220,18 +221,32 @@ class Monster:
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
         screen_y1 = self.world_y1 - cam_y
-        if self.state_dir=='right':
+        if self.state == 'idle':
+            if self.state_dir=='right':
                 self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state_dir=='left':
+            elif self.state_dir=='left':
                 self.image1.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state_dir=='up':
+            elif self.state_dir=='up':
                 self.image1.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state_dir=='down':
+            elif self.state_dir=='down':
                 self.image1.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
+        elif self.state == 'chase':
+            if self.state_dir=='right':
+                self.image2.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='left':
+                self.image2.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='up':
+                self.image2.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='down':
+                self.image2.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
+
+
 
     def update(self, knight_x=None, knight_y=None):
-
-        self.frame = (self.frame + 1) % 4
+        if self.state == 'idle':
+            self.frame = (self.frame + 1) % 4
+        elif self.state == 'chase':
+            self.frame = (self.frame + 1) % 8
 
         if knight_x is None or knight_y is None:
             self.state = 'idle'
