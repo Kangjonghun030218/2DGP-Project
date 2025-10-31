@@ -208,6 +208,7 @@ class Monster:
         self.world_y1 = y
         self.image1 = load_image('orc1_idle_with_shadow.png')
         self.image2 = load_image('orc1_run_with_shadow.png')
+        self.image3 = load_image('orc1_attack_with_shadow.png')
         self.frame = 0
 
         self.state = 'idle'
@@ -239,13 +240,21 @@ class Monster:
                 self.image2.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
             elif self.state_dir=='down':
                 self.image2.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
-
+        elif self.state == 'attack':
+            if self.state_dir=='right':
+                self.image3.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='left':
+                self.image3.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='up':
+                self.image3.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir=='down':
+                self.image3.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
 
 
     def update(self, knight_x=None, knight_y=None):
         if self.state == 'idle':
             self.frame = (self.frame + 1) % 4
-        elif self.state == 'chase':
+        elif self.state == 'chase' or self.state == 'attack':
             self.frame = (self.frame + 1) % 8
 
         if knight_x is None or knight_y is None:
