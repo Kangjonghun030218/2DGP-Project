@@ -8,8 +8,15 @@ cam_x, cam_y = 0, 0
 
 
 class Village:
-    def __init__(self):
+    def __init__(self,map_number=1):
         self.image = load_image('map_1.png')
+        self.image2= load_image('map_2.png')
+        self.map_number = map_number
+        if self.map_number == 1:
+            self.image = self.image
+        elif self.map_number == 2:
+            self.image = self.image2
+
 
         self.width = self.image.w
         self.height = self.image.h
