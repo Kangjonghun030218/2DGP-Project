@@ -200,18 +200,53 @@ class NPC:
 
     def update(self):
         self.frame = (self.frame + 1) % 4
+
+
 class Monster:
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         self.world_x1 = x
         self.world_y1 = y
         self.image1 = load_image('orc1_idle_with_shadow.png')
         self.frame = 0
+
+        self.state = 'idle'
+        self.speed = 2
+        self.aggro_range = 250
+        self.attack_range = 50
+
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
         screen_y1 = self.world_y1 - cam_y
-        self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1,100,100)
-    def update(self):
+        self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
+
+
+    def update(self, knight_x=None, knight_y=None):
+
         self.frame = (self.frame + 1) % 4
+
+        if knight_x is None or knight_y is None:
+            self.state = 'idle'
+            return
+
+        dist_x = knight_x - self.world_x1
+        dist_y = knight_y - self.world_y1
+        distance_sq = dist_x ** 2 + dist_y ** 2
+
+        if distance_sq < self.attack_range ** 2:
+            self.state = 'attack'
+        elif distance_sq < self.aggro_range ** 2:
+            self.state = 'chase'
+        else:
+            self.state = 'idle'
+
+        if self.state == 'chase':
+            distance = math.sqrt(distance_sq)
+            if distance > 0:
+                dir_x = dist_x / distance
+                dir_y = dist_y / distance
+
+                self.world_x1 += dir_x * self.speed
+                self.world_y1 += dir_y * self.speed
 
 
 
@@ -276,6 +311,8 @@ def update_world():
         for obj in world:
             if obj is knight:
                 obj.update(game_map.width, game_map.height)
+            elif isinstance(obj, Monster):
+                obj.update(knight.world_x, knight.world_y)
             else:
                 obj.update()
     else:
