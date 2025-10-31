@@ -208,26 +208,37 @@ def handle_event():
         if event.type == SDL_QUIT:
             running = False
 
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
+        elif event.type == SDL_KEYDOWN:
+            if event.key == SDLK_ESCAPE:
+                running = False
+            elif event.key == SDLK_1:
+                reset_world(1)
+            elif event.key == SDLK_2:
+                reset_world(2)
+            else:
+                for obj in world:
+                    if isinstance(obj, Knight):
+                        obj.handle_event(event)
         else:
             for obj in world:
                 if isinstance(obj, Knight):
                     obj.handle_event(event)
 
 
-def reset_world():
+def reset_world(map_number=1):
     global world, cam_x, cam_y
 
     cam_x, cam_y = 0, 0
 
     world = []
-    map_1 = Village()
-    knight = Knight()
-    npc = NPC()
+    map_to_load = Village(map_number)
+    world.append(map_to_load)
 
-    world.append(map_1)
-    world.append(npc)
+    if map_number == 1:
+        npc = NPC()
+        world.append(npc)
+
+    knight = Knight()
     world.append(knight)
 
 def update_world():
@@ -279,7 +290,7 @@ def render_world():
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
-reset_world()
+reset_world(1)
 while running:
     handle_event()
     update_world()
