@@ -200,6 +200,19 @@ class NPC:
 
     def update(self):
         self.frame = (self.frame + 1) % 4
+class Monster:
+    def __init__(self,x,y):
+        self.world_x1 = x
+        self.world_y1 = y
+        self.image1 = load_image('orc1_idle_with_shadow.png')
+        self.frame = 0
+    def draw(self, cam_x, cam_y):
+        screen_x1 = self.world_x1 - cam_x
+        screen_y1 = self.world_y1 - cam_y
+        self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1,100,100)
+    def update(self):
+        self.frame = (self.frame + 1) % 4
+
 
 
 def handle_event():
@@ -238,14 +251,18 @@ def reset_world(map_number=1):
     cam_x, cam_y = 0, 0
     world = []
 
+
     game_map = GameMap(map_number)
     world.append(game_map)
 
     if map_number == 1:
         npc = NPC()
         world.append(npc)
-
-    knight = Knight()
+    elif map_number == 2:
+        monster = Monster(400, 400)
+        world.append(monster)
+    if knight is None:
+        knight = Knight()
     world.append(knight)
 
 
