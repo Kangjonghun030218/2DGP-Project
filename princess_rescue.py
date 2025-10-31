@@ -5,22 +5,28 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
 
 cam_x, cam_y = 0, 0
+game_mode = 'play'
+world_map_image = None
+knight = None
+game_map = None
+
+running = True
+world = []
 
 
 class GameMap:
-    def __init__(self,map_number=1):
-        self.image = load_image('map_1.png')
-        self.image2= load_image('map_2.png')
+    def __init__(self, map_number=1):
+        self.map1_image = load_image('map_1.png')
+        self.map2_image = load_image('map_2.png')
         self.map_number = map_number
-        if self.map_number == 1:
-            self.image = self.image
-        elif self.map_number == 2:
-            self.image = self.image2
 
+        if self.map_number == 1:
+            self.image = self.map1_image
+        else:
+            self.image = self.map2_image
 
         self.width = self.image.w
         self.height = self.image.h
-
         self.world_x = self.width // 2
         self.world_y = self.height // 2
 
@@ -170,10 +176,10 @@ class NPC:
         self.image4 = load_image('Boy_idle.png')
         self.frame = 0
 
-        self.world_x1, self.world_y1 = 550+600, 200+200
-        self.world_x2, self.world_y2 = 50+600, 230+150
-        self.world_x3, self.world_y3 = 150+600, 400+200
-        self.world_x4, self.world_y4 = 300+550, 100+250
+        self.world_x1, self.world_y1 = 550 + 600, 200 + 200
+        self.world_x2, self.world_y2 = 50 + 600, 230 + 150
+        self.world_x3, self.world_y3 = 150 + 600, 400 + 200
+        self.world_x4, self.world_y4 = 300 + 550, 100 + 250
 
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
@@ -197,12 +203,8 @@ class NPC:
         self.frame = (self.frame + 1) % 4
 
 
-running = True
-world = []
-
-
 def handle_event():
-    global running
+    global running, game_mode
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -212,27 +214,33 @@ def handle_event():
             if event.key == SDLK_ESCAPE:
                 running = False
             elif event.key == SDLK_1:
+                game_mode = 'play'
                 reset_world(1)
             elif event.key == SDLK_2:
+                game_mode = 'play'
                 reset_world(2)
-            else:
+            elif event.key == SDLK_3:
+                game_mode = 'map_view'
+
+            elif game_mode == 'play':
                 for obj in world:
                     if isinstance(obj, Knight):
                         obj.handle_event(event)
-        else:
+
+        elif game_mode == 'play':
             for obj in world:
                 if isinstance(obj, Knight):
                     obj.handle_event(event)
 
 
 def reset_world(map_number=1):
-    global world, cam_x, cam_y
+    global world, cam_x, cam_y, knight, game_map
 
     cam_x, cam_y = 0, 0
-
     world = []
-    map_to_load = GameMap(map_number)
-    world.append(map_to_load)
+
+    game_map = GameMap(map_number)
+    world.append(game_map)
 
     if map_number == 1:
         npc = NPC()
@@ -241,19 +249,14 @@ def reset_world(map_number=1):
     knight = Knight()
     world.append(knight)
 
+
 def update_world():
-    global world, cam_x, cam_y
+    global world, cam_x, cam_y, game_mode, knight, game_map
 
-    knight = None
-    game_map = None
+    if game_mode != 'play':
+        return
 
-    for obj in world:
-        if isinstance(obj, Knight):
-            knight = obj
-        elif isinstance(obj, GameMap):
-            game_map = obj
-
-    if knight and GameMap:
+    if knight and game_map:
         for obj in world:
             if obj is knight:
                 obj.update(game_map.width, game_map.height)
@@ -281,18 +284,35 @@ def update_world():
 
 
 def render_world():
-    global world, cam_x, cam_y
+    global world, cam_x, cam_y, game_mode, world_map_image, knight, game_map
 
     clear_canvas()
-    for object in world:
-        object.draw(cam_x, cam_y)
+
+    if game_mode == 'play':
+        for object in world:
+            object.draw(cam_x, cam_y)
+
+    elif game_mode == 'map_view':
+        world_map_image.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+        if knight and world_map_image:
+            screen_x = (knight.world_x / world_map_image.w) * CANVAS_WIDTH
+            screen_y = (knight.world_y / world_map_image.h) * CANVAS_HEIGHT
+
+            clip_y_down = 192
+            knight.image.clip_draw(0, clip_y_down, 64, 64, screen_x, screen_y, 100, 100)
+
     update_canvas()
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+world_map_image = load_image('map_2.png')
 reset_world(1)
+
 while running:
     handle_event()
     update_world()
     render_world()
     delay(0.05)
+
+close_canvas()
