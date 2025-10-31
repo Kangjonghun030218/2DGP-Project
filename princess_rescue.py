@@ -210,6 +210,9 @@ class Monster:
         self.frame = 0
 
         self.state = 'idle'
+        self.state_dir='down'
+        self.face_dirX = 1
+        self.face_dirY = 1
         self.speed = 2
         self.aggro_range = 250
         self.attack_range = 50
@@ -217,8 +220,14 @@ class Monster:
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
         screen_y1 = self.world_y1 - cam_y
-        self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-
+        if self.state_dir=='right':
+                self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
+        elif self.state_dir=='left':
+                self.image1.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
+        elif self.state_dir=='up':
+                self.image1.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
+        elif self.state_dir=='down':
+                self.image1.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
 
     def update(self, knight_x=None, knight_y=None):
 
@@ -247,6 +256,18 @@ class Monster:
 
                 self.world_x1 += dir_x * self.speed
                 self.world_y1 += dir_y * self.speed
+
+
+                if abs(dist_x) > abs(dist_y):
+                    if dist_x > 0:
+                        self.state_dir = 'right'
+                    else:
+                        self.state_dir = 'left'
+                else:
+                    if dist_y > 0:
+                        self.state_dir = 'up'
+                    else:
+                        self.state_dir = 'down'
 
 
 
