@@ -203,12 +203,18 @@ class NPC:
 
 
 class Monster:
-    def __init__(self, x, y):
+    def __init__(self, x, y, a):
         self.world_x1 = x
         self.world_y1 = y
-        self.image1 = load_image('orc1_idle_with_shadow.png')
-        self.image2 = load_image('orc1_run_with_shadow.png')
-        self.image3 = load_image('orc1_attack_with_shadow.png')
+        if a==1:
+            self.image1 = load_image('orc1_idle_with_shadow.png')
+            self.image2 = load_image('orc1_run_with_shadow.png')
+            self.image3 = load_image('orc1_attack_with_shadow.png')
+        elif a==2:
+            self.image1= load_image('orc2_idle_with_shadow.png')
+            self.image2 = load_image('orc2_run_with_shadow.png')
+            self.image3 = load_image('orc2_attack_with_shadow.png')
+
         self.frame = 0
 
         self.state = 'idle'
@@ -339,8 +345,10 @@ def reset_world(map_number=1):
         npc = NPC()
         world.append(npc)
     elif map_number == 2:
-        monster = Monster(400, 400)
+        monster = Monster(400, 400,1)
+        monster2=Monster(400, 500,2)
         world.append(monster)
+        world.append(monster2)
     if knight is None:
         knight = Knight()
     world.append(knight)
