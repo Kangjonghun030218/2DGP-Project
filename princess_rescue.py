@@ -214,6 +214,10 @@ class Monster:
             self.image1= load_image('orc2_idle_with_shadow.png')
             self.image2 = load_image('orc2_run_with_shadow.png')
             self.image3 = load_image('orc2_attack_with_shadow.png')
+        elif a==3:
+            self.image1= load_image('orc3_idle_with_shadow.png')
+            self.image2 = load_image('orc3_run_with_shadow.png')
+            self.image3=load_image('orc3_attack_with_shadow.png')
 
         self.frame = 0
 
@@ -347,8 +351,10 @@ def reset_world(map_number=1):
     elif map_number == 2:
         monster = Monster(400, 400,1)
         monster2=Monster(400, 500,2)
+        monster3=Monster(400, 600,3)
         world.append(monster)
         world.append(monster2)
+        world.append(monster3)
     if knight is None:
         knight = Knight()
     world.append(knight)
