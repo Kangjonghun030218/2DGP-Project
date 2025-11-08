@@ -15,15 +15,12 @@ world = []
 
 class GameMap:
     def __init__(self, map_number=0):
-        self.map0_image=load_image('map_0.png')
         self.map1_image = load_image('map_1.png')
         self.map2_image = load_image('map_2.png')
         self.map_number = map_number
 
 
-        if self.map_number == 0:
-            self.image=self.map0_image
-        elif self.map_number == 1:
+        if self.map_number == 1:
             self.image = self.map1_image
         elif self.map_number == 2:
             self.image = self.map2_image
@@ -406,6 +403,7 @@ def reset_world(map_number=1):
         world.append(monster4_1)
         world.append(monster5_1)
         world.append(monster6_1)
+
     if knight is None:
         knight = Knight()
     world.append(knight)
@@ -447,7 +445,7 @@ def update_world():
 
 
 def render_world():
-    global world, cam_x, cam_y, game_mode, knight, game_map
+    global world, cam_x, cam_y, game_mode, knight, game_map,menu_image
 
     clear_canvas()
 
@@ -463,10 +461,16 @@ def render_world():
                  screen_y = (knight.world_y / game_map.height) * CANVAS_HEIGHT
                  clip_y_down = 192
                  knight.image.clip_draw(0, clip_y_down, 64, 64, screen_x, screen_y, 100, 100)
+    elif game_mode == 'menu':
+        if menu_image:
+            menu_image.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+
     update_canvas()
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+menu_image = load_image('map_0.png')
 reset_world(1)
 
 while running:
