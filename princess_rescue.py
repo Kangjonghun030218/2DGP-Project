@@ -331,35 +331,44 @@ class Monster:
                         self.state_dir = 'down'
 
 
-
 def handle_event():
     global running, game_mode
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             running = False
+            return
 
-        elif event.type == SDL_KEYDOWN:
+        if event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 running = False
-            elif event.key == SDLK_0:
-                game_mode = 'menu'
-                reset_world(0)
-            elif event.key == SDLK_1:
+                return
+
+            if game_mode == 'menu':
                 game_mode = 'play'
                 reset_world(1)
-            elif event.key == SDLK_2:
-                game_mode = 'play'
-                reset_world(2)
-            elif event.key == SDLK_3:
-                game_mode = 'map_view'
 
             elif game_mode == 'play':
-                for obj in world:
-                    if isinstance(obj, Knight):
-                        obj.handle_event(event)
+                if event.key == SDLK_0:
+                    game_mode = 'menu'
+                elif event.key == SDLK_1:
+                    reset_world(1)
+                elif event.key == SDLK_2:
+                    reset_world(2)
+                elif event.key == SDLK_3:
+                    game_mode = 'map_view'
+                else:
+                    for obj in world:
+                        if isinstance(obj, Knight):
+                            obj.handle_event(event)
 
-        elif game_mode == 'play':
+            elif game_mode == 'map_view':
+                if event.key == SDLK_3:
+                    game_mode = 'play'
+                elif event.key == SDLK_0:
+                    game_mode = 'menu'
+
+        elif event.type == SDL_KEYUP and game_mode == 'play':
             for obj in world:
                 if isinstance(obj, Knight):
                     obj.handle_event(event)
