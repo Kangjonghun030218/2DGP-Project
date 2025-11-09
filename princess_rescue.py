@@ -480,7 +480,7 @@ def render_world():
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 menu_image = load_image('map_0.png')
-reset_world(1)
+#reset_world(1)
 
 while running:
     handle_event()
