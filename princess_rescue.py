@@ -9,6 +9,15 @@ game_mode = 'menu'
 knight = None
 game_map = None
 
+font = None
+dialogue_message = None
+quest_log = {
+    'check_npc': {
+        'status': 'not_started',
+        'talked_to_man': False
+    }
+}
+
 running = True
 world = []
 
@@ -181,6 +190,40 @@ class NPC:
         self.world_x3, self.world_y3 = 150 + 600, 400 + 200
         self.world_x4, self.world_y4 = 300 + 550, 100 + 250
 
+        self.talk_range = 50
+    def interact(self, knight_x, knight_y):
+        global dialogue_message, quest_log
+
+
+        dist_to_1 = math.sqrt((self.world_x1 - knight_x) ** 2 + (self.world_y1 - knight_y) ** 2)
+        dist_to_2 = math.sqrt((self.world_x2 - knight_x) ** 2 + (self.world_y2 - knight_y) ** 2)
+        quest = quest_log['check_npc']
+
+
+        if dist_to_1 < self.talk_range:
+            if quest['status'] == 'not_started':
+                dialogue_message = "hello?"
+                quest['status'] = 'in_progress'
+            elif quest['status'] == 'in_progress':
+                if quest['talked_to_man']:
+                    dialogue_message = "hi!"
+                    quest['status'] = 'completed'
+                else:
+                    dialogue_message = "nice to meet you"
+            elif quest['status'] == 'completed':
+                dialogue_message = "thank you."
+            return True
+
+        elif dist_to_2 < self.talk_range:
+            if quest['status'] == 'not_started':
+                dialogue_message = "hello2"
+            elif quest['status'] == 'in_progress':
+                dialogue_message = "hi2"
+                quest['talked_to_man'] = True
+            elif quest['status'] == 'completed':
+                dialogue_message = "thank you2."
+            return True
+
     def draw(self, cam_x, cam_y):
         screen_x1 = self.world_x1 - cam_x
         screen_y1 = self.world_y1 - cam_y
@@ -332,7 +375,8 @@ class Monster:
 
 
 def handle_event():
-    global running, game_mode
+    global running, game_mode, dialogue_message
+
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -343,11 +387,9 @@ def handle_event():
             if event.key == SDLK_ESCAPE:
                 running = False
                 return
-
             if game_mode == 'menu':
                 game_mode = 'play'
                 reset_world(1)
-
             elif game_mode == 'play':
                 if event.key == SDLK_0:
                     game_mode = 'menu'
@@ -357,17 +399,25 @@ def handle_event():
                     reset_world(2)
                 elif event.key == SDLK_3:
                     game_mode = 'map_view'
+                elif event.key == SDLK_SPACE:
+                    for obj in world:
+                        if isinstance(obj, NPC):
+                            if obj.interact(knight.world_x, knight.world_y):
+                                game_mode = 'dialogue'
+                                break
                 else:
                     for obj in world:
                         if isinstance(obj, Knight):
                             obj.handle_event(event)
-
             elif game_mode == 'map_view':
                 if event.key == SDLK_3:
                     game_mode = 'play'
                 elif event.key == SDLK_0:
                     game_mode = 'menu'
-
+            elif game_mode == 'dialogue':
+                if event.key == SDLK_SPACE:
+                    game_mode = 'play'
+                    dialogue_message = None
         elif event.type == SDL_KEYUP and game_mode == 'play':
             for obj in world:
                 if isinstance(obj, Knight):
@@ -379,11 +429,8 @@ def reset_world(map_number=1):
 
     cam_x, cam_y = 0, 0
     world = []
-
-
     game_map = GameMap(map_number)
     world.append(game_map)
-
     if map_number == 1:
         npc = NPC()
         world.append(npc)
@@ -474,12 +521,20 @@ def render_world():
         if menu_image:
             menu_image.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
 
+    elif game_mode == 'dialogue':
+        for object in world:
+            object.draw(cam_x, cam_y)
+
+        if dialogue_message and font:
+            font.draw(101, 101, dialogue_message, (0, 0, 0))  # -- > 그림자 디테일 ~
+            font.draw(100, 100, dialogue_message, (225, 180, 200))
 
     update_canvas()
 
 
 open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 menu_image = load_image('map_0.png')
+font = load_font('ARIAL.ttf', 20)
 #reset_world(1)
 
 while running:
