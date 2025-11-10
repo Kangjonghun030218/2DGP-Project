@@ -113,36 +113,55 @@ class Knight:
         elif self.state == 'attack':
             self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
-
             if self.is_effect_active:
+                base_img1 = None
+                base_img2 = None
+                flip = ''
+
+
+                if self.effect_flip_direction == 'left':
+                    base_img1 = effect_image_R1
+                    base_img2 = effect_image_R2
+                    flip = 'h'
+                elif self.effect_flip_direction == 'right':
+                    base_img1 = effect_image_R1
+                    base_img2 = effect_image_R2
+                    flip = ''
+                elif self.effect_flip_direction == 'down':
+                    base_img1 = effect_image_U1
+                    base_img2 = effect_image_U2
+                    flip = 'v'
+                elif self.effect_flip_direction == 'up':
+                    base_img1 = effect_image_U1
+                    base_img2 = effect_image_U2
+                    flip = ''
+
+
                 effect_img_to_draw = None
+                if self.effect_frame == 0:
+                    effect_img_to_draw = base_img1
+                else:
+                    effect_img_to_draw = base_img2
 
-
-                if self.effect_frame == 0 and effect_image1:
-                    effect_img_to_draw = effect_image1
-                elif self.effect_frame == 1 and effect_image2:
-                    effect_img_to_draw = effect_image2
 
                 if effect_img_to_draw:
-                    flip = ''
-                    if self.effect_flip_direction == 'left':
-                        flip = 'h'
-
-
                     effect_offset_x = 0
                     effect_offset_y = 0
 
                     if self.effect_flip_direction == 'left':
                         effect_offset_x = -30
-                    else:
+                    elif self.effect_flip_direction == 'right':
                         effect_offset_x = 30
+                    elif self.effect_flip_direction == 'down':
+                        effect_offset_y = -30
+                    elif self.effect_flip_direction == 'up':
+                        effect_offset_y = 30
 
                     effect_img_to_draw.clip_composite_draw(
                         0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
                         0, flip,
                         screen_x + effect_offset_x, screen_y + effect_offset_y,
-                        effect_img_to_draw.w, effect_img_to_draw.h
-                    )
+                        effect_img_to_draw.w, effect_img_to_draw.h)
 
 
     def update(self, map_width=800, map_height=600):
@@ -645,8 +664,10 @@ skill1_image = load_image('skill1.png')
 skill2_image = load_image('skill2.png')
 skill3_image = load_image('skill3.png')
 
-effect_image1 = load_image('skill2-1_R.png')
-effect_image2 = load_image('skill2-2_R.png')
+effect_image_R1 = load_image('skill2-1_R.png')
+effect_image_R2 = load_image('skill2-2_R.png')
+effect_image_U1 = load_image('skill2-1_U.png')
+effect_image_U2 = load_image('skill2-2_U.png')
 
 
 
