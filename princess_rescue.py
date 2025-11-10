@@ -517,6 +517,7 @@ def render_world():
     if game_mode == 'play':
         for object in world:
             object.draw(cam_x, cam_y)
+        draw_ui()
 
     elif game_mode == 'map_view':
         if game_map:
@@ -545,6 +546,61 @@ open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 menu_image = load_image('map_0.png')
 font = load_font('ARIAL.ttf', 20)
 #reset_world(1)
+
+bar_bg_image = load_image('bar_bg.png')
+hp_bar_image = load_image('bar_hp.png')
+mp_bar_image = load_image('bar_mp.png')
+
+
+
+
+def draw_ui():
+    if not knight or not bar_bg_image or not hp_bar_image or not mp_bar_image:
+        if font:
+            font.draw(20, CANVAS_HEIGHT - 30, "UI Image Load Error", (255, 0, 0))
+        return
+
+
+    bar_max_width = 200
+    bar_height = 20
+    ui_x = 20
+    hp_bar_y = CANVAS_HEIGHT - 35
+    mp_bar_y = CANVAS_HEIGHT - 65
+
+  #hp 관련
+    hp_ratio = knight.current_hp / knight.max_hp
+    current_hp_width = int(bar_max_width * hp_ratio)
+    bar_bg_image.draw(ui_x + bar_max_width // 2, hp_bar_y + bar_height // 2, bar_max_width, bar_height)
+
+
+
+    if current_hp_width > 0:
+        draw_x = ui_x + current_hp_width // 2
+        hp_bar_image.draw(draw_x, hp_bar_y + bar_height // 2, current_hp_width, bar_height)
+
+    #mp 관련
+    mp_ratio = knight.current_mp / knight.max_mp
+    current_mp_width = int(bar_max_width * mp_ratio)
+    bar_bg_image.draw(ui_x + bar_max_width // 2, mp_bar_y + bar_height // 2, bar_max_width, bar_height)
+
+
+    if current_mp_width > 0:
+        draw_x_mp = ui_x + current_mp_width // 2
+        mp_bar_image.draw(draw_x_mp, mp_bar_y + bar_height // 2, current_mp_width, bar_height)
+
+
+    text_x = 20
+    if font:
+        hp_text = f"HP: {knight.current_hp} / {knight.max_hp}"
+        mp_text = f"MP: {knight.current_mp} / {knight.max_mp}"
+
+
+        font.draw(text_x + 6, hp_bar_y + 4, hp_text, (0, 0, 0))
+        font.draw(text_x + 6, mp_bar_y + 4, mp_text, (0, 0, 0))
+
+        font.draw(text_x + 5, hp_bar_y + 5, hp_text, (255, 255, 255))
+        font.draw(text_x + 5, mp_bar_y + 5, mp_text, (255, 255, 255))
+
 
 while running:
     handle_event()
