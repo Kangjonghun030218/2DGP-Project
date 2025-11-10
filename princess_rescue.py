@@ -275,6 +275,8 @@ class Knight:
         self.world_y = max(half_height, min(self.world_y, map_height - half_height))
 
     def activate_skill(self, skill_name):
+        global world
+
         current_time = get_time()
         cooldown = self.skill_cooldowns[skill_name]
         last_used = self.skill_last_used[skill_name]
@@ -296,6 +298,28 @@ class Knight:
                 self.state = 'attack'
                 self.effect_frame = 0
                 self.frame = 0
+
+            elif self.skill_name == 'skill3':
+                if projectile_image_LR or projectile_image_UD:
+
+                    offset_x = 0
+                    offset_y = 0
+                    if self.direct == 'right':
+                        offset_x = 30
+                    elif self.direct == 'left':
+                        offset_x = -30
+                    elif self.direct == 'up':
+                        offset_y = 30
+                    elif self.direct == 'down':
+                        offset_y = -30
+
+                    new_projectile = Projectile(
+                        self.world_x + offset_x,
+                        self.world_y + offset_y,
+                        self.direct,
+                        speed=15,
+                    )
+                    world.append(new_projectile)
             self.skill_last_used[self.skill_name] = current_time
         else:
             print(f"[{self.skill_name}] 쿨타임 중!")
@@ -531,6 +555,60 @@ class Monster:
                         self.state_dir = 'down'
 
 
+class Projectile:
+    def __init__(self, start_x, start_y, direction, speed=10, image=None):
+        self.world_x = start_x
+        self.world_y = start_y
+        self.direction = direction
+        self.speed = speed
+        self.image_to_draw = None
+        if self.direction == 'left' or self.direction == 'right':
+            self.image_to_draw = projectile_image_LR
+        elif self.direction == 'up' or self.direction == 'down':
+            self.image_to_draw = projectile_image_UD
+
+        self.life_time = 2.0
+        self.start_time = get_time()
+
+
+        self.vel_x, self.vel_y = 0, 0
+        if self.direction == 'left':
+            self.vel_x = -self.speed
+        elif self.direction == 'right':
+            self.vel_x = self.speed
+        elif self.direction == 'up':
+            self.vel_y = self.speed
+        elif self.direction == 'down':
+            self.vel_y = -self.speed
+
+    def draw(self, cam_x, cam_y):
+        screen_x = self.world_x - cam_x
+        screen_y = self.world_y - cam_y
+
+
+        flip = ''
+        if self.direction == 'left':
+            flip = 'h'
+        elif self.direction == 'down':
+            flip = 'v'
+
+        if self.image_to_draw:
+            self.image_to_draw.clip_composite_draw(
+                0, 0, self.image_to_draw.w, self.image_to_draw.h,
+                0, flip,
+                screen_x, screen_y,
+                self.image_to_draw.w, self.image_to_draw.h
+            )
+
+    def update(self):
+        self.world_x += self.vel_x
+        self.world_y += self.vel_y
+
+
+        if get_time() - self.start_time > self.life_time:
+            return True
+        return False
+
 
 
 
@@ -639,17 +717,20 @@ def update_world():
     if game_mode != 'play':
         return
 
-    if knight and game_map:
-        for obj in world:
+    removed_objects = []
+    for obj in world:
             if obj is knight:
                 obj.update(game_map.width, game_map.height)
             elif isinstance(obj, Monster):
                 obj.update(knight.world_x, knight.world_y)
+            elif isinstance(obj, Projectile):
+                if obj.update():
+                    removed_objects.append(obj)
             else:
                 obj.update()
-    else:
-        for obj in world:
-            obj.update()
+
+    for obj in removed_objects:
+        world.remove(obj)
 
     if knight and game_map:
         target_cam_x = knight.world_x - CANVAS_WIDTH // 2
@@ -721,6 +802,9 @@ effect_image_U2 = load_image('skill2-2_U.png')
 
 effect_image1_R1 = load_image('skill1-1_R.png')
 effect_image1_U1 = load_image('skill1-1_U.png')
+
+projectile_image_LR = load_image('projectile_LR.png')
+projectile_image_UD = load_image('projectile_UD.png')
 
 
 
