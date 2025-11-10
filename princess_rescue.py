@@ -71,6 +71,7 @@ class Knight:
         self.max_mp = 50
         self.current_mp = 50
 
+        self.skill_name=''
         self.is_effect_active = False
         self.effect_start_time = 0.0
         self.effect_total_duration = 0.5
@@ -113,6 +114,49 @@ class Knight:
         elif self.state == 'attack':
             self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
+        if self.skill_name=='skill1':
+            if self.is_effect_active:
+                base_img1 = None
+                flip = ''
+
+                if self.effect_flip_direction == 'left':
+                    base_img1 = effect_image1_R1
+                    flip = 'h'
+                elif self.effect_flip_direction == 'right':
+                    base_img1 = effect_image1_R1
+                    flip = ''
+                elif self.effect_flip_direction == 'down':
+                    base_img1 = effect_image1_U1
+                    flip = 'v'
+                elif self.effect_flip_direction == 'up':
+                    base_img1 = effect_image1_U1
+                    flip = ''
+
+
+                effect_img_to_draw = base_img1
+
+
+                if effect_img_to_draw:
+                    effect_offset_x = 0
+                    effect_offset_y = 0
+
+                    if self.effect_flip_direction == 'left':
+                        effect_offset_x = -30
+                    elif self.effect_flip_direction == 'right':
+                        effect_offset_x = 30
+                    elif self.effect_flip_direction == 'down':
+                        effect_offset_y = -30
+                    elif self.effect_flip_direction == 'up':
+                        effect_offset_y = 30
+
+                    effect_img_to_draw.clip_composite_draw(
+                        0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
+                        0, flip,
+                        screen_x + effect_offset_x, screen_y + effect_offset_y,
+                        effect_img_to_draw.w, effect_img_to_draw.h)
+
+
+        elif self.skill_name=='skill2':
             if self.is_effect_active:
                 base_img1 = None
                 base_img2 = None
@@ -234,21 +278,27 @@ class Knight:
         current_time = get_time()
         cooldown = self.skill_cooldowns[skill_name]
         last_used = self.skill_last_used[skill_name]
+        self.skill_name=skill_name
 
         if current_time - last_used > cooldown:
-            print(f"[{skill_name}] 스킬 발동!")
+            print(f"[{self.skill_name}] 스킬 발동!")
 
+            if self.skill_name=='skill1':
+                self.is_effect_active = True
+                self.effect_start_time = current_time
+                self.effect_flip_direction = self.direct
+                self.state = 'attack'
 
-            if skill_name == 'skill2':
+            elif self.skill_name == 'skill2':
                 self.is_effect_active = True
                 self.effect_start_time = current_time
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
                 self.effect_frame = 0
                 self.frame = 0
-            self.skill_last_used[skill_name] = current_time
+            self.skill_last_used[self.skill_name] = current_time
         else:
-            print(f"[{skill_name}] 쿨타임 중!")
+            print(f"[{self.skill_name}] 쿨타임 중!")
 
 
     def handle_event(self, event):
@@ -669,6 +719,8 @@ effect_image_R2 = load_image('skill2-2_R.png')
 effect_image_U1 = load_image('skill2-1_U.png')
 effect_image_U2 = load_image('skill2-2_U.png')
 
+effect_image1_R1 = load_image('skill1-1_R.png')
+effect_image1_U1 = load_image('skill1-1_U.png')
 
 
 
