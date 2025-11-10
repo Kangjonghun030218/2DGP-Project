@@ -66,6 +66,11 @@ class Knight:
         self.dir_x = 0
         self.dir_y = 0
 
+        self.max_hp = 100
+        self.current_hp = 100
+        self.max_mp = 50
+        self.current_mp = 50
+
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -372,6 +377,10 @@ class Monster:
                         self.state_dir = 'up'
                     else:
                         self.state_dir = 'down'
+
+
+
+
 
 
 def handle_event():
