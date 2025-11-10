@@ -551,6 +551,11 @@ bar_bg_image = load_image('bar_bg.png')
 hp_bar_image = load_image('bar_hp.png')
 mp_bar_image = load_image('bar_mp.png')
 
+skill1_image = load_image('skill1.png')
+skill2_image = load_image('skill2.png')
+skill3_image = load_image('skill3.png')
+
+
 
 
 
