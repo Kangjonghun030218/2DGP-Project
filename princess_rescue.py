@@ -77,6 +77,18 @@ class Knight:
             'right': 64,
             'up': 0
         }
+
+        self.skill_cooldowns = {
+            'skill1': 5.0,
+            'skill2': 8.0,
+            'skill3': 10.0
+        }
+        self.skill_last_used = {
+            'skill1': 0.0,
+            'skill2': 0.0,
+            'skill3': 0.0
+        }
+
         self.face_dirX = 1
         self.face_dirY = 1
 
@@ -148,6 +160,19 @@ class Knight:
 
         self.world_x = max(half_width, min(self.world_x, map_width - half_width))
         self.world_y = max(half_height, min(self.world_y, map_height - half_height))
+
+    def activate_skill(self, skill_name):
+        current_time = get_time()
+        cooldown = self.skill_cooldowns[skill_name]
+        last_used = self.skill_last_used[skill_name]
+
+        if current_time - last_used > cooldown:
+            print(f"[{skill_name}] 스킬 발동!")
+
+            self.skill_last_used[skill_name] = current_time
+        else:
+            print(f"[{skill_name}] 쿨타임 중!")
+
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
@@ -408,6 +433,13 @@ def handle_event():
                     reset_world(2)
                 elif event.key == SDLK_3:
                     game_mode = 'map_view'
+                elif event.key == SDLK_7:
+                    if knight: knight.activate_skill('skill1')
+                elif event.key == SDLK_8:
+                    if knight: knight.activate_skill('skill2')
+                elif event.key == SDLK_9:
+                    if knight: knight.activate_skill('skill3')
+
                 elif event.key == SDLK_SPACE:
                     for obj in world:
                         if isinstance(obj, NPC):
@@ -605,6 +637,57 @@ def draw_ui():
 
         font.draw(text_x + 5, hp_bar_y + 5, hp_text, (255, 255, 255))
         font.draw(text_x + 5, mp_bar_y + 5, mp_text, (255, 255, 255))
+
+    if not (skill1_image and skill2_image and skill3_image):
+        return
+
+    current_time = get_time()
+    icon_size = 48
+    icon_spacing = 10
+    icon_y = 40
+
+    center_x = CANVAS_WIDTH // 2
+    skill2_x = center_x
+    skill1_x = center_x - icon_size - icon_spacing
+    skill3_x = center_x + icon_size + icon_spacing
+
+    positions = {
+        'skill1': skill1_x,
+        'skill2': skill2_x,
+        'skill3': skill3_x
+    }
+    images = {
+        'skill1': skill1_image,
+        'skill2': skill2_image,
+        'skill3': skill3_image
+    }
+    keys = {'skill1': '7', 'skill2': '8', 'skill3': '9'}
+
+    for skill_name in ['skill1', 'skill2', 'skill3']:
+        x = positions[skill_name]
+        image = images[skill_name]
+
+        cooldown = knight.skill_cooldowns[skill_name]
+        time_elapsed = current_time - knight.skill_last_used[skill_name]
+
+        if time_elapsed < cooldown:
+            image.opacify(0.3)
+            image.draw(x, icon_y, icon_size, icon_size)
+            image.opacify(1.0)
+
+
+            remaining_time = cooldown - time_elapsed
+            if font:
+                font.draw(x - 10, icon_y, f"{remaining_time:.1f}", (255, 0, 0))
+        else:
+            image.draw(x, icon_y, icon_size, icon_size)
+
+        if font:
+            key_text_y = icon_y + icon_size // 2 + 10
+            font.draw(x - 5, key_text_y, keys[skill_name], (255, 255, 0))
+
+
+
 
 
 while running:
