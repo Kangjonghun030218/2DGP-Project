@@ -5,6 +5,7 @@ class GameMap:
         self.map1_image = load_image('map_1.png')
         self.map2_image = load_image('map_2.png')
         self.map_number = map_number
+        self.collision_boxes = []
 
         if self.map_number == 1:
             self.image = self.map1_image
@@ -28,10 +29,15 @@ class GameMap:
                 (250, 450, 470, 600),  # 장비상점
                 (520, 465, 700, 665),  # 상점
                 (1050, 425, 1250, 525),  # 법사집
-                (1300, 550, 1550, 850),  # 닌자집
+                (1300, 515, 1550, 850),  # 닌자집
                 (1400, 250, 1650, 450),  # 우측하단 물레방아집
-                (750,300,810,540) #우측벽
+                (750,300,810,540), #좌측벽
+                (1050, 300, 1100, 380),  # 우측벽
+                (1200, 0, 1800, 210),  # 우측하단
+                (0, 0, 670, 210)  # 좌측하단
             ]
+        elif self.map_number == 2:
+              pass
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
