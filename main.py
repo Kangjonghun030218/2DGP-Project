@@ -115,7 +115,7 @@ def update_world():
     removed_objects = []
     for obj in g.world:
         if obj is g.knight:
-            obj.update(g.game_map.width, g.game_map.height)
+            obj.update(g.game_map)
         elif isinstance(obj, Monster):
             obj.update(g.knight.world_x, g.knight.world_y)
         elif isinstance(obj, Projectile):
@@ -203,6 +203,6 @@ while g.running:
     handle_event()
     update_world()
     render_world()
-    delay(0.05)
+    delay(0.01)
 
 close_canvas()

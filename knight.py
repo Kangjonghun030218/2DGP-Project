@@ -3,6 +3,17 @@ import game_globals as g
 from projectile import Projectile
 
 
+def check_collision(a, b):
+    left_a, bottom_a, right_a, top_a = a
+    left_b, bottom_b, right_b, top_b = b
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+    return True
+
+
 class Knight:
     def __init__(self):
         self.world_x = 1000
@@ -156,7 +167,7 @@ class Knight:
                         screen_x + effect_offset_x, screen_y + effect_offset_y,
                         effect_img_to_draw.w, effect_img_to_draw.h)
 
-    def update(self, map_width=800, map_height=600):
+    def update(self, game_map):
         if self.is_effect_active:
             time_since_start = get_time() - self.effect_start_time
             half_duration = self.effect_total_duration / 2
@@ -213,11 +224,37 @@ class Knight:
         elif self.state == 'run':
             current_speed = self.speed * 2
 
-        self.world_x += self.dir_x * current_speed
-        self.world_y += self.dir_y * current_speed
+        dx = self.dir_x * current_speed
+        dy = self.dir_y * current_speed
 
-        half_width = 32
-        half_height = 32
+        map_width = game_map.width
+        map_height = game_map.height
+        l, b, r, t = self.get_bb()
+        half_width = (r - l) / 2
+        half_height = (t - b) / 2
+
+        next_bb_x = (l + dx, b, r + dx, t)
+
+        x_collides = False
+        for box in game_map.get_collision_boxes():
+            if check_collision(next_bb_x, box):
+                x_collides = True
+                break
+
+        if not x_collides:
+            self.world_x += dx
+
+        l, b, r, t = self.get_bb()
+        next_bb_y = (l, b + dy, r, t + dy)
+
+        y_collides = False
+        for box in game_map.get_collision_boxes():
+            if check_collision(next_bb_y, box):
+                y_collides = True
+                break
+
+        if not y_collides:
+            self.world_y += dy
 
         self.world_x = max(half_width, min(self.world_x, map_width - half_width))
         self.world_y = max(half_height, min(self.world_y, map_height - half_height))
@@ -300,3 +337,9 @@ class Knight:
                 self.dir_y += 1
             elif event.key == SDLK_UP:
                 self.dir_y -= 1
+
+    def get_bb(self):
+        half_width = 32
+        half_height = 32
+        return (self.world_x - half_width, self.world_y - half_height,
+                self.world_x + half_width, self.world_y + half_height)
