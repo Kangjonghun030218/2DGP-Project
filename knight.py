@@ -92,7 +92,14 @@ class Knight:
             screen_r, screen_t = r - cam_x, t - cam_y
 
             draw_rectangle(screen_l, screen_b, screen_r, screen_t)
+            is_attack_frame = (self.state == 'attack')
+            if is_attack_frame:
+                al, ab, ar, at = self.get_attack_bb()
 
+                screen_al, screen_ab = al - cam_x, ab - cam_y
+                screen_ar, screen_at = ar - cam_x, at - cam_y
+
+                draw_rectangle(screen_al, screen_ab, screen_ar, screen_at)
 
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
@@ -330,6 +337,7 @@ class Knight:
                 self.effect_start_time = current_time
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
+                self.frame = 0
 
             elif self.skill_name == 'skill2':
                 self.is_effect_active = True
@@ -372,6 +380,7 @@ class Knight:
                     self.a_key_pressed = True
                     self.state = 'attack'
                     self.frame = 0
+                    self.skill_name = 'normal'
             elif event.key == SDLK_LEFT:
                 self.dir_x -= 1
             elif event.key == SDLK_RIGHT:
@@ -397,7 +406,14 @@ class Knight:
 
     def get_attack_bb(self):
             l, b, r, t = self.get_bb()
-            attack_range = 50
+            attack_range = 0
+            if self.skill_name == 'skill1':
+                attack_range = 75
+            elif self.skill_name == 'skill2':
+                attack_range = 100
+            else:
+                attack_range = 50
+
             if self.direct == 'right':
                 return (r, b, r + attack_range, t)
             elif self.direct == 'left':
