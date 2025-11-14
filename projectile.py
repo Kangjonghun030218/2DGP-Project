@@ -52,8 +52,8 @@ class Projectile:
             draw_rectangle(screen_l, screen_b, screen_r, screen_t)
 
     def get_bb(self):
-        half_width = 10
-        half_height = 10
+        half_width = self.image_to_draw.w / 2
+        half_height = self.image_to_draw.h / 2
         return (self.world_x - half_width, self.world_y - half_height,
                 self.world_x + half_width, self.world_y + half_height)
 
