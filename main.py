@@ -121,6 +121,8 @@ def update_world():
                 obj.update(g.knight.world_x, g.knight.world_y)
             else:
                 obj.update()
+            if obj.is_removable:
+                removed_objects.append(obj)
         elif isinstance(obj, Projectile):
             if obj.update():
                 removed_objects.append(obj)
@@ -257,6 +259,6 @@ while g.running:
     handle_event()
     update_world()
     render_world()
-    delay(0.03)
+    delay(0.05)
 
 close_canvas()

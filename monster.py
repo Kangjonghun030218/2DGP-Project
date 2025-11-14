@@ -44,13 +44,13 @@ class Monster:
             self.image2 = load_image('Slime2_Run_with_shadow.png')
             self.image3 = load_image('Slime2_Attack_with_shadow.png')
             self.image4 = load_image('Slime2_Hurt_with_shadow.png')
-            self.image5 = load_image('Slime1_Death_with_shadow.png')
+            self.image5 = load_image('Slime2_Death_with_shadow.png')
         elif a == 6:
             self.image1 = load_image('Slime3_Idle_with_shadow.png')
             self.image2 = load_image('Slime3_Run_with_shadow.png')
             self.image3 = load_image('Slime3_Attack_with_shadow.png')
-            self.image4 = load_image('Slime2_Hurt_with_shadow.png')
-            self.image5 = load_image('Slime1_Death_with_shadow.png')
+            self.image4 = load_image('Slime3_Hurt_with_shadow.png')
+            self.image5 = load_image('Slime3_Death_with_shadow.png')
 
         self.frame = 0
         self.state = 'idle'
@@ -69,7 +69,16 @@ class Monster:
         self.knockback_dir_y = 0
         self.knockback_speed = 10
 
+        if self.kinMonster == 1:
+            self.death_max_frame = 8  # 오크는 8 프레임
+        elif self.kinMonster == 2:
+            self.death_max_frame = 10  # 슬라임은 10 프레임
+
+        self.is_removable = False  # 월드에서 제거되어야 하는지 여부
+
         self.debug_mode = g.DEBUG_MODE_ON
+
+
 
     def get_bb(self):
         half_width = 32
@@ -88,7 +97,6 @@ class Monster:
 
         if self.current_hp <= 0:
             self.state = 'dead'
-            # self.state = 'dead'
             return
 
 
@@ -157,15 +165,34 @@ class Monster:
                 self.image4.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
             elif self.state_dir == 'down':
                 self.image4.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
+        elif self.state == 'dead':
+            if self.state_dir == 'right':
+                    self.image5.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir == 'left':
+                    self.image5.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir == 'up':
+                    self.image5.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
+            elif self.state_dir == 'down':
+                    self.image5.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
 
     def update(self, knight_x=None, knight_y=None):
+        if self.state == 'dead':
+            if self.frame < self.death_max_frame - 1:
+                self.frame = (self.frame + 1)
+            else:
+                self.frame = self.death_max_frame - 1
+                self.is_removable = True
+            return
+
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
                 self.world_x1 += self.knockback_dir_x * self.knockback_speed
                 self.world_y1 += self.knockback_dir_y * self.knockback_speed
-
-                self.frame = (self.frame + 1) % 4
+                if self.kinMonster==1:
+                    self.frame = (self.frame + 1) % 6
+                elif self.kinMonster==2:
+                    self.frame = (self.frame + 2) % 5
                 return
             else:
                 self.is_hit = False
@@ -176,8 +203,8 @@ class Monster:
                 self.frame = (self.frame + 1) % 4
             elif self.state == 'chase' or self.state == 'attack':
                 self.frame = (self.frame + 1) % 8
-            elif self.state == 'hit':
-                self.frame = (self.frame + 1) % 6
+
+
         elif self.kinMonster == 2:
             if self.state == 'idle':
                 self.frame = (self.frame + 1) % 6
@@ -185,8 +212,9 @@ class Monster:
                 self.frame = (self.frame + 1) % 8
             elif self.state == 'attack':
                 self.frame = (self.frame + 1) % 10
-            elif self.state == 'hit':
-                self.frame = (self.frame + 1) % 5
+
+
+
 
 
         if knight_x is None or knight_y is None:
