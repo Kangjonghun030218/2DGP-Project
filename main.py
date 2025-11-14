@@ -6,6 +6,7 @@ from npc import NPC
 from monster import Monster
 from projectile import Projectile
 from ui import draw_ui
+import random
 
 
 def handle_event():
@@ -78,30 +79,35 @@ def reset_world(map_number=1):
         npc = NPC()
         g.world.append(npc)
     elif map_number == 2:
-        monster = Monster(400, 400, 1)
-        monster_1 = Monster(380, 400, 1)
-        monster2 = Monster(400, 500, 2)
-        monster2_1 = Monster(200, 500, 2)
-        monster3 = Monster(400, 600, 3)
-        monster3_1 = Monster(100, 600, 3)
-        monster4 = Monster(400, 700, 4)
-        monster4_1 = Monster(500, 700, 4)
-        monster5 = Monster(400, 800, 5)
-        monster5_1 = Monster(570, 800, 5)
-        monster6 = Monster(400, 900, 6)
-        monster6_1 = Monster(600, 900, 6)
-        g.world.append(monster)
-        g.world.append(monster2)
-        g.world.append(monster3)
-        g.world.append(monster4)
-        g.world.append(monster5)
-        g.world.append(monster6)
-        g.world.append(monster_1)
-        g.world.append(monster2_1)
-        g.world.append(monster3_1)
-        g.world.append(monster4_1)
-        g.world.append(monster5_1)
-        g.world.append(monster6_1)
+        monster_spawn_zones = [
+
+            ((150, 450, 250, 550), 1, 10),
+
+
+            ((350, 350, 450, 450), 2, 10),
+
+
+            ((50, 250, 150, 350), 3, 10),
+
+
+            ((350, 700, 450, 800), 4, 10),
+
+
+            ((500, 650, 600, 750), 5, 10),
+
+
+            ((600, 300, 700, 400), 6, 10)
+        ]
+
+        # 정의된 구역에 몬스터를 스폰
+        for zone, m_type, count in monster_spawn_zones:
+            x_min, y_min, x_max, y_max = zone
+
+            for _ in range(count):
+                x = random.randint(x_min, x_max)
+                y = random.randint(y_min, y_max)
+
+                g.world.append(Monster(x, y, m_type))
 
     if g.knight is None:
         g.knight = Knight()
