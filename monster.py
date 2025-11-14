@@ -70,11 +70,11 @@ class Monster:
         self.knockback_speed = 10
 
         if self.kinMonster == 1:
-            self.death_max_frame = 8  # 오크는 8 프레임
+            self.death_max_frame = 8
         elif self.kinMonster == 2:
-            self.death_max_frame = 10  # 슬라임은 10 프레임
+            self.death_max_frame = 10
 
-        self.is_removable = False  # 월드에서 제거되어야 하는지 여부
+        self.is_removable = False
 
         self.debug_mode = g.DEBUG_MODE_ON
 
@@ -212,9 +212,6 @@ class Monster:
                 self.frame = (self.frame + 1) % 8
             elif self.state == 'attack':
                 self.frame = (self.frame + 1) % 10
-
-
-
 
 
         if knight_x is None or knight_y is None:
