@@ -8,6 +8,7 @@ class Projectile:
         self.direction = direction
         self.speed = speed
         self.image_to_draw = None
+        self.debug_mode = g.DEBUG_MODE_ON
 
         if self.direction == 'left' or self.direction == 'right':
             self.image_to_draw = g.projectile_image_LR
@@ -44,6 +45,17 @@ class Projectile:
                 screen_x, screen_y,
                 self.image_to_draw.w, self.image_to_draw.h
             )
+        if self.debug_mode:
+            l, b, r, t = self.get_bb()
+            screen_l, screen_b = l - cam_x, b - cam_y
+            screen_r, screen_t = r - cam_x, t - cam_y
+            draw_rectangle(screen_l, screen_b, screen_r, screen_t)
+
+    def get_bb(self):
+        half_width = 10
+        half_height = 10
+        return (self.world_x - half_width, self.world_y - half_height,
+                self.world_x + half_width, self.world_y + half_height)
 
     def update(self):
         self.world_x += self.vel_x

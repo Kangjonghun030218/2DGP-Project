@@ -38,3 +38,5 @@ effect_image1_U1 = None
 
 projectile_image_LR = None
 projectile_image_UD = None
+
+DEBUG_MODE_ON = True

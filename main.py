@@ -1,7 +1,7 @@
 from pico2d import *
 import game_globals as g
 from game_map import GameMap
-from knight import Knight
+from knight import Knight, check_collision
 from npc import NPC
 from monster import Monster
 from projectile import Projectile
@@ -117,7 +117,10 @@ def update_world():
         if obj is g.knight:
             obj.update(g.game_map)
         elif isinstance(obj, Monster):
-            obj.update(g.knight.world_x, g.knight.world_y)
+            if g.knight:
+                obj.update(g.knight.world_x, g.knight.world_y)
+            else:
+                obj.update()
         elif isinstance(obj, Projectile):
             if obj.update():
                 removed_objects.append(obj)
@@ -125,7 +128,9 @@ def update_world():
             obj.update()
 
     for obj in removed_objects:
-        g.world.remove(obj)
+        if obj in g.world:
+            g.world.remove(obj)
+
 
     if g.knight and g.game_map:
         target_cam_x = g.knight.world_x - g.CANVAS_WIDTH // 2
@@ -142,6 +147,55 @@ def update_world():
         if max_cam_x < 0: g.cam_x = 0
         if max_cam_y < 0: g.cam_y = 0
 
+    if not g.knight:
+        return
+
+    monsters_in_world = [obj for obj in g.world if isinstance(obj, Monster)]
+    knight_attack_frame = (g.knight.state == 'attack' and (g.knight.frame == 3 or g.knight.frame == 4))
+
+    if knight_attack_frame:
+        knight_attack_box = g.knight.get_attack_bb()
+        for monster in monsters_in_world:
+            if monster.current_hp > 0 and check_collision(knight_attack_box, monster.get_bb()):
+                damage = 10
+
+                if g.knight.skill_name == 'skill1':
+                    damage = 20
+                elif g.knight.skill_name == 'skill2':
+                    damage = 30
+
+
+                monster.take_damage(damage, g.knight.world_x, g.knight.world_y)
+
+    projectiles_in_world = [obj for obj in g.world if isinstance(obj, Projectile)]
+
+    for obj in projectiles_in_world:
+        for monster in monsters_in_world:
+            if monster.current_hp > 0 and check_collision(obj.get_bb(), monster.get_bb()):
+                monster.take_damage(15, obj.world_x, obj.world_y)
+
+                if obj in g.world:
+                    g.world.remove(obj)
+                break
+
+
+    for monster in monsters_in_world:
+        if monster.current_hp <= 0: continue
+
+        if monster.state == 'attack':
+            damage_frame = False
+            if monster.kinMonster == 1 and monster.frame == 4:
+                damage_frame = True
+            elif monster.kinMonster == 2 and monster.frame == 5:
+                damage_frame = True
+
+            if damage_frame:
+                dist_x = g.knight.world_x - monster.world_x1
+                dist_y = g.knight.world_y - monster.world_y1
+                distance_sq = dist_x ** 2 + dist_y ** 2
+
+                if distance_sq < monster.attack_range ** 2:
+                    g.knight.take_damage(5, monster.world_x1, monster.world_y1)
 
 def render_world():
     clear_canvas()
@@ -203,6 +257,6 @@ while g.running:
     handle_event()
     update_world()
     render_world()
-    delay(0.01)
+    delay(0.03)
 
 close_canvas()

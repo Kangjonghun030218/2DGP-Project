@@ -23,6 +23,7 @@ class Knight:
         self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
         self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
         self.image4 = load_image('Swordsman_lvl1_Attack_with_shadow.png')
+        self.image5= load_image('Swordsman_lvl1_Hurt_with_shadow.png')
 
         self.frame = 0
         self.speed = 5
@@ -45,6 +46,14 @@ class Knight:
         self.effect_frame = 0
         self.effect_flip_direction = 'right'
 
+
+        self.is_hit = False
+        self.hit_start_time = 0.0
+        self.hit_duration = 0.3
+        self.knockback_dir_x = 0
+        self.knockback_dir_y = 0
+        self.knockback_speed = 10
+
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -66,9 +75,19 @@ class Knight:
         self.face_dirX = 1
         self.face_dirY = 1
 
+        self.debug_mode = g.DEBUG_MODE_ON
+
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
         screen_y = self.world_y - cam_y
+        if self.debug_mode:
+            l, b, r, t = self.get_bb()
+
+            screen_l, screen_b = l - cam_x, b - cam_y
+            screen_r, screen_t = r - cam_x, t - cam_y
+
+            draw_rectangle(screen_l, screen_b, screen_r, screen_t)
+
 
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
@@ -79,6 +98,8 @@ class Knight:
             self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'attack':
             self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+        elif self.state == 'hit':
+            self.image5.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
         if self.skill_name == 'skill1':
             if self.is_effect_active:
@@ -168,6 +189,27 @@ class Knight:
                         effect_img_to_draw.w, effect_img_to_draw.h)
 
     def update(self, game_map):
+        if self.is_hit:
+            current_time = get_time()
+            if current_time - self.hit_start_time < self.hit_duration:
+                # 넉백 적용 (맵 경계나 장애물 충돌은 미적용된 단순 넉백)
+                self.world_x += self.knockback_dir_x * self.knockback_speed
+                self.world_y += self.knockback_dir_y * self.knockback_speed
+                self.frame = (self.frame + 1) % 5
+
+                map_width = game_map.width
+                map_height = game_map.height
+                l, b, r, t = self.get_bb()
+                half_width = (r - l) / 2
+                half_height = (t - b) / 2
+                self.world_x = max(half_width, min(self.world_x, map_width - half_width))
+                self.world_y = max(half_height, min(self.world_y, map_height - half_height))
+
+                return
+            else:
+                self.is_hit = False
+                self.state = 'idle'
+
         if self.is_effect_active:
             time_since_start = get_time() - self.effect_start_time
             half_duration = self.effect_total_duration / 2
@@ -185,6 +227,7 @@ class Knight:
                 self.state = 'idle'
                 self.frame = 0
             return
+
 
         if self.dir_x == 0 and self.dir_y == 0:
             if self.state != 'idle':
@@ -337,6 +380,46 @@ class Knight:
                 self.dir_y += 1
             elif event.key == SDLK_UP:
                 self.dir_y -= 1
+
+    def get_attack_bb(self):
+            l, b, r, t = self.get_bb()
+            attack_range = 50
+            if self.direct == 'right':
+                return (r, b, r + attack_range, t)
+            elif self.direct == 'left':
+                return (l - attack_range, b, l, t)
+            elif self.direct == 'up':
+                return (l, t, r, t + attack_range)
+            elif self.direct == 'down':
+                return (l, b - attack_range, r, b)
+            return self.get_bb()
+
+    def take_damage(self, amount, attacker_x, attacker_y):
+        if self.is_hit: return
+
+        self.current_hp -= amount
+        print(f"캐릭터 HP: {self.current_hp}")
+
+        if self.current_hp <= 0:
+            print("GAME OVER")
+            # self.state = 'dead'
+            pass
+
+        self.state = 'hit'
+        self.is_hit = True
+        self.hit_start_time = get_time()
+        self.frame = 0
+
+        dx = self.world_x - attacker_x
+        dy = self.world_y - attacker_y
+        dist = math.sqrt(dx**2 + dy**2)
+
+        if dist > 0:
+            self.knockback_dir_x = dx / dist
+            self.knockback_dir_y = dy / dist
+        else:
+            self.knockback_dir_x = 1
+            self.knockback_dir_y = 0
 
     def get_bb(self):
         half_width = 32
