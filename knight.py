@@ -24,6 +24,7 @@ class Knight:
         self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
         self.image4 = load_image('Swordsman_lvl1_Attack_with_shadow.png')
         self.image5= load_image('Swordsman_lvl1_Hurt_with_shadow.png')
+        self.image6= load_image('Swordsman_lvl1_Death_with_shadow.png')
 
         self.frame = 0
         self.speed = 5
@@ -53,6 +54,10 @@ class Knight:
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
         self.knockback_speed = 10
+
+
+        self.death_max_frame = 7
+        self.is_dead_and_animation_finished = False
 
         self.clip_y_table = {
             'down': 192,
@@ -100,6 +105,8 @@ class Knight:
             self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'hit':
             self.image5.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+        elif self.state == 'dead':
+            self.image6.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
         if self.skill_name == 'skill1':
             if self.is_effect_active:
@@ -189,10 +196,17 @@ class Knight:
                         effect_img_to_draw.w, effect_img_to_draw.h)
 
     def update(self, game_map):
+        if self.state == 'dead':
+            if self.frame < self.death_max_frame - 1:
+                self.frame = (self.frame + 1)
+            else:
+                self.frame = self.death_max_frame - 1
+                self.is_dead_and_animation_finished = True
+            return
+
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
-                # 넉백 적용 (맵 경계나 장애물 충돌은 미적용된 단순 넉백)
                 self.world_x += self.knockback_dir_x * self.knockback_speed
                 self.world_y += self.knockback_dir_y * self.knockback_speed
                 self.frame = (self.frame + 1) % 5
@@ -395,15 +409,17 @@ class Knight:
             return self.get_bb()
 
     def take_damage(self, amount, attacker_x, attacker_y):
-        if self.is_hit: return
+        if self.is_hit or self.state == 'dead': return
 
         self.current_hp -= amount
         print(f"캐릭터 HP: {self.current_hp}")
 
         if self.current_hp <= 0:
-            print("GAME OVER")
-            # self.state = 'dead'
-            pass
+            self.current_hp = 0
+            self.state = 'dead'
+            self.frame = 0
+            self.is_dead_and_animation_finished = False
+            return
 
         self.state = 'hit'
         self.is_hit = True
@@ -426,3 +442,17 @@ class Knight:
         half_height = 32
         return (self.world_x - half_width, self.world_y - half_height,
                 self.world_x + half_width, self.world_y + half_height)
+
+    def respawn(self):
+        print("캐릭터가 부활합니다. (마을에서 스폰)")
+        self.world_x = 1000
+        self.world_y = 350
+        self.current_hp = self.max_hp
+        self.current_mp = self.max_mp
+        self.state = 'idle'
+        self.frame = 0
+        self.is_hit = False
+        self.is_dead_and_animation_finished = False
+        self.direct = 'down'
+        self.dir_x = 0
+        self.dir_y = 0

@@ -133,6 +133,12 @@ def update_world():
         if obj in g.world:
             g.world.remove(obj)
 
+    if g.knight and g.knight.is_dead_and_animation_finished:
+            print("죽음 애니메이션 완료, 마을로 리스폰합니다.")
+            reset_world(1)
+            g.knight.respawn()
+            return
+
 
     if g.knight and g.game_map:
         target_cam_x = g.knight.world_x - g.CANVAS_WIDTH // 2
@@ -149,7 +155,7 @@ def update_world():
         if max_cam_x < 0: g.cam_x = 0
         if max_cam_y < 0: g.cam_y = 0
 
-    if not g.knight:
+    if not g.knight or g.knight.state == 'dead':
         return
 
     monsters_in_world = [obj for obj in g.world if isinstance(obj, Monster)]
@@ -203,8 +209,8 @@ def render_world():
     clear_canvas()
 
     if g.game_mode == 'play':
-        for object in g.world:
-            object.draw(g.cam_x, g.cam_y)
+        for obj in g.world:
+            obj.draw(g.cam_x, g.cam_y)
         draw_ui()
 
     elif g.game_mode == 'map_view':
@@ -221,8 +227,8 @@ def render_world():
             g.menu_image.draw(g.CANVAS_WIDTH // 2, g.CANVAS_HEIGHT // 2, g.CANVAS_WIDTH, g.CANVAS_HEIGHT)
 
     elif g.game_mode == 'dialogue':
-        for object in g.world:
-            object.draw(g.cam_x, g.cam_y)
+        for obj in g.world:
+            obj.draw(g.cam_x, g.cam_y)
 
         if g.dialogue_message and g.font:
             g.font.draw(101, 101, g.dialogue_message, (0, 0, 0))
