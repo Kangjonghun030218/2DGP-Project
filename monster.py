@@ -20,31 +20,37 @@ class Monster:
             self.image2 = load_image('orc1_run_with_shadow.png')
             self.image3 = load_image('orc1_attack_with_shadow.png')
             self.image4=load_image('orc1_hurt_with_shadow.png')
+            self.image5 = load_image('orc1_death_with_shadow.png')
         elif a == 2:
             self.image1 = load_image('orc2_idle_with_shadow.png')
             self.image2 = load_image('orc2_run_with_shadow.png')
             self.image3 = load_image('orc2_attack_with_shadow.png')
             self.image4 = load_image('orc2_hurt_with_shadow.png')
+            self.image5 = load_image('orc2_death_with_shadow.png')
         elif a == 3:
             self.image1 = load_image('orc3_idle_with_shadow.png')
             self.image2 = load_image('orc3_run_with_shadow.png')
             self.image3 = load_image('orc3_attack_with_shadow.png')
             self.image4 = load_image('orc3_hurt_with_shadow.png')
+            self.image5 = load_image('orc3_death_with_shadow.png')
         elif a == 4:
             self.image1 = load_image('Slime1_Idle_with_shadow.png')
             self.image2 = load_image('Slime1_Run_with_shadow.png')
             self.image3 = load_image('Slime1_Attack_with_shadow.png')
             self.image4 = load_image('Slime1_Hurt_with_shadow.png')
+            self.image5 = load_image('Slime1_Death_with_shadow.png')
         elif a == 5:
             self.image1 = load_image('Slime2_Idle_with_shadow.png')
             self.image2 = load_image('Slime2_Run_with_shadow.png')
             self.image3 = load_image('Slime2_Attack_with_shadow.png')
             self.image4 = load_image('Slime2_Hurt_with_shadow.png')
+            self.image5 = load_image('Slime1_Death_with_shadow.png')
         elif a == 6:
             self.image1 = load_image('Slime3_Idle_with_shadow.png')
             self.image2 = load_image('Slime3_Run_with_shadow.png')
             self.image3 = load_image('Slime3_Attack_with_shadow.png')
             self.image4 = load_image('Slime2_Hurt_with_shadow.png')
+            self.image5 = load_image('Slime1_Death_with_shadow.png')
 
         self.frame = 0
         self.state = 'idle'
@@ -81,7 +87,7 @@ class Monster:
 
 
         if self.current_hp <= 0:
-            self.state = 'idle'
+            self.state = 'dead'
             # self.state = 'dead'
             return
 
