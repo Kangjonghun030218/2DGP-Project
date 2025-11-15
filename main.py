@@ -111,14 +111,14 @@ def reset_world(map_number=1):
     g.world.append(g.knight)
 
 
-def update_world():
+def update_world(frame_time):
     if g.game_mode != 'play':
         return
 
     removed_objects = []
     for obj in g.world:
         if obj is g.knight:
-            obj.update(g.game_map)
+            obj.update(g.game_map, frame_time)
         elif isinstance(obj, Monster):
             if g.knight:
                 obj.update(g.knight.world_x, g.knight.world_y)
@@ -314,10 +314,16 @@ g.effect_image1_U1 = load_image('skill1-1_U.png')
 g.projectile_image_LR = load_image('projectile_LR.png')
 g.projectile_image_UD = load_image('projectile_UD.png')
 
+
+last_time = get_time()
 while g.running:
+    current_time = get_time()
+    frame_time = current_time - last_time
+    last_time = current_time
+
     handle_event()
-    update_world()
+    update_world(frame_time)
     render_world()
-    delay(0.01)
+    #delay(0.01)
 
 close_canvas()

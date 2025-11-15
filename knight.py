@@ -44,12 +44,12 @@ class Knight:
             'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
         }
 
-        self.level = 1
+        self.level = 2
         self.quests_completed = 0
-        self.current_images = self.images_lvl1
+        self.current_images = self.images_lvl2
 
         self.frame = 0
-        self.speed = 5
+        self.speed = 500
         self.state = "idle"
         self.direct = "down"
         self.r_key_pressed = False
@@ -75,7 +75,7 @@ class Knight:
         self.hit_duration = 0.3
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
-        self.knockback_speed = 10
+        self.knockback_speed = 1000
 
         self.hp_potions = 0
         self.mp_potions = 0
@@ -107,7 +107,7 @@ class Knight:
 
         self.debug_mode = g.DEBUG_MODE_ON
 
-        self.skill1_lvl3_effect_anim = [
+        self.skill1_lvl2_effect_anim = [
             load_image('lvl2-1.png'),
             load_image('lvl2-2.png'),
             load_image('lvl2-3.png'),
@@ -120,6 +120,28 @@ class Knight:
             load_image('lvl2-10.png'),
             load_image('lvl2-11.png'),
             load_image('lvl2-12.png')
+        ]
+        self.skill1_lvl3_effect_anim = [
+            load_image('lvl3-1.png'),
+            load_image('lvl3-2.png'),
+            load_image('lvl3-3.png'),
+            load_image('lvl3-4.png'),
+            load_image('lvl3-5.png'),
+            load_image('lvl3-6.png'),
+            load_image('lvl3-7.png'),
+            load_image('lvl3-8.png'),
+            load_image('lvl3-9.png'),
+            load_image('lvl3-10.png'),
+            load_image('lvl3-11.png'),
+            load_image('lvl3-12.png'),
+            load_image('lvl3-13.png'),
+            load_image('lvl3-14.png'),
+            load_image('lvl3-15.png'),
+            load_image('lvl3-16.png'),
+            load_image('lvl3-17.png'),
+            load_image('lvl3-18.png'),
+            load_image('lvl3-19.png'),
+            load_image('lvl3-20.png')
         ]
         self.effect_anim_frame = 0
         self.effect_anim_delay = 0.05
@@ -199,8 +221,25 @@ class Knight:
 
         elif self.skill_name == 'skill2':
             if self.is_effect_active:
-                if self.level == 3:
-                    if self.effect_anim_frame < 11:
+                if self.level == 2:
+                    if self.effect_anim_frame < 12:
+                        image_to_draw = self.skill1_lvl2_effect_anim[self.effect_anim_frame]
+
+                        flip = ''
+                        offset_x = 0
+
+                        if self.effect_flip_direction == 'left':
+                            flip = 'h'
+
+                        elif self.effect_flip_direction == 'right':
+                            flip = ''
+                        image_to_draw.clip_composite_draw(
+                            0, 0, image_to_draw.w, image_to_draw.h,
+                            0, flip,
+                            screen_x + offset_x, screen_y, 100, 100)
+
+                elif self.level == 3:
+                    if self.effect_anim_frame < 20:
                         image_to_draw = self.skill1_lvl3_effect_anim[self.effect_anim_frame]
 
                         flip = ''
@@ -215,6 +254,7 @@ class Knight:
                             0, 0, image_to_draw.w, image_to_draw.h,
                             0, flip,
                             screen_x + offset_x, screen_y, 100, 100)
+
                 elif self.level == 1:
                     base_img1 = None
                     base_img2 = None
@@ -261,7 +301,7 @@ class Knight:
                             screen_x + effect_offset_x, screen_y + effect_offset_y,
                             effect_img_to_draw.w, effect_img_to_draw.h)
 
-    def update(self, game_map):
+    def update(self, game_map,frame_time):
         if self.state == 'dead':
             if self.frame < self.death_max_frame - 1:
                 self.frame = (self.frame + 1)
@@ -273,8 +313,8 @@ class Knight:
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
-                self.world_x += self.knockback_dir_x * self.knockback_speed
-                self.world_y += self.knockback_dir_y * self.knockback_speed
+                self.world_x += self.knockback_dir_x * self.knockback_speed * frame_time
+                self.world_y += self.knockback_dir_y * self.knockback_speed * frame_time
                 self.frame = (self.frame + 1) % 5
 
                 map_width = game_map.width
@@ -293,11 +333,17 @@ class Knight:
         time_since_start = get_time() - self.effect_start_time
 
 
-        if self.skill_name == 'skill2' and self.level == 3:
-            self.effect_anim_timer += 0.01
+        if self.skill_name == 'skill2' and self.level == 2:
+            self.effect_anim_timer += frame_time
             if self.effect_anim_timer >= self.effect_anim_delay:
-                self.effect_anim_frame += 1
                 self.effect_anim_timer = 0.0
+                self.effect_anim_frame = (self.effect_anim_frame + 1) % 12
+
+        elif self.skill_name == 'skill2' and self.level == 3:
+            self.effect_anim_timer += frame_time
+            if self.effect_anim_timer >= self.effect_anim_delay:
+                self.effect_anim_timer = 0.0
+                self.effect_anim_frame = (self.effect_anim_frame + 1) % 20
 
 
         elif self.skill_name == 'skill2':
@@ -356,8 +402,8 @@ class Knight:
         elif self.state == 'run':
             current_speed = self.speed * 2
 
-        dx = self.dir_x * current_speed
-        dy = self.dir_y * current_speed
+        dx = self.dir_x * current_speed * frame_time
+        dy = self.dir_y * current_speed * frame_time
 
         map_width = game_map.width
         map_height = game_map.height
@@ -408,12 +454,6 @@ class Knight:
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
                 self.frame = 0
-                if self.level >= 2:
-                    self.effect_total_duration = self.effect_anim_delay * 12
-                    self.effect_anim_frame = 0
-                    self.effect_anim_timer = 0.0
-                else:
-                    self.effect_total_duration = 0.5
 
             elif self.skill_name == 'skill2':
                 self.is_effect_active = True
@@ -422,6 +462,14 @@ class Knight:
                 self.state = 'attack'
                 self.effect_frame = 0
                 self.frame = 0
+                if self.level == 3:
+                    self.effect_total_duration = self.effect_anim_delay * 20
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
+                elif self.level == 2:
+                    self.effect_total_duration = self.effect_anim_delay * 12
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
 
             elif self.skill_name == 'skill3':
                 if g.projectile_image_LR or g.projectile_image_UD:
