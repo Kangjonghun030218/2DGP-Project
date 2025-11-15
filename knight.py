@@ -107,6 +107,24 @@ class Knight:
 
         self.debug_mode = g.DEBUG_MODE_ON
 
+        self.skill1_lvl2_effect_anim = [
+            load_image('lvl2-1.png'),
+            load_image('lvl2-2.png'),
+            load_image('lvl2-3.png'),
+            load_image('lvl2-4.png'),
+            load_image('lvl2-5.png'),
+            load_image('lvl2-6.png'),
+            load_image('lvl2-7.png'),
+            load_image('lvl2-8.png'),
+            load_image('lvl2-9.png'),
+            load_image('lvl2-10.png'),
+            load_image('lvl2-11.png'),
+            load_image('lvl2-12.png')
+        ]
+        self.effect_anim_frame = 0
+        self.effect_anim_delay = 0.05
+        self.effect_anim_timer = 0.0
+
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
         screen_y = self.world_y - cam_y
@@ -142,42 +160,61 @@ class Knight:
 
         if self.skill_name == 'skill1':
             if self.is_effect_active:
-                base_img1 = None
-                flip = ''
 
-                if self.effect_flip_direction == 'left':
-                    base_img1 = g.effect_image1_R1
-                    flip = 'h'
-                elif self.effect_flip_direction == 'right':
-                    base_img1 = g.effect_image1_R1
+                if self.level >= 2:
+                    if self.effect_anim_frame < 11:
+                        image_to_draw = self.skill1_lvl2_effect_anim[self.effect_anim_frame]
+
+                        flip = ''
+                        offset_x = 0
+
+                        if self.effect_flip_direction == 'left':
+                            flip = 'h'
+
+                        elif self.effect_flip_direction == 'right':
+                            flip = ''
+                        image_to_draw.clip_composite_draw(
+                            0, 0, image_to_draw.w, image_to_draw.h,
+                            0, flip,
+                            screen_x + offset_x, screen_y, 100, 100)
+
+                else:
+                    base_img1 = None
                     flip = ''
-                elif self.effect_flip_direction == 'down':
-                    base_img1 = g.effect_image1_U1
-                    flip = 'v'
-                elif self.effect_flip_direction == 'up':
-                    base_img1 = g.effect_image1_U1
-                    flip = ''
-
-                effect_img_to_draw = base_img1
-
-                if effect_img_to_draw:
-                    effect_offset_x = 0
-                    effect_offset_y = 0
-
                     if self.effect_flip_direction == 'left':
-                        effect_offset_x = -30
+                        base_img1 = g.effect_image1_R1
+                        flip = 'h'
                     elif self.effect_flip_direction == 'right':
-                        effect_offset_x = 30
+                        base_img1 = g.effect_image1_R1
+                        flip = ''
                     elif self.effect_flip_direction == 'down':
-                        effect_offset_y = -30
+                        base_img1 = g.effect_image1_U1
+                        flip = 'v'
                     elif self.effect_flip_direction == 'up':
-                        effect_offset_y = 30
+                        base_img1 = g.effect_image1_U1
+                        flip = ''
 
-                    effect_img_to_draw.clip_composite_draw(
-                        0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
-                        0, flip,
-                        screen_x + effect_offset_x, screen_y + effect_offset_y,
-                        effect_img_to_draw.w, effect_img_to_draw.h)
+                    effect_img_to_draw = base_img1
+                    if effect_img_to_draw:
+                        effect_offset_x = 0
+                        effect_offset_y = 0
+
+                        if self.effect_flip_direction == 'left':
+                            effect_offset_x = -30
+                        elif self.effect_flip_direction == 'right':
+                            effect_offset_x = 30
+                        elif self.effect_flip_direction == 'down':
+                            effect_offset_y = -30
+                        elif self.effect_flip_direction == 'up':
+                            effect_offset_y = 30
+
+                        effect_img_to_draw.clip_composite_draw(
+                            0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
+                            0, flip,
+                            screen_x + effect_offset_x, screen_y + effect_offset_y,
+                            effect_img_to_draw.w, effect_img_to_draw.h)
+
+
 
         elif self.skill_name == 'skill2':
             if self.is_effect_active:
@@ -256,16 +293,25 @@ class Knight:
                 self.is_hit = False
                 self.state = 'idle'
 
-        if self.is_effect_active:
-            time_since_start = get_time() - self.effect_start_time
-            half_duration = self.effect_total_duration / 2
+        time_since_start = get_time() - self.effect_start_time
 
+
+        if self.skill_name == 'skill1' and self.level >= 2:
+            self.effect_anim_timer += 0.01
+            if self.effect_anim_timer >= self.effect_anim_delay:
+                self.effect_anim_frame += 1
+                self.effect_anim_timer = 0.0
+
+
+        elif self.skill_name == 'skill2':
+            half_duration = self.effect_total_duration / 2
             if time_since_start < half_duration:
                 self.effect_frame = 0
             elif time_since_start < self.effect_total_duration:
                 self.effect_frame = 1
-            else:
-                self.is_effect_active = False
+
+        if time_since_start > self.effect_total_duration:
+            self.is_effect_active = False
 
         if self.state == 'attack':
             self.frame = (self.frame + 1)
@@ -348,6 +394,8 @@ class Knight:
         self.world_x = max(half_width, min(self.world_x, map_width - half_width))
         self.world_y = max(half_height, min(self.world_y, map_height - half_height))
 
+
+
     def activate_skill(self, skill_name):
         current_time = get_time()
         cooldown = self.skill_cooldowns[skill_name]
@@ -363,6 +411,12 @@ class Knight:
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
                 self.frame = 0
+                if self.level >= 2:
+                    self.effect_total_duration = self.effect_anim_delay * 12
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
+                else:
+                    self.effect_total_duration = 0.5
 
             elif self.skill_name == 'skill2':
                 self.is_effect_active = True
