@@ -126,6 +126,14 @@ def update_world():
     for obj in removed_objects:
         if obj in g.world:
             g.world.remove(obj)
+            if isinstance(obj, Monster) and obj.current_hp <= 0:
+                hunt_quest = g.quest_log['monster_hunt']
+                if (hunt_quest['status'] == 'in_progress' and
+                        obj.kinMonster == hunt_quest['current_target_type']):
+
+                    if hunt_quest['current_kill_count'] < 10:
+                        hunt_quest['current_kill_count'] += 1
+                        print(f"퀘스트 몬스터 처치! 타입: {obj.kinMonster}, 현재 카운트: {hunt_quest['current_kill_count']}")
 
     if g.knight and g.knight.is_dead_and_animation_finished:
             print("죽음 애니메이션 완료, 마을로 리스폰합니다.")
