@@ -44,9 +44,9 @@ class Knight:
             'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
         }
 
-        self.level = 2
+        self.level = 3
         self.quests_completed = 0
-        self.current_images = self.images_lvl2
+        self.current_images = self.images_lvl3
 
         self.frame = 0
         self.speed = 500
@@ -155,6 +155,25 @@ class Knight:
             load_image('15933_U.png'),
             load_image('15934_U.png')
         ]
+
+        self.skill1_lvl3_1_effect_anim = [
+            load_image('75639.png'),
+            load_image('75645.png'),
+            load_image('75653.png'),
+            load_image('75655.png'),
+            load_image('75661.png'),
+            load_image('75667.png')
+        ]
+
+        self.skill1_lvl3_1_U_effect_anim = [
+            load_image('75639_U.png'),
+            load_image('75645_U.png'),
+            load_image('75653_U.png'),
+            load_image('75655_U.png'),
+            load_image('75661_U.png'),
+            load_image('75667_U.png')
+        ]
+
         self.effect_anim_frame = 0
         self.effect_anim_delay = 0.05
         self.effect_anim_timer = 0.0
@@ -214,6 +233,46 @@ class Knight:
                         elif self.effect_flip_direction == 'down':
                             flip = 'v'
                             image_to_draw = self.skill1_lvl2_1_U_effect_anim[self.effect_anim_frame]
+
+                        effect_img_to_draw = image_to_draw
+                        if effect_img_to_draw:
+                            effect_offset_x = 0
+                            effect_offset_y = 0
+
+                            if self.effect_flip_direction == 'left':
+                                effect_offset_x = -30
+                            elif self.effect_flip_direction == 'right':
+                                effect_offset_x = 30
+                            elif self.effect_flip_direction == 'down':
+                                effect_offset_y = -30
+                            elif self.effect_flip_direction == 'up':
+                                effect_offset_y = 30
+
+                            effect_img_to_draw.clip_composite_draw(
+                                0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
+                                0, flip,
+                                screen_x + effect_offset_x, screen_y + effect_offset_y,
+                                effect_img_to_draw.w, effect_img_to_draw.h)
+                elif self.level == 3:
+                    if self.effect_anim_frame < 6:
+                        image_to_draw = None
+                        flip = ''
+                        offset_x = 0
+
+                        if self.effect_flip_direction == 'left':
+                            flip = 'h'
+                            image_to_draw = self.skill1_lvl3_1_effect_anim[self.effect_anim_frame]
+
+                        elif self.effect_flip_direction == 'right':
+                            flip = ''
+                            image_to_draw = self.skill1_lvl3_1_effect_anim[self.effect_anim_frame]
+                        elif self.effect_flip_direction == 'up':
+                            flip = ''
+                            image_to_draw = self.skill1_lvl3_1_U_effect_anim[self.effect_anim_frame]
+
+                        elif self.effect_flip_direction == 'down':
+                            flip = 'v'
+                            image_to_draw = self.skill1_lvl3_1_U_effect_anim[self.effect_anim_frame]
 
                         effect_img_to_draw = image_to_draw
                         if effect_img_to_draw:
@@ -412,6 +471,12 @@ class Knight:
                 self.effect_anim_timer = 0.0
                 self.effect_anim_frame = (self.effect_anim_frame + 1) % 4
 
+        elif self.skill_name == 'skill1' and self.level == 3:
+            self.effect_anim_timer += frame_time
+            if self.effect_anim_timer >= self.effect_anim_delay:
+                self.effect_anim_timer = 0.0
+                self.effect_anim_frame = (self.effect_anim_frame + 1) % 6
+
         if time_since_start > self.effect_total_duration:
             self.is_effect_active = False
 
@@ -515,6 +580,10 @@ class Knight:
                 self.frame = 0
                 if self.level == 2:
                     self.effect_total_duration = self.effect_anim_delay * 4
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
+                if self.level == 3:
+                    self.effect_total_duration = self.effect_anim_delay * 6
                     self.effect_anim_frame = 0
                     self.effect_anim_timer = 0.0
 
