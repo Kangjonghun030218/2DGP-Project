@@ -19,12 +19,34 @@ class Knight:
         self.world_x = 1000
         self.world_y = 350
 
-        self.image = load_image('Swordsman_lvl1_Idle_with_shadow.png')
-        self.image2 = load_image('Swordsman_lvl1_Walk_with_shadow.png')
-        self.image3 = load_image('Swordsman_lvl1_Run_with_shadow.png')
-        self.image4 = load_image('Swordsman_lvl1_Attack_with_shadow.png')
-        self.image5= load_image('Swordsman_lvl1_Hurt_with_shadow.png')
-        self.image6= load_image('Swordsman_lvl1_Death_with_shadow.png')
+        self.images_lvl1 = {
+            'idle': load_image('Swordsman_lvl1_Idle_with_shadow.png'),
+            'walk': load_image('Swordsman_lvl1_Walk_with_shadow.png'),
+            'run': load_image('Swordsman_lvl1_Run_with_shadow.png'),
+            'attack': load_image('Swordsman_lvl1_Attack_with_shadow.png'),
+            'hit': load_image('Swordsman_lvl1_Hurt_with_shadow.png'),
+            'dead': load_image('Swordsman_lvl1_Death_with_shadow.png')
+        }
+        self.images_lvl2 = {
+            'idle': load_image('Swordsman_lvl2_Idle_with_shadow.png'),
+            'walk': load_image('Swordsman_lvl2_Walk_with_shadow.png'),
+            'run': load_image('Swordsman_lvl2_Run_with_shadow.png'),
+            'attack': load_image('Swordsman_lvl2_Attack_with_shadow.png'),
+            'hit': load_image('Swordsman_lvl2_Hurt_with_shadow.png'),
+            'dead': load_image('Swordsman_lvl2_Death_with_shadow.png')
+        }
+        self.images_lvl3 = {
+            'idle': load_image('Swordsman_lvl3_Idle_with_shadow.png'),
+            'walk': load_image('Swordsman_lvl3_Walk_with_shadow.png'),
+            'run': load_image('Swordsman_lvl3_Run_with_shadow.png'),
+            'attack': load_image('Swordsman_lvl3_Attack_with_shadow.png'),
+            'hit': load_image('Swordsman_lvl3_Hurt_with_shadow.png'),
+            'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
+        }
+
+        self.level = 1
+        self.quests_completed = 0
+        self.current_images = self.images_lvl1
 
         self.frame = 0
         self.speed = 5
@@ -106,17 +128,17 @@ class Knight:
 
         clip_y = self.clip_y_table[self.direct]
         if self.state == 'idle':
-            self.image.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['idle'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'move':
-            self.image2.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['walk'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'run':
-            self.image3.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['run'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'attack':
-            self.image4.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['attack'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'hit':
-            self.image5.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['hit'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
         elif self.state == 'dead':
-            self.image6.clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
+            self.current_images['dead'].clip_draw(self.frame * 64, clip_y, 64, 64, screen_x, screen_y)
 
         if self.skill_name == 'skill1':
             if self.is_effect_active:
@@ -511,3 +533,4 @@ class Knight:
         elif potion_type == 'mp':
             self.mp_potions += 1
             print(f"MP 포션 획득! (총: {self.mp_potions}개)")
+
