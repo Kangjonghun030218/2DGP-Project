@@ -534,3 +534,14 @@ class Knight:
             self.mp_potions += 1
             print(f"MP 포션 획득! (총: {self.mp_potions}개)")
 
+    def upgrade_level(self):
+        if self.level >= 3:
+            return
+
+        self.level += 1
+        print(f"--- 장비 업그레이드! 레벨 {self.level} 달성 ---")
+
+        if self.level == 2:
+            self.current_images = self.images_lvl2
+        elif self.level == 3:
+            self.current_images = self.images_lvl3
