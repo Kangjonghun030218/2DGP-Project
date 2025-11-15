@@ -154,7 +154,16 @@ def update_world():
             reset_world(1)
             g.knight.respawn()
             return
+    if g.knight:
 
+        hunt_quest = g.quest_log['monster_hunt']
+        current_stage = hunt_quest['total_quest_stage']
+
+        if current_stage == 3 and g.knight.level == 1:
+            g.knight.upgrade_level()
+
+        elif current_stage == 5 and g.knight.level == 2:
+            g.knight.upgrade_level()
 
     if g.knight and g.game_map:
         target_cam_x = g.knight.world_x - g.CANVAS_WIDTH // 2
@@ -181,7 +190,7 @@ def update_world():
         knight_attack_box = g.knight.get_attack_bb()
         for monster in monsters_in_world:
             if monster.current_hp > 0 and check_collision(knight_attack_box, monster.get_bb()):
-                damage = 10
+                damage = 100
 
                 if g.knight.skill_name == 'skill1':
                     damage = 20
