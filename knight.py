@@ -143,6 +143,18 @@ class Knight:
             load_image('lvl3-19.png'),
             load_image('lvl3-20.png')
         ]
+        self.skill1_lvl2_1_effect_anim = [
+            load_image('15931.png'),
+            load_image('15932.png'),
+            load_image('15933.png'),
+            load_image('15934.png')
+        ]
+        self.skill1_lvl2_1_U_effect_anim = [
+            load_image('15931_U.png'),
+            load_image('15932_U.png'),
+            load_image('15933_U.png'),
+            load_image('15934_U.png')
+        ]
         self.effect_anim_frame = 0
         self.effect_anim_delay = 0.05
         self.effect_anim_timer = 0.0
@@ -182,6 +194,47 @@ class Knight:
 
         if self.skill_name == 'skill1':
             if self.is_effect_active:
+                if self.level == 2:
+                    if self.effect_anim_frame < 4:
+                        image_to_draw = None
+                        flip = ''
+                        offset_x = 0
+
+                        if self.effect_flip_direction == 'left':
+                            flip = 'h'
+                            image_to_draw = self.skill1_lvl2_1_effect_anim[self.effect_anim_frame]
+
+                        elif self.effect_flip_direction == 'right':
+                            flip = ''
+                            image_to_draw = self.skill1_lvl2_1_effect_anim[self.effect_anim_frame]
+                        elif self.effect_flip_direction == 'up':
+                            flip = ''
+                            image_to_draw = self.skill1_lvl2_1_U_effect_anim[self.effect_anim_frame]
+
+                        elif self.effect_flip_direction == 'down':
+                            flip = 'v'
+                            image_to_draw = self.skill1_lvl2_1_U_effect_anim[self.effect_anim_frame]
+
+                        effect_img_to_draw = image_to_draw
+                        if effect_img_to_draw:
+                            effect_offset_x = 0
+                            effect_offset_y = 0
+
+                            if self.effect_flip_direction == 'left':
+                                effect_offset_x = -30
+                            elif self.effect_flip_direction == 'right':
+                                effect_offset_x = 30
+                            elif self.effect_flip_direction == 'down':
+                                effect_offset_y = -30
+                            elif self.effect_flip_direction == 'up':
+                                effect_offset_y = 30
+
+                            effect_img_to_draw.clip_composite_draw(
+                                0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
+                                0, flip,
+                                screen_x + effect_offset_x, screen_y + effect_offset_y,
+                                effect_img_to_draw.w, effect_img_to_draw.h)
+                else:
                     base_img1 = None
                     flip = ''
                     if self.effect_flip_direction == 'left':
@@ -353,6 +406,12 @@ class Knight:
             elif time_since_start < self.effect_total_duration:
                 self.effect_frame = 1
 
+        elif self.skill_name == 'skill1'and self.level == 2:
+            self.effect_anim_timer += frame_time
+            if self.effect_anim_timer >= self.effect_anim_delay:
+                self.effect_anim_timer = 0.0
+                self.effect_anim_frame = (self.effect_anim_frame + 1) % 4
+
         if time_since_start > self.effect_total_duration:
             self.is_effect_active = False
 
@@ -454,6 +513,10 @@ class Knight:
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
                 self.frame = 0
+                if self.level == 2:
+                    self.effect_total_duration = self.effect_anim_delay * 4
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
 
             elif self.skill_name == 'skill2':
                 self.is_effect_active = True
