@@ -7,6 +7,9 @@ from monster import Monster
 from projectile import Projectile
 from ui import draw_ui
 import random
+from potion import Potion
+
+PICKUP_RANGE = 50
 
 
 def handle_event():
@@ -34,12 +37,18 @@ def handle_event():
                     reset_world(2)
                 elif event.key == SDLK_3:
                     g.game_mode = 'map_view'
+                elif event.key == SDLK_5:
+                    if g.knight: g.knight.use_potion('hp')
+                elif event.key == SDLK_6:
+                    if g.knight: g.knight.use_potion('mp')
                 elif event.key == SDLK_7:
                     if g.knight: g.knight.activate_skill('skill1')
                 elif event.key == SDLK_8:
                     if g.knight: g.knight.activate_skill('skill2')
                 elif event.key == SDLK_9:
                     if g.knight: g.knight.activate_skill('skill3')
+                elif event.key == SDLK_z:
+                    pickup_item()
 
                 elif event.key == SDLK_SPACE:
                     for obj in g.world:
@@ -129,11 +138,16 @@ def update_world():
             if isinstance(obj, Monster) and obj.current_hp <= 0:
                 hunt_quest = g.quest_log['monster_hunt']
                 if (hunt_quest['status'] == 'in_progress' and
-                        obj.kinMonster == hunt_quest['current_target_type']):
+                        obj.monster_type == hunt_quest['current_target_type']):
 
                     if hunt_quest['current_kill_count'] < 10:
                         hunt_quest['current_kill_count'] += 1
-                        print(f"퀘스트 몬스터 처치! 타입: {obj.kinMonster}, 현재 카운트: {hunt_quest['current_kill_count']}")
+                        print(f"퀘스트 몬스터 처치! 타입: {obj.monster_type}, 현재 카운트: {hunt_quest['current_kill_count']}")
+                if random.random() < 0.3:
+                    potion_type = random.choice(['hp', 'mp'])
+                    new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
+                    g.world.append(new_potion)
+                    print(f"{potion_type.upper()} 포션 드랍!")
 
     if g.knight and g.knight.is_dead_and_animation_finished:
             print("죽음 애니메이션 완료, 마을로 리스폰합니다.")
@@ -238,6 +252,31 @@ def render_world():
 
     update_canvas()
 
+def pickup_item():
+    if not g.knight:
+        return
+
+    potions_in_world = [obj for obj in g.world if isinstance(obj, Potion)]
+    if not potions_in_world:
+        return
+
+    closest_potion = None
+    min_dist_sq = PICKUP_RANGE ** 2
+
+    for potion in potions_in_world:
+        dx = potion.world_x - g.knight.world_x
+        dy = potion.world_y - g.knight.world_y
+        dist_sq = dx**2 + dy**2
+
+        if dist_sq < min_dist_sq:
+            min_dist_sq = dist_sq
+            closest_potion = potion
+
+    if closest_potion:
+        g.knight.add_potion(closest_potion.potion_type)
+        g.world.remove(closest_potion)
+        print(f"{closest_potion.potion_type.upper()} 포션을 주웠습니다.")
+
 
 open_canvas(g.CANVAS_WIDTH, g.CANVAS_HEIGHT)
 
@@ -251,6 +290,9 @@ g.mp_bar_image = load_image('bar_mp.png')
 g.skill1_image = load_image('skill1.png')
 g.skill2_image = load_image('skill2.png')
 g.skill3_image = load_image('skill3.png')
+
+g.hp_potion_image = load_image('hp_potion.png')
+g.mp_potion_image = load_image('mp_potion.png')
 
 g.effect_image_R1 = load_image('skill2-1_R.png')
 g.effect_image_R2 = load_image('skill2-2_R.png')

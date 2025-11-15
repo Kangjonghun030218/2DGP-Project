@@ -55,6 +55,9 @@ class Knight:
         self.knockback_dir_y = 0
         self.knockback_speed = 10
 
+        self.hp_potions = 0
+        self.mp_potions = 0
+
 
         self.death_max_frame = 7
         self.is_dead_and_animation_finished = False
@@ -472,3 +475,39 @@ class Knight:
         self.direct = 'down'
         self.dir_x = 0
         self.dir_y = 0
+
+    def use_potion(self, potion_type):
+        if self.state == 'dead' or self.is_hit:
+            return
+
+        if potion_type == 'hp':
+            if self.hp_potions > 0:
+                if self.current_hp < self.max_hp:
+                    self.hp_potions -= 1
+                    self.current_hp += 50  # HP 회복량
+                    self.current_hp = min(self.max_hp, self.current_hp)
+                    print(f"HP 포션 사용! 현재 HP: {self.current_hp}")
+                else:
+                    print("HP가 이미 가득 찼습니다.")
+            else:
+                print("HP 포션이 없습니다.")
+
+        elif potion_type == 'mp':
+            if self.mp_potions > 0:
+                if self.current_mp < self.max_mp:
+                    self.mp_potions -= 1
+                    self.current_mp += 20
+                    self.current_mp = min(self.max_mp, self.current_mp)
+                    print(f"MP 포션 사용! 현재 MP: {self.current_mp}")
+                else:
+                    print("MP가 이미 가득 찼습니다.")
+            else:
+                print("MP 포션이 없습니다.")
+
+    def add_potion(self, potion_type):
+        if potion_type == 'hp':
+            self.hp_potions += 1
+            print(f"HP 포션 획득! (총: {self.hp_potions}개)")
+        elif potion_type == 'mp':
+            self.mp_potions += 1
+            print(f"MP 포션 획득! (총: {self.mp_potions}개)")

@@ -48,11 +48,14 @@ def draw_ui():
     icon_size = 48
     icon_spacing = 10
     icon_y = 40
+    key_text_y = icon_y + icon_size // 2 + 10
 
     center_x = g.CANVAS_WIDTH // 2
     skill2_x = center_x
     skill1_x = center_x - icon_size - icon_spacing
     skill3_x = center_x + icon_size + icon_spacing
+    potion2_x = skill1_x - icon_size - icon_spacing
+    potion1_x = potion2_x - icon_size - icon_spacing
 
     positions = {
         'skill1': skill1_x,
@@ -87,3 +90,13 @@ def draw_ui():
         if g.font:
             key_text_y = icon_y + icon_size // 2 + 10
             g.font.draw(x - 5, key_text_y, keys[skill_name], (255, 255, 0))
+    if g.hp_potion_image:
+            g.hp_potion_image.draw(potion1_x, icon_y, icon_size, icon_size)
+            if g.font:
+                g.font.draw(potion1_x - 5, key_text_y, '5', (255, 255, 0))
+                g.font.draw(potion1_x + 10, icon_y - 15, f'{g.knight.hp_potions}', (255, 255, 255))
+    if g.mp_potion_image:
+            g.mp_potion_image.draw(potion2_x, icon_y, icon_size, icon_size)
+            if g.font:
+                g.font.draw(potion2_x - 5, key_text_y, '6', (255, 255, 0))
+                g.font.draw(potion2_x + 10, icon_y - 15, f'{g.knight.mp_potions}', (255, 255, 255))

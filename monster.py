@@ -6,7 +6,7 @@ class Monster:
     def __init__(self, x, y, a):
         self.world_x1 = x
         self.world_y1 = y
-
+        self.monster_type = a
         if a <= 3:
             self.kinMonster = 1
             self.max_hp = 100
