@@ -53,11 +53,13 @@ class Monster:
             self.image5 = load_image('Slime3_Death_with_shadow.png')
 
         self.frame = 0
+        self.frame_timer = 0.0
+        self.animation_speed = 0.1
         self.state = 'idle'
         self.state_dir = 'down'
         self.face_dirX = 1
         self.face_dirY = 1
-        self.speed = 2
+        self.speed = 150
         self.aggro_range = 250
         self.attack_range = 50
 
@@ -67,7 +69,7 @@ class Monster:
         self.hit_duration = 0.3
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
-        self.knockback_speed = 10
+        self.knockback_speed = 500
 
         if self.kinMonster == 1:
             self.death_max_frame = 8
@@ -175,10 +177,13 @@ class Monster:
             elif self.state_dir == 'down':
                     self.image5.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
 
-    def update(self, knight_x=None, knight_y=None):
+    def update(self, frame_time, knight_x=None, knight_y=None):
+        self.frame_timer += frame_time
         if self.state == 'dead':
             if self.frame < self.death_max_frame - 1:
-                self.frame = (self.frame + 1)
+                if self.frame_timer >= self.animation_speed:
+                    self.frame_timer -= self.animation_speed
+                    self.frame = (self.frame + 1)
             else:
                 self.frame = self.death_max_frame - 1
                 self.is_removable = True
@@ -187,31 +192,33 @@ class Monster:
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
-                self.world_x1 += self.knockback_dir_x * self.knockback_speed
-                self.world_y1 += self.knockback_dir_y * self.knockback_speed
-                if self.kinMonster==1:
-                    self.frame = (self.frame + 1) % 6
-                elif self.kinMonster==2:
-                    self.frame = (self.frame + 2) % 5
+                self.world_x1 += self.knockback_dir_x * self.knockback_speed * frame_time
+                self.world_y1 += self.knockback_dir_y * self.knockback_speed * frame_time
+                if self.frame_timer >= self.animation_speed:
+                    self.frame_timer -= self.animation_speed
+                    if self.kinMonster == 1:
+                        self.frame = (self.frame + 1) % 6
+                    elif self.kinMonster == 2:
+                        self.frame = (self.frame + 1) % 5
                 return
             else:
                 self.is_hit = False
                 self.state = 'idle'
 
-        if self.kinMonster == 1:
-            if self.state == 'idle':
-                self.frame = (self.frame + 1) % 4
-            elif self.state == 'chase' or self.state == 'attack':
-                self.frame = (self.frame + 1) % 8
-
-
-        elif self.kinMonster == 2:
-            if self.state == 'idle':
-                self.frame = (self.frame + 1) % 6
-            elif self.state == 'chase':
-                self.frame = (self.frame + 1) % 8
-            elif self.state == 'attack':
-                self.frame = (self.frame + 1) % 10
+        if self.frame_timer >= self.animation_speed:
+            self.frame_timer -= self.animation_speed
+            if self.kinMonster == 1:
+                if self.state == 'idle':
+                    self.frame = (self.frame + 1) % 4
+                elif self.state == 'chase' or self.state == 'attack':
+                    self.frame = (self.frame + 1) % 8
+            elif self.kinMonster == 2:
+                if self.state == 'idle':
+                    self.frame = (self.frame + 1) % 6
+                elif self.state == 'chase':
+                    self.frame = (self.frame + 1) % 8
+                elif self.state == 'attack':
+                    self.frame = (self.frame + 1) % 10
 
 
         if knight_x is None or knight_y is None:
@@ -235,8 +242,8 @@ class Monster:
                 dir_x = dist_x / distance
                 dir_y = dist_y / distance
 
-                self.world_x1 += dir_x * self.speed
-                self.world_y1 += dir_y * self.speed
+                self.world_x1 += dir_x * self.speed * frame_time
+                self.world_y1 += dir_y * self.speed * frame_time
 
                 if abs(dist_x) > abs(dist_y):
                     if dist_x > 0:
