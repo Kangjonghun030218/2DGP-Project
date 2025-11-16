@@ -44,11 +44,13 @@ class Knight:
             'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
         }
 
-        self.level = 3
+        self.level = 1
         self.quests_completed = 0
-        self.current_images = self.images_lvl3
+        self.current_images = self.images_lvl1
 
         self.frame = 0
+        self.frame_timer = 0.0
+        self.animation_speed = 0.1
         self.speed = 500
         self.state = "idle"
         self.direct = "down"
@@ -414,8 +416,10 @@ class Knight:
                             effect_img_to_draw.w, effect_img_to_draw.h)
 
     def update(self, game_map,frame_time):
+        self.frame_timer += frame_time
         if self.state == 'dead':
-            if self.frame < self.death_max_frame - 1:
+            if self.frame_timer >= self.animation_speed:
+                self.frame_timer -= self.animation_speed
                 self.frame = (self.frame + 1)
             else:
                 self.frame = self.death_max_frame - 1
@@ -427,7 +431,9 @@ class Knight:
             if current_time - self.hit_start_time < self.hit_duration:
                 self.world_x += self.knockback_dir_x * self.knockback_speed * frame_time
                 self.world_y += self.knockback_dir_y * self.knockback_speed * frame_time
-                self.frame = (self.frame + 1) % 5
+                if self.frame_timer >= self.animation_speed:
+                    self.frame_timer -= self.animation_speed
+                    self.frame = (self.frame + 1) % 5
 
                 map_width = game_map.width
                 map_height = game_map.height
@@ -481,7 +487,11 @@ class Knight:
             self.is_effect_active = False
 
         if self.state == 'attack':
-            self.frame = (self.frame + 1)
+            attack_anim_speed = 0.05
+            if self.frame_timer >= attack_anim_speed:
+                self.frame_timer -= attack_anim_speed
+                self.frame = (self.frame + 1)
+
             if self.frame >= 8:
                 self.state = 'idle'
                 self.frame = 0
@@ -511,14 +521,16 @@ class Knight:
         elif self.dir_y < 0:
             self.direct = 'down'
 
-        if self.direct == 'up' and self.state == 'idle':
-            self.frame = (self.frame + 1) % 4
-        elif self.state == 'move':
-            self.frame = (self.frame + 1) % 6
-        elif self.state == 'run':
-            self.frame = (self.frame + 1) % 8
-        elif self.state == 'idle':
-            self.frame = (self.frame + 1) % 12
+        if self.frame_timer >= self.animation_speed:
+            self.frame_timer -= self.animation_speed
+            if self.direct == 'up' and self.state == 'idle':
+                self.frame = (self.frame + 1) % 4
+            elif self.state == 'move':
+                self.frame = (self.frame + 1) % 6
+            elif self.state == 'run':
+                self.frame = (self.frame + 1) % 8
+            elif self.state == 'idle':
+                self.frame = (self.frame + 1) % 12
 
         current_speed = 0
         if self.state == 'move':
