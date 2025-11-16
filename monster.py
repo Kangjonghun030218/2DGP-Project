@@ -2,6 +2,64 @@ from pico2d import *
 import math
 import game_globals as g
 
+PIXEL_PER_METER = (10.0 / 0.3)
+
+#몬스터 추적 속도
+MONSTER_SPEED_KMPH = 30.0  # Km / Hour
+MONSTER_SPEED_MPM = (MONSTER_SPEED_KMPH * 1000.0 / 60.0)
+MONSTER_SPEED_MPS = (MONSTER_SPEED_MPM / 60.0)
+MONSTER_SPEED_PPS = (MONSTER_SPEED_MPS * PIXEL_PER_METER) # Pixel / Sec
+
+#몬스터 넉백 속도
+KNOCKBACK_SPEED_KMPH = 10.0
+KNOCKBACK_SPEED_MPM = (KNOCKBACK_SPEED_KMPH * 1000.0 / 60.0)
+KNOCKBACK_SPEED_MPS = (KNOCKBACK_SPEED_MPM / 60.0)
+KNOCKBACK_SPEED_PPS = (KNOCKBACK_SPEED_MPS * PIXEL_PER_METER)
+
+
+#오크
+TIME_PER_ACTION_ORC_IDLE = 1.0
+FRAMES_PER_ACTION_ORC_IDLE = 4
+TIME_PER_FRAME_ORC_IDLE = TIME_PER_ACTION_ORC_IDLE / FRAMES_PER_ACTION_ORC_IDLE
+
+TIME_PER_ACTION_ORC_CHASE = 0.8
+FRAMES_PER_ACTION_ORC_CHASE = 8
+TIME_PER_FRAME_ORC_CHASE = TIME_PER_ACTION_ORC_CHASE / FRAMES_PER_ACTION_ORC_CHASE
+
+TIME_PER_ACTION_ORC_ATTACK = 0.8
+FRAMES_PER_ACTION_ORC_ATTACK = 8
+TIME_PER_FRAME_ORC_ATTACK = TIME_PER_ACTION_ORC_ATTACK / FRAMES_PER_ACTION_ORC_ATTACK
+
+TIME_PER_ACTION_ORC_HIT = 0.6
+FRAMES_PER_ACTION_ORC_HIT = 6
+TIME_PER_FRAME_ORC_HIT = TIME_PER_ACTION_ORC_HIT / FRAMES_PER_ACTION_ORC_HIT
+
+TIME_PER_ACTION_ORC_DEAD = 1.6
+FRAMES_PER_ACTION_ORC_DEAD = 8
+TIME_PER_FRAME_ORC_DEAD = TIME_PER_ACTION_ORC_DEAD / FRAMES_PER_ACTION_ORC_DEAD
+
+
+#슬라임
+TIME_PER_ACTION_SLIME_IDLE = 1.2
+FRAMES_PER_ACTION_SLIME_IDLE = 6
+TIME_PER_FRAME_SLIME_IDLE = TIME_PER_ACTION_SLIME_IDLE / FRAMES_PER_ACTION_SLIME_IDLE
+
+TIME_PER_ACTION_SLIME_CHASE = 0.8
+FRAMES_PER_ACTION_SLIME_CHASE = 8
+TIME_PER_FRAME_SLIME_CHASE = TIME_PER_ACTION_SLIME_CHASE / FRAMES_PER_ACTION_SLIME_CHASE
+
+TIME_PER_ACTION_SLIME_ATTACK = 1.0
+FRAMES_PER_ACTION_SLIME_ATTACK = 10
+TIME_PER_FRAME_SLIME_ATTACK = TIME_PER_ACTION_SLIME_ATTACK / FRAMES_PER_ACTION_SLIME_ATTACK
+
+TIME_PER_ACTION_SLIME_HIT = 0.5
+FRAMES_PER_ACTION_SLIME_HIT = 5
+TIME_PER_FRAME_SLIME_HIT = TIME_PER_ACTION_SLIME_HIT / FRAMES_PER_ACTION_SLIME_HIT
+
+TIME_PER_ACTION_SLIME_DEAD = 2.0
+FRAMES_PER_ACTION_SLIME_DEAD = 10
+TIME_PER_FRAME_SLIME_DEAD = TIME_PER_ACTION_SLIME_DEAD / FRAMES_PER_ACTION_SLIME_DEAD
+
 class Monster:
     def __init__(self, x, y, a):
         self.world_x1 = x
@@ -59,7 +117,8 @@ class Monster:
         self.state_dir = 'down'
         self.face_dirX = 1
         self.face_dirY = 1
-        self.speed = 150
+        self.speed = MONSTER_SPEED_PPS
+
         self.aggro_range = 250
         self.attack_range = 50
 
@@ -69,7 +128,7 @@ class Monster:
         self.hit_duration = 0.3
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
-        self.knockback_speed = 500
+        self.knockback_speed = KNOCKBACK_SPEED_PPS
 
         if self.kinMonster == 1:
             self.death_max_frame = 8
@@ -79,6 +138,31 @@ class Monster:
         self.is_removable = False
 
         self.debug_mode = g.DEBUG_MODE_ON
+
+        if self.kinMonster == 1:  # 오크
+            self.time_per_frame_idle = TIME_PER_FRAME_ORC_IDLE
+            self.time_per_frame_chase = TIME_PER_FRAME_ORC_CHASE
+            self.time_per_frame_attack = TIME_PER_FRAME_ORC_ATTACK
+            self.time_per_frame_hit = TIME_PER_FRAME_ORC_HIT
+            self.time_per_frame_dead = TIME_PER_FRAME_ORC_DEAD
+
+            self.frames_idle = FRAMES_PER_ACTION_ORC_IDLE
+            self.frames_chase = FRAMES_PER_ACTION_ORC_CHASE
+            self.frames_attack = FRAMES_PER_ACTION_ORC_ATTACK
+            self.frames_hit = FRAMES_PER_ACTION_ORC_HIT
+            self.frames_dead = FRAMES_PER_ACTION_ORC_DEAD
+        else:  # 슬라임
+            self.time_per_frame_idle = TIME_PER_FRAME_SLIME_IDLE
+            self.time_per_frame_chase = TIME_PER_FRAME_SLIME_CHASE
+            self.time_per_frame_attack = TIME_PER_FRAME_SLIME_ATTACK
+            self.time_per_frame_hit = TIME_PER_FRAME_SLIME_HIT
+            self.time_per_frame_dead = TIME_PER_FRAME_SLIME_DEAD
+
+            self.frames_idle = FRAMES_PER_ACTION_SLIME_IDLE
+            self.frames_chase = FRAMES_PER_ACTION_SLIME_CHASE
+            self.frames_attack = FRAMES_PER_ACTION_SLIME_ATTACK
+            self.frames_hit = FRAMES_PER_ACTION_SLIME_HIT
+            self.frames_dead = FRAMES_PER_ACTION_SLIME_DEAD
 
 
 
@@ -180,13 +264,12 @@ class Monster:
     def update(self, frame_time, knight_x=None, knight_y=None):
         self.frame_timer += frame_time
         if self.state == 'dead':
-            if self.frame < self.death_max_frame - 1:
-                if self.frame_timer >= self.animation_speed:
-                    self.frame_timer -= self.animation_speed
-                    self.frame = (self.frame + 1)
-            else:
-                self.frame = self.death_max_frame - 1
-                self.is_removable = True
+            if self.frame_timer >= self.time_per_frame_dead:
+                self.frame_timer -= self.time_per_frame_dead
+                if self.frame < self.frames_dead - 1:
+                    self.frame += 1
+                else:
+                    self.is_removable = True
             return
 
         if self.is_hit:
@@ -194,47 +277,56 @@ class Monster:
             if current_time - self.hit_start_time < self.hit_duration:
                 self.world_x1 += self.knockback_dir_x * self.knockback_speed * frame_time
                 self.world_y1 += self.knockback_dir_y * self.knockback_speed * frame_time
-                if self.frame_timer >= self.animation_speed:
-                    self.frame_timer -= self.animation_speed
-                    if self.kinMonster == 1:
-                        self.frame = (self.frame + 1) % 6
-                    elif self.kinMonster == 2:
-                        self.frame = (self.frame + 1) % 5
+
+                if self.frame_timer >= self.time_per_frame_hit:
+                    self.frame_timer -= self.time_per_frame_hit
+                    self.frame = (self.frame + 1) % self.frames_hit
                 return
             else:
                 self.is_hit = False
                 self.state = 'idle'
+                self.frame = 0
 
-        if self.frame_timer >= self.animation_speed:
-            self.frame_timer -= self.animation_speed
-            if self.kinMonster == 1:
-                if self.state == 'idle':
-                    self.frame = (self.frame + 1) % 4
-                elif self.state == 'chase' or self.state == 'attack':
-                    self.frame = (self.frame + 1) % 8
-            elif self.kinMonster == 2:
-                if self.state == 'idle':
-                    self.frame = (self.frame + 1) % 6
-                elif self.state == 'chase':
-                    self.frame = (self.frame + 1) % 8
-                elif self.state == 'attack':
-                    self.frame = (self.frame + 1) % 10
 
+        current_anim_speed = 0.1
+        current_max_frames = 1
+        if self.state == 'idle':
+            current_anim_speed = self.time_per_frame_idle
+            current_max_frames = self.frames_idle
+        elif self.state == 'chase':
+            current_anim_speed = self.time_per_frame_chase
+            current_max_frames = self.frames_chase
+        elif self.state == 'attack':
+            current_anim_speed = self.time_per_frame_attack
+            current_max_frames = self.frames_attack
+
+        if self.frame_timer >= current_anim_speed:
+            self.frame_timer -= current_anim_speed
+            self.frame = (self.frame + 1) % current_max_frames
 
         if knight_x is None or knight_y is None:
-            self.state = 'idle'
+            if self.state != 'idle':
+                self.state = 'idle'
+                self.frame = 0
             return
 
         dist_x = knight_x - self.world_x1
         dist_y = knight_y - self.world_y1
         distance_sq = dist_x ** 2 + dist_y ** 2
 
+        new_state = self.state
         if distance_sq < self.attack_range ** 2:
-            self.state = 'attack'
+            new_state = 'attack'
         elif distance_sq < self.aggro_range ** 2:
-            self.state = 'chase'
+            new_state = 'chase'
         else:
-            self.state = 'idle'
+            new_state = 'idle'
+
+        if self.state != new_state:
+            self.state = new_state
+            self.frame = 0
+
+
 
         if self.state == 'chase':
             distance = math.sqrt(distance_sq)
