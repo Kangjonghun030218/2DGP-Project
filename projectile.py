@@ -2,7 +2,7 @@ from pico2d import *
 import game_globals as g
 
 class Projectile:
-    def __init__(self, start_x, start_y, direction, speed=10):
+    def __init__(self, start_x, start_y, direction, speed=700):
         self.world_x = start_x
         self.world_y = start_y
         self.direction = direction
@@ -57,9 +57,9 @@ class Projectile:
         return (self.world_x - half_width, self.world_y - half_height,
                 self.world_x + half_width, self.world_y + half_height)
 
-    def update(self):
-        self.world_x += self.vel_x
-        self.world_y += self.vel_y
+    def update(self, frame_time):
+        self.world_x += self.vel_x * frame_time
+        self.world_y += self.vel_y * frame_time
 
         if get_time() - self.start_time > self.life_time:
             return True

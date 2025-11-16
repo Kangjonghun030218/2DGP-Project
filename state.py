@@ -156,14 +156,16 @@ class PlayState(BaseState):
                 obj.update(g.game_map, frame_time)
             elif isinstance(obj, Monster):
                 if g.knight:
-                    obj.update(g.knight.world_x, g.knight.world_y)
+                    obj.update(frame_time, g.knight.world_x, g.knight.world_y)
                 else:
-                    obj.update()
+                    obj.update(frame_time)
                 if obj.is_removable:
                     removed_objects.append(obj)
             elif isinstance(obj, Projectile):
-                if obj.update():
-                    removed_objects.append(obj)
+                    if obj.update(frame_time):
+                        removed_objects.append(obj)
+            elif isinstance(obj, NPC):
+                obj.update(frame_time)
             else:
                 obj.update()
 

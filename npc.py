@@ -17,6 +17,9 @@ class NPC:
 
         self.talk_range = 50
 
+        self.frame_timer = 0.0
+        self.animation_speed = 0.2
+
     def interact(self, knight_x, knight_y):
         dist_to_1 = math.sqrt((self.world_x1 - knight_x) ** 2 + (self.world_y1 - knight_y) ** 2)
         dist_to_2 = math.sqrt((self.world_x2 - knight_x) ** 2 + (self.world_y2 - knight_y) ** 2)
@@ -104,5 +107,8 @@ class NPC:
         self.image3.clip_draw(self.frame * 48, 0, 48, 48, screen_x3, screen_y3)
         self.image4.clip_draw(self.frame * 48, 0, 48, 48, screen_x4, screen_y4)
 
-    def update(self):
-        self.frame = (self.frame + 1) % 4
+    def update(self, frame_time):
+        self.frame_timer += frame_time
+        if self.frame_timer >= self.animation_speed:
+            self.frame_timer -= self.animation_speed  # 타이머 리셋
+            self.frame = (self.frame + 1) % 4
