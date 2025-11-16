@@ -27,6 +27,7 @@ TIME_PER_ACTION_WALK = 0.6
 TIME_PER_ACTION_RUN = 0.8
 TIME_PER_ACTION_ATTACK = 0.4
 TIME_PER_ACTION_HIT = 0.3
+TIME_PER_ACTION_DEAD = 0.7
 
 #시트 수
 FRAMES_PER_ACTION_IDLE = 12
@@ -34,6 +35,7 @@ FRAMES_PER_ACTION_WALK = 6
 FRAMES_PER_ACTION_RUN = 8
 FRAMES_PER_ACTION_ATTACK = 8
 FRAMES_PER_ACTION_HIT = 5
+FRAMES_PER_ACTION_DEAD = 7
 
 
 TIME_PER_FRAME_IDLE = TIME_PER_ACTION_IDLE / FRAMES_PER_ACTION_IDLE
@@ -41,6 +43,7 @@ TIME_PER_FRAME_WALK = TIME_PER_ACTION_WALK / FRAMES_PER_ACTION_WALK
 TIME_PER_FRAME_RUN = TIME_PER_ACTION_RUN / FRAMES_PER_ACTION_RUN
 TIME_PER_FRAME_ATTACK = TIME_PER_ACTION_ATTACK / FRAMES_PER_ACTION_ATTACK
 TIME_PER_FRAME_HIT = TIME_PER_ACTION_HIT / FRAMES_PER_ACTION_HIT
+TIME_PER_FRAME_DEAD = TIME_PER_ACTION_DEAD / FRAMES_PER_ACTION_DEAD
 
 ####-----------여기서 부터는 스킬 관련 시간 조정할거임-----------####
 # Skill 1 (Lvl 1)
@@ -499,9 +502,9 @@ class Knight:
             current_animation_speed = TIME_PER_FRAME_HIT
 
         if self.state == 'dead':
-            if self.frame < self.death_max_frame - 1:
-                if self.frame_timer >= 0.1:
-                    self.frame_timer -= 0.1
+            if self.frame < FRAMES_PER_ACTION_DEAD - 1:
+                if self.frame_timer >= TIME_PER_FRAME_DEAD:
+                    self.frame_timer -= TIME_PER_FRAME_DEAD
                     self.frame = (self.frame + 1)
             else:
                 self.frame = self.death_max_frame - 1
