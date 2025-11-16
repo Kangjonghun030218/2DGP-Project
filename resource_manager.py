@@ -1,0 +1,132 @@
+from pico2d import load_image, load_font
+
+_images = {}
+_fonts = {}
+
+
+def load_all():
+    print("Loading resources...")
+
+    _images['map_0'] = load_image('map_0.png')
+    _images['map_1'] = load_image('map_1.png')
+    _images['map_2'] = load_image('map_2.png')
+
+    # --- UI 아이템 이미지 ---
+    _images['bar_bg'] = load_image('bar_bg.png')
+    _images['bar_hp'] = load_image('bar_hp.png')
+    _images['bar_mp'] = load_image('bar_mp.png')
+    _images['skill1'] = load_image('skill1.png')
+    _images['skill2'] = load_image('skill2.png')
+    _images['skill3'] = load_image('skill3.png')
+    _images['hp_potion'] = load_image('hp_potion.png')
+    _images['mp_potion'] = load_image('mp_potion.png')
+    _images['projectile_LR'] = load_image('projectile_LR.png')
+    _images['projectile_UD'] = load_image('projectile_UD.png')
+
+    # --- Lvl 1 이미지 ---
+    _images['knight_lvl1_idle'] = load_image('Swordsman_lvl1_Idle_with_shadow.png')
+    _images['knight_lvl1_walk'] = load_image('Swordsman_lvl1_Walk_with_shadow.png')
+    _images['knight_lvl1_run'] = load_image('Swordsman_lvl1_Run_with_shadow.png')
+    _images['knight_lvl1_attack'] = load_image('Swordsman_lvl1_Attack_with_shadow.png')
+    _images['knight_lvl1_hit'] = load_image('Swordsman_lvl1_Hurt_with_shadow.png')
+    _images['knight_lvl1_dead'] = load_image('Swordsman_lvl1_Death_with_shadow.png')
+
+    # --- Lvl 2 이미지 ---
+    _images['knight_lvl2_idle'] = load_image('Swordsman_lvl2_Idle_with_shadow.png')
+    _images['knight_lvl2_walk'] = load_image('Swordsman_lvl2_Walk_with_shadow.png')
+    _images['knight_lvl2_run'] = load_image('Swordsman_lvl2_Run_with_shadow.png')
+    _images['knight_lvl2_attack'] = load_image('Swordsman_lvl2_Attack_with_shadow.png')
+    _images['knight_lvl2_hit'] = load_image('Swordsman_lvl2_Hurt_with_shadow.png')
+    _images['knight_lvl2_dead'] = load_image('Swordsman_lvl2_Death_with_shadow.png')
+
+    # --- Lvl 3 이미지 ---
+    _images['knight_lvl3_idle'] = load_image('Swordsman_lvl3_Idle_with_shadow.png')
+    _images['knight_lvl3_walk'] = load_image('Swordsman_lvl3_Walk_with_shadow.png')
+    _images['knight_lvl3_run'] = load_image('Swordsman_lvl3_Run_with_shadow.png')
+    _images['knight_lvl3_attack'] = load_image('Swordsman_lvl3_Attack_with_shadow.png')
+    _images['knight_lvl3_hit'] = load_image('Swordsman_lvl3_Hurt_with_shadow.png')
+    _images['knight_lvl3_dead'] = load_image('Swordsman_lvl3_Death_with_shadow.png')
+
+    # --- 스킬 Lvl 1  이펙트 ---
+    _images['effect_skill1_R1'] = load_image('skill1-1_R.png')
+    _images['effect_skill1_U1'] = load_image('skill1-1_U.png')
+    _images['effect_skill2_R1'] = load_image('skill2-1_R.png')
+    _images['effect_skill2_R2'] = load_image('skill2-2_R.png')
+    _images['effect_skill2_U1'] = load_image('skill2-1_U.png')
+    _images['effect_skill2_U2'] = load_image('skill2-2_U.png')
+
+    # --- 스킬 Lvl 2/3 이펙트 ---
+    _images['skill_lvl2_anim'] = [load_image(f'lvl2-{i}.png') for i in range(1, 13)]
+    _images['skill_lvl3_anim'] = [load_image(f'lvl3-{i}.png') for i in range(1, 21)]
+
+    _images['skill_lvl2_R_anim'] = [
+        load_image('15931.png'), load_image('15932.png'),
+        load_image('15933.png'), load_image('15934.png')
+    ]
+    _images['skill_lvl2_U_anim'] = [
+        load_image('15931_U.png'), load_image('15932_U.png'),
+        load_image('15933_U.png'), load_image('15934_U.png')
+    ]
+    _images['skill_lvl3_R_anim'] = [
+        load_image('75639.png'), load_image('75645.png'),
+        load_image('75653.png'), load_image('75655.png'),
+        load_image('75661.png'), load_image('75667.png')
+    ]
+    _images['skill_lvl3_U_anim'] = [
+        load_image('75639_U.png'), load_image('75645_U.png'),
+        load_image('75653_U.png'), load_image('75655_U.png'),
+        load_image('75661_U.png'), load_image('75667_U.png')
+    ]
+    # 오크 1
+    _images['orc1_idle'] = load_image('orc1_idle_with_shadow.png')
+    _images['orc1_run'] = load_image('orc1_run_with_shadow.png')
+    _images['orc1_attack'] = load_image('orc1_attack_with_shadow.png')
+    _images['orc1_hurt'] = load_image('orc1_hurt_with_shadow.png')
+    _images['orc1_dead'] = load_image('orc1_death_with_shadow.png')
+    # 오크 2
+    _images['orc2_idle'] = load_image('orc2_idle_with_shadow.png')
+    _images['orc2_run'] = load_image('orc2_run_with_shadow.png')
+    _images['orc2_attack'] = load_image('orc2_attack_with_shadow.png')
+    _images['orc2_hurt'] = load_image('orc2_hurt_with_shadow.png')
+    _images['orc2_dead'] = load_image('orc2_death_with_shadow.png')
+    # 오크 3
+    _images['orc3_idle'] = load_image('orc3_idle_with_shadow.png')
+    _images['orc3_run'] = load_image('orc3_run_with_shadow.png')
+    _images['orc3_attack'] = load_image('orc3_attack_with_shadow.png')
+    _images['orc3_hurt'] = load_image('orc3_hurt_with_shadow.png')
+    _images['orc3_dead'] = load_image('orc3_death_with_shadow.png')
+
+    # 슬라임 1
+    _images['slime1_idle'] = load_image('Slime1_Idle_with_shadow.png')
+    _images['slime1_run'] = load_image('Slime1_Run_with_shadow.png')
+    _images['slime1_attack'] = load_image('Slime1_Attack_with_shadow.png')
+    _images['slime1_hurt'] = load_image('Slime1_Hurt_with_shadow.png')
+    _images['slime1_dead'] = load_image('Slime1_Death_with_shadow.png')
+    # 슬라임 2
+    _images['slime2_idle'] = load_image('Slime2_Idle_with_shadow.png')
+    _images['slime2_run'] = load_image('Slime2_Run_with_shadow.png')
+    _images['slime2_attack'] = load_image('Slime2_Attack_with_shadow.png')
+    _images['slime2_hurt'] = load_image('Slime2_Hurt_with_shadow.png')
+    _images['slime2_dead'] = load_image('Slime2_Death_with_shadow.png')
+    # 슬라임 3
+    _images['slime3_idle'] = load_image('Slime3_Idle_with_shadow.png')
+    _images['slime3_run'] = load_image('Slime3_Run_with_shadow.png')
+    _images['slime3_attack'] = load_image('Slime3_Attack_with_shadow.png')
+    _images['slime3_hurt'] = load_image('Slime3_Hurt_with_shadow.png')
+    _images['slime3_dead'] = load_image('Slime3_Death_with_shadow.png')
+    #엔피씨
+    _images['npc_old_woman'] = load_image('Old_woman_idle.png')
+    _images['npc_old_man'] = load_image('Old_man_idle.png')
+    _images['npc_man'] = load_image('Man_idle.png')
+    _images['npc_boy'] = load_image('Boy_idle.png')
+
+    # --- 폰트 ---
+    _fonts['default'] = load_font('ARIAL.ttf', 20)
+
+
+def get_image(key):
+    return _images.get(key)
+
+
+def get_font(key='default'):
+    return _fonts.get(key)
