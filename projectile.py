@@ -1,5 +1,6 @@
 from pico2d import *
-import game_globals as g
+import config
+import resource_manager
 
 class Projectile:
     def __init__(self, start_x, start_y, direction, speed=700):
@@ -8,12 +9,12 @@ class Projectile:
         self.direction = direction
         self.speed = speed
         self.image_to_draw = None
-        self.debug_mode = g.DEBUG_MODE_ON
+        self.debug_mode = config.DEBUG_MODE_ON
 
         if self.direction == 'left' or self.direction == 'right':
-            self.image_to_draw = g.projectile_image_LR
+            self.image_to_draw = resource_manager.get_image('projectile_LR')
         elif self.direction == 'up' or self.direction == 'down':
-            self.image_to_draw = g.projectile_image_UD
+            self.image_to_draw = resource_manager.get_image('projectile_UD')
 
         self.life_time = 2.0
         self.start_time = get_time()

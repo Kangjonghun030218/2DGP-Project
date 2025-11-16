@@ -1,5 +1,8 @@
 from pico2d import *
-import game_globals as g
+import server
+import resource_manager
+import config
+import math
 from projectile import Projectile
 
 
@@ -93,33 +96,33 @@ class Knight:
         self.world_y = 350
 
         self.images_lvl1 = {
-            'idle': load_image('Swordsman_lvl1_Idle_with_shadow.png'),
-            'walk': load_image('Swordsman_lvl1_Walk_with_shadow.png'),
-            'run': load_image('Swordsman_lvl1_Run_with_shadow.png'),
-            'attack': load_image('Swordsman_lvl1_Attack_with_shadow.png'),
-            'hit': load_image('Swordsman_lvl1_Hurt_with_shadow.png'),
-            'dead': load_image('Swordsman_lvl1_Death_with_shadow.png')
+            'idle': resource_manager.get_image('knight_lvl1_idle'),
+            'walk': resource_manager.get_image('knight_lvl1_walk'),
+            'run': resource_manager.get_image('knight_lvl1_run'),
+            'attack': resource_manager.get_image('knight_lvl1_attack'),
+            'hit': resource_manager.get_image('knight_lvl1_hit'),
+            'dead': resource_manager.get_image('knight_lvl1_dead')
         }
         self.images_lvl2 = {
-            'idle': load_image('Swordsman_lvl2_Idle_with_shadow.png'),
-            'walk': load_image('Swordsman_lvl2_Walk_with_shadow.png'),
-            'run': load_image('Swordsman_lvl2_Run_with_shadow.png'),
-            'attack': load_image('Swordsman_lvl2_Attack_with_shadow.png'),
-            'hit': load_image('Swordsman_lvl2_Hurt_with_shadow.png'),
-            'dead': load_image('Swordsman_lvl2_Death_with_shadow.png')
+            'idle': resource_manager.get_image('knight_lvl2_idle'),
+            'walk': resource_manager.get_image('knight_lvl2_walk'),
+            'run': resource_manager.get_image('knight_lvl2_run'),
+            'attack': resource_manager.get_image('knight_lvl2_attack'),
+            'hit': resource_manager.get_image('knight_lvl2_hit'),
+            'dead': resource_manager.get_image('knight_lvl2_dead')
         }
         self.images_lvl3 = {
-            'idle': load_image('Swordsman_lvl3_Idle_with_shadow.png'),
-            'walk': load_image('Swordsman_lvl3_Walk_with_shadow.png'),
-            'run': load_image('Swordsman_lvl3_Run_with_shadow.png'),
-            'attack': load_image('Swordsman_lvl3_Attack_with_shadow.png'),
-            'hit': load_image('Swordsman_lvl3_Hurt_with_shadow.png'),
-            'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
+            'idle': resource_manager.get_image('knight_lvl3_idle'),
+            'walk': resource_manager.get_image('knight_lvl3_walk'),
+            'run': resource_manager.get_image('knight_lvl3_run'),
+            'attack': resource_manager.get_image('knight_lvl3_attack'),
+            'hit': resource_manager.get_image('knight_lvl3_hit'),
+            'dead': resource_manager.get_image('knight_lvl3_dead')
         }
 
-        self.level =3
+        self.level =1
         self.quests_completed = 0
-        self.current_images = self.images_lvl3
+        self.current_images = self.images_lvl1
 
         self.frame = 0
         self.frame_timer = 0.0
@@ -182,74 +185,14 @@ class Knight:
             'skill3': 0.0
         }
 
-        self.debug_mode = g.DEBUG_MODE_ON
+        self.debug_mode = config.DEBUG_MODE_ON
 
-        self.skill1_lvl2_effect_anim = [
-            load_image('lvl2-1.png'),
-            load_image('lvl2-2.png'),
-            load_image('lvl2-3.png'),
-            load_image('lvl2-4.png'),
-            load_image('lvl2-5.png'),
-            load_image('lvl2-6.png'),
-            load_image('lvl2-7.png'),
-            load_image('lvl2-8.png'),
-            load_image('lvl2-9.png'),
-            load_image('lvl2-10.png'),
-            load_image('lvl2-11.png'),
-            load_image('lvl2-12.png')
-        ]
-        self.skill1_lvl3_effect_anim = [
-            load_image('lvl3-1.png'),
-            load_image('lvl3-2.png'),
-            load_image('lvl3-3.png'),
-            load_image('lvl3-4.png'),
-            load_image('lvl3-5.png'),
-            load_image('lvl3-6.png'),
-            load_image('lvl3-7.png'),
-            load_image('lvl3-8.png'),
-            load_image('lvl3-9.png'),
-            load_image('lvl3-10.png'),
-            load_image('lvl3-11.png'),
-            load_image('lvl3-12.png'),
-            load_image('lvl3-13.png'),
-            load_image('lvl3-14.png'),
-            load_image('lvl3-15.png'),
-            load_image('lvl3-16.png'),
-            load_image('lvl3-17.png'),
-            load_image('lvl3-18.png'),
-            load_image('lvl3-19.png'),
-            load_image('lvl3-20.png')
-        ]
-        self.skill1_lvl2_1_effect_anim = [
-            load_image('15931.png'),
-            load_image('15932.png'),
-            load_image('15933.png'),
-            load_image('15934.png')
-        ]
-        self.skill1_lvl2_1_U_effect_anim = [
-            load_image('15931_U.png'),
-            load_image('15932_U.png'),
-            load_image('15933_U.png'),
-            load_image('15934_U.png')
-        ]
-
-        self.skill1_lvl3_1_effect_anim = [
-            load_image('75639.png'),
-            load_image('75645.png'),
-            load_image('75653.png'),
-            load_image('75655.png'),
-            load_image('75661.png'),
-            load_image('75667.png')
-        ]
-
-        self.skill1_lvl3_1_U_effect_anim = [
-            load_image('75639_U.png'),
-            load_image('75645_U.png'),
-            load_image('75653_U.png'),
-            load_image('75655_U.png'),
-            load_image('75661_U.png'),
-            load_image('75667_U.png')
-        ]
+        self.skill1_lvl2_effect_anim = resource_manager.get_image('skill_lvl2_anim')
+        self.skill1_lvl3_effect_anim = resource_manager.get_image('skill_lvl3_anim')
+        self.skill1_lvl2_1_effect_anim = resource_manager.get_image('skill_lvl2_R_anim')
+        self.skill1_lvl2_1_U_effect_anim = resource_manager.get_image('skill_lvl2_U_anim')
+        self.skill1_lvl3_1_effect_anim = resource_manager.get_image('skill_lvl3_R_anim')
+        self.skill1_lvl3_1_U_effect_anim = resource_manager.get_image('skill_lvl3_U_anim')
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -369,16 +312,16 @@ class Knight:
                     base_img1 = None
                     flip = ''
                     if self.effect_flip_direction == 'left':
-                        base_img1 = g.effect_image1_R1
+                        base_img1 = resource_manager.get_image('effect_skill1_R1')
                         flip = 'h'
                     elif self.effect_flip_direction == 'right':
-                        base_img1 = g.effect_image1_R1
+                        base_img1 = resource_manager.get_image('effect_skill1_R1')
                         flip = ''
                     elif self.effect_flip_direction == 'down':
-                        base_img1 = g.effect_image1_U1
+                        base_img1 = resource_manager.get_image('effect_skill1_U1')
                         flip = 'v'
                     elif self.effect_flip_direction == 'up':
-                        base_img1 = g.effect_image1_U1
+                        base_img1 = resource_manager.get_image('effect_skill1_U1')
                         flip = ''
 
                     effect_img_to_draw = base_img1
@@ -444,20 +387,20 @@ class Knight:
                     base_img2 = None
                     flip = ''
                     if self.effect_flip_direction == 'left':
-                        base_img1 = g.effect_image_R1
-                        base_img2 = g.effect_image_R2
+                        base_img1 = resource_manager.get_image('effect_skill2_R1')
+                        base_img2 = resource_manager.get_image('effect_skill2_R2')
                         flip = 'h'
                     elif self.effect_flip_direction == 'right':
-                        base_img1 = g.effect_image_R1
-                        base_img2 = g.effect_image_R2
+                        base_img1 = resource_manager.get_image('effect_skill2_R1')
+                        base_img2 = resource_manager.get_image('effect_skill2_R2')
                         flip = ''
                     elif self.effect_flip_direction == 'down':
-                        base_img1 = g.effect_image_U1
-                        base_img2 = g.effect_image_U2
+                        base_img1 = resource_manager.get_image('effect_skill2_U1')
+                        base_img2 = resource_manager.get_image('effect_skill2_U2')
                         flip = 'v'
                     elif self.effect_flip_direction == 'up':
-                        base_img1 = g.effect_image_U1
-                        base_img2 = g.effect_image_U2
+                        base_img1 = resource_manager.get_image('effect_skill2_U1')
+                        base_img2 = resource_manager.get_image('effect_skill2_U2')
                         flip = ''
 
                     effect_img_to_draw = None
@@ -568,7 +511,7 @@ class Knight:
                         self.effect_anim_timer -= TIME_PER_FRAME_SKILL1_LVL3
                         self.effect_anim_frame = (self.effect_anim_frame + 1)
 
-                elif self.level == 1:  # [신규] Lvl 1 (2프레임) 로직 추가
+                elif self.level == 1:
                     half_duration = self.effect_total_duration / 2
                     if time_since_start < half_duration:
                         self.effect_frame = 0
@@ -710,7 +653,7 @@ class Knight:
                     self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL3
 
             elif self.skill_name == 'skill3':
-                if g.projectile_image_LR or g.projectile_image_UD:
+                if resource_manager.get_image('projectile_LR') or resource_manager.get_image('projectile_UD'):
                     offset_x = 0
                     offset_y = 0
                     if self.direct == 'right':
@@ -728,10 +671,10 @@ class Knight:
                         self.direct,
                         speed=700,
                     )
-                    g.world.append(new_projectile)
-            self.skill_last_used[self.skill_name] = current_time
-        else:
-            print(f"[{self.skill_name}] 쿨타임 중!")
+                    server.world.append(new_projectile)
+                self.skill_last_used[self.skill_name] = current_time
+            else:
+                print(f"[{self.skill_name}] 쿨타임 중!")
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:

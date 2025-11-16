@@ -1,6 +1,7 @@
 from pico2d import *
 import math
-import game_globals as g
+import server
+import resource_manager
 
 class NPC:
     def __init__(self):
@@ -25,33 +26,32 @@ class NPC:
         dist_to_2 = math.sqrt((self.world_x2 - knight_x) ** 2 + (self.world_y2 - knight_y) ** 2)
         dist_to_3 = math.sqrt((self.world_x3 - knight_x) ** 2 + (self.world_y3 - knight_y) ** 2)
 
-        check_quest = g.quest_log['check_npc']
-        hunt_quest = g.quest_log['monster_hunt']
+        check_quest = server.quest_log['check_npc']
+        hunt_quest = server.quest_log['monster_hunt']
 
         if dist_to_1 < self.talk_range:
             if check_quest['status'] == 'not_started':
-                g.dialogue_message = "hello?"
+                server.dialogue_message = "hello?"
                 check_quest['status'] = 'in_progress'
             elif check_quest['status'] == 'in_progress':
                 if check_quest['talked_to_man']:
-                    g.dialogue_message = "hi!"
+                    server.dialogue_message = "hi!"
                     check_quest['status'] = 'completed'
                 else:
-                    g.dialogue_message = "nice to meet you"
+                    server.dialogue_message = "nice to meet you"
             elif check_quest['status'] == 'completed':
-                g.dialogue_message = "thank you."
+                server.dialogue_message = "thank you."
             return True
 
         elif dist_to_2 < self.talk_range:
             if check_quest['status'] == 'not_started':
-                g.dialogue_message = "hello2"
+                server.dialogue_message = "hello2"
             elif check_quest['status'] == 'in_progress':
-                g.dialogue_message = "hi2"
+                server.dialogue_message = "hi2"
                 check_quest['talked_to_man'] = True
             elif check_quest['status'] == 'completed':
-                g.dialogue_message = "thank you2."
+                server.dialogue_message = "thank you2."
             return True
-
 
         elif dist_to_3 < self.talk_range:
             monster_names = {
@@ -63,7 +63,7 @@ class NPC:
             target_name = monster_names.get(current_stage, f"monster (type {current_stage})")
 
             if hunt_quest['status'] == 'not_started':
-                g.dialogue_message = f"hey, {target_name} 10 kill."
+                server.dialogue_message = f"hey, {target_name} 10 kill."
                 hunt_quest['status'] = 'in_progress'
                 hunt_quest['current_target_type'] = 1
                 hunt_quest['current_kill_count'] = 0
@@ -74,22 +74,21 @@ class NPC:
                     hunt_quest['total_quest_stage'] += 1
 
                     if hunt_quest['total_quest_stage'] > 6:
-                        g.dialogue_message = "great, all quest clear!"
+                        server.dialogue_message = "great, all quest clear!"
                         hunt_quest['status'] = 'completed'
                     else:
                         hunt_quest['current_target_type'] = hunt_quest['total_quest_stage']
                         hunt_quest['current_kill_count'] = 0
                         next_target_name = monster_names.get(hunt_quest['current_target_type'], "next monster")
-                        g.dialogue_message = f"good! next {next_target_name} 10 kill."
+                        server.dialogue_message = f"good! next {next_target_name} 10 kill."
                 else:
                     remaining = 10 - hunt_quest['current_kill_count']
-                    g.dialogue_message = f"{target_name} {remaining}more kill."
+                    server.dialogue_message = f"{target_name} {remaining}more kill."
 
             elif hunt_quest['status'] == 'completed':
-                g.dialogue_message = "thanks."
+                server.dialogue_message = "thanks."
 
             return True
-
         return False
 
     def draw(self, cam_x, cam_y):

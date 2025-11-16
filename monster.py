@@ -1,6 +1,7 @@
 from pico2d import *
 import math
-import game_globals as g
+import config
+import resource_manager
 
 PIXEL_PER_METER = (10.0 / 0.3)
 
@@ -74,41 +75,41 @@ class Monster:
         self.current_hp = self.max_hp
 
         if a == 1:
-            self.image1 = load_image('orc1_idle_with_shadow.png')
-            self.image2 = load_image('orc1_run_with_shadow.png')
-            self.image3 = load_image('orc1_attack_with_shadow.png')
-            self.image4=load_image('orc1_hurt_with_shadow.png')
-            self.image5 = load_image('orc1_death_with_shadow.png')
+            self.image1 = resource_manager.get_image('orc1_idle')
+            self.image2 = resource_manager.get_image('orc1_run')
+            self.image3 = resource_manager.get_image('orc1_attack')
+            self.image4 = resource_manager.get_image('orc1_hurt')
+            self.image5 = resource_manager.get_image('orc1_dead')
         elif a == 2:
-            self.image1 = load_image('orc2_idle_with_shadow.png')
-            self.image2 = load_image('orc2_run_with_shadow.png')
-            self.image3 = load_image('orc2_attack_with_shadow.png')
-            self.image4 = load_image('orc2_hurt_with_shadow.png')
-            self.image5 = load_image('orc2_death_with_shadow.png')
+            self.image1 = resource_manager.get_image('orc2_idle')
+            self.image2 = resource_manager.get_image('orc2_run')
+            self.image3 = resource_manager.get_image('orc2_attack')
+            self.image4 = resource_manager.get_image('orc2_hurt')
+            self.image5 = resource_manager.get_image('orc2_dead')
         elif a == 3:
-            self.image1 = load_image('orc3_idle_with_shadow.png')
-            self.image2 = load_image('orc3_run_with_shadow.png')
-            self.image3 = load_image('orc3_attack_with_shadow.png')
-            self.image4 = load_image('orc3_hurt_with_shadow.png')
-            self.image5 = load_image('orc3_death_with_shadow.png')
+            self.image1 = resource_manager.get_image('orc3_idle')
+            self.image2 = resource_manager.get_image('orc3_run')
+            self.image3 = resource_manager.get_image('orc3_attack')
+            self.image4 = resource_manager.get_image('orc3_hurt')
+            self.image5 = resource_manager.get_image('orc3_dead')
         elif a == 4:
-            self.image1 = load_image('Slime1_Idle_with_shadow.png')
-            self.image2 = load_image('Slime1_Run_with_shadow.png')
-            self.image3 = load_image('Slime1_Attack_with_shadow.png')
-            self.image4 = load_image('Slime1_Hurt_with_shadow.png')
-            self.image5 = load_image('Slime1_Death_with_shadow.png')
+            self.image1 = resource_manager.get_image('slime1_idle')
+            self.image2 = resource_manager.get_image('slime1_run')
+            self.image3 = resource_manager.get_image('slime1_attack')
+            self.image4 = resource_manager.get_image('slime1_hurt')
+            self.image5 = resource_manager.get_image('slime1_dead')
         elif a == 5:
-            self.image1 = load_image('Slime2_Idle_with_shadow.png')
-            self.image2 = load_image('Slime2_Run_with_shadow.png')
-            self.image3 = load_image('Slime2_Attack_with_shadow.png')
-            self.image4 = load_image('Slime2_Hurt_with_shadow.png')
-            self.image5 = load_image('Slime2_Death_with_shadow.png')
+            self.image1 = resource_manager.get_image('slime2_idle')
+            self.image2 = resource_manager.get_image('slime2_run')
+            self.image3 = resource_manager.get_image('slime2_attack')
+            self.image4 = resource_manager.get_image('slime2_hurt')
+            self.image5 = resource_manager.get_image('slime2_dead')
         elif a == 6:
-            self.image1 = load_image('Slime3_Idle_with_shadow.png')
-            self.image2 = load_image('Slime3_Run_with_shadow.png')
-            self.image3 = load_image('Slime3_Attack_with_shadow.png')
-            self.image4 = load_image('Slime3_Hurt_with_shadow.png')
-            self.image5 = load_image('Slime3_Death_with_shadow.png')
+            self.image1 = resource_manager.get_image('slime3_idle')
+            self.image2 = resource_manager.get_image('slime3_run')
+            self.image3 = resource_manager.get_image('slime3_attack')
+            self.image4 = resource_manager.get_image('slime3_hurt')
+            self.image5 = resource_manager.get_image('slime3_dead')
 
         self.frame = 0
         self.frame_timer = 0.0
@@ -134,7 +135,7 @@ class Monster:
 
         self.is_removable = False
 
-        self.debug_mode = g.DEBUG_MODE_ON
+        self.debug_mode = config.DEBUG_MODE_ON
 
         if self.kinMonster == 1:  # 오크
             self.time_per_frame_idle = TIME_PER_FRAME_ORC_IDLE

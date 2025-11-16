@@ -1,5 +1,4 @@
-from pico2d import *
-import game_globals as g
+import resource_manager
 
 class Potion:
     def __init__(self, x, y, potion_type):
@@ -8,9 +7,9 @@ class Potion:
         self.potion_type = potion_type
 
         if self.potion_type == 'hp':
-            self.image = g.hp_potion_image
+            self.image = resource_manager.get_image('hp_potion')
         else:
-            self.image = g.mp_potion_image
+            self.image = resource_manager.get_image('mp_potion')
 
         self.width = self.image.w
         self.height = self.image.h
