@@ -3,6 +3,45 @@ import game_globals as g
 from projectile import Projectile
 
 
+PIXEL_PER_METER = (10.0 / 0.3)
+
+WALK_SPEED_KMPH = 30.0
+WALK_SPEED_MPM = (WALK_SPEED_KMPH * 1000.0 / 60.0)
+WALK_SPEED_MPS = (WALK_SPEED_MPM / 60.0)
+WALK_SPEED_PPS = (WALK_SPEED_MPS * PIXEL_PER_METER)
+
+
+RUN_SPEED_KMPH = 60.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+
+#넉백 속도
+KNOCKBACK_SPEED_PPS = (WALK_SPEED_PPS * 2)
+
+
+# 각 동작이 1사이클 도는 데 걸리는 시간 !
+TIME_PER_ACTION_IDLE = 2.4
+TIME_PER_ACTION_WALK = 0.6
+TIME_PER_ACTION_RUN = 0.8
+TIME_PER_ACTION_ATTACK = 0.4
+TIME_PER_ACTION_HIT = 0.3
+
+#시트 수
+FRAMES_PER_ACTION_IDLE = 12
+FRAMES_PER_ACTION_WALK = 6
+FRAMES_PER_ACTION_RUN = 8
+FRAMES_PER_ACTION_ATTACK = 8
+FRAMES_PER_ACTION_HIT = 5
+
+
+TIME_PER_FRAME_IDLE = TIME_PER_ACTION_IDLE / FRAMES_PER_ACTION_IDLE
+TIME_PER_FRAME_WALK = TIME_PER_ACTION_WALK / FRAMES_PER_ACTION_WALK
+TIME_PER_FRAME_RUN = TIME_PER_ACTION_RUN / FRAMES_PER_ACTION_RUN
+TIME_PER_FRAME_ATTACK = TIME_PER_ACTION_ATTACK / FRAMES_PER_ACTION_ATTACK
+TIME_PER_FRAME_HIT = TIME_PER_ACTION_HIT / FRAMES_PER_ACTION_HIT
+
 def check_collision(a, b):
     left_a, bottom_a, right_a, top_a = a
     left_b, bottom_b, right_b, top_b = b
@@ -50,8 +89,7 @@ class Knight:
 
         self.frame = 0
         self.frame_timer = 0.0
-        self.animation_speed = 0.1
-        self.speed = 500
+
         self.state = "idle"
         self.direct = "down"
         self.r_key_pressed = False
@@ -71,13 +109,16 @@ class Knight:
         self.effect_frame = 0
         self.effect_flip_direction = 'right'
 
+        self.walk_speed = WALK_SPEED_PPS
+        self.run_speed = RUN_SPEED_PPS
+        self.knockback_speed = KNOCKBACK_SPEED_PPS
 
         self.is_hit = False
         self.hit_start_time = 0.0
         self.hit_duration = 0.3
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
-        self.knockback_speed = 1000
+
 
         self.hp_potions = 0
         self.mp_potions = 0
@@ -417,10 +458,24 @@ class Knight:
 
     def update(self, game_map,frame_time):
         self.frame_timer += frame_time
+
+        current_animation_speed = 0.1
+        if self.state == 'idle':
+            current_animation_speed = TIME_PER_FRAME_IDLE
+        elif self.state == 'move':
+            current_animation_speed = TIME_PER_FRAME_WALK
+        elif self.state == 'run':
+            current_animation_speed = TIME_PER_FRAME_RUN
+        elif self.state == 'attack':
+            current_animation_speed = TIME_PER_FRAME_ATTACK
+        elif self.state == 'hit':
+            current_animation_speed = TIME_PER_FRAME_HIT
+
         if self.state == 'dead':
-            if self.frame_timer >= self.animation_speed:
-                self.frame_timer -= self.animation_speed
-                self.frame = (self.frame + 1)
+            if self.frame < self.death_max_frame - 1:
+                if self.frame_timer >= 0.1:
+                    self.frame_timer -= 0.1
+                    self.frame = (self.frame + 1)
             else:
                 self.frame = self.death_max_frame - 1
                 self.is_dead_and_animation_finished = True
@@ -431,9 +486,9 @@ class Knight:
             if current_time - self.hit_start_time < self.hit_duration:
                 self.world_x += self.knockback_dir_x * self.knockback_speed * frame_time
                 self.world_y += self.knockback_dir_y * self.knockback_speed * frame_time
-                if self.frame_timer >= self.animation_speed:
-                    self.frame_timer -= self.animation_speed
-                    self.frame = (self.frame + 1) % 5
+                if self.frame_timer >= current_animation_speed:
+                    self.frame_timer -= current_animation_speed
+                    self.frame = (self.frame + 1) % FRAMES_PER_ACTION_HIT
 
                 map_width = game_map.width
                 map_height = game_map.height
@@ -487,16 +542,14 @@ class Knight:
             self.is_effect_active = False
 
         if self.state == 'attack':
-            attack_anim_speed = 0.05
-            if self.frame_timer >= attack_anim_speed:
-                self.frame_timer -= attack_anim_speed
+            if self.frame_timer >= current_animation_speed:
+                self.frame_timer -= current_animation_speed
                 self.frame = (self.frame + 1)
 
-            if self.frame >= 8:
+            if self.frame >= FRAMES_PER_ACTION_ATTACK:
                 self.state = 'idle'
                 self.frame = 0
             return
-
 
         if self.dir_x == 0 and self.dir_y == 0:
             if self.state != 'idle':
@@ -521,8 +574,8 @@ class Knight:
         elif self.dir_y < 0:
             self.direct = 'down'
 
-        if self.frame_timer >= self.animation_speed:
-            self.frame_timer -= self.animation_speed
+        if self.frame_timer >= current_animation_speed:
+            self.frame_timer -= current_animation_speed
             if self.direct == 'up' and self.state == 'idle':
                 self.frame = (self.frame + 1) % 4
             elif self.state == 'move':
@@ -534,9 +587,9 @@ class Knight:
 
         current_speed = 0
         if self.state == 'move':
-            current_speed = self.speed
+            current_speed = self.walk_speed
         elif self.state == 'run':
-            current_speed = self.speed * 2
+            current_speed = self.run_speed
 
         dx = self.dir_x * current_speed * frame_time
         dy = self.dir_y * current_speed * frame_time
@@ -632,7 +685,7 @@ class Knight:
                         self.world_x + offset_x,
                         self.world_y + offset_y,
                         self.direct,
-                        speed=15,
+                        speed=700,
                     )
                     g.world.append(new_projectile)
             self.skill_last_used[self.skill_name] = current_time
