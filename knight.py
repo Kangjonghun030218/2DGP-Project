@@ -42,6 +42,37 @@ TIME_PER_FRAME_RUN = TIME_PER_ACTION_RUN / FRAMES_PER_ACTION_RUN
 TIME_PER_FRAME_ATTACK = TIME_PER_ACTION_ATTACK / FRAMES_PER_ACTION_ATTACK
 TIME_PER_FRAME_HIT = TIME_PER_ACTION_HIT / FRAMES_PER_ACTION_HIT
 
+####-----------여기서 부터는 스킬 관련 시간 조정할거임-----------####
+# Skill 1 (Lvl 1)
+TIME_PER_ACTION_SKILL1_LVL1 = 0.5
+FRAMES_PER_ACTION_SKILL1_LVL1 = 2
+TIME_PER_FRAME_SKILL1_LVL1 = TIME_PER_ACTION_SKILL1_LVL1 / FRAMES_PER_ACTION_SKILL1_LVL1
+
+# Skill 1 (Lvl 2)
+TIME_PER_ACTION_SKILL1_LVL2 = 0.4
+FRAMES_PER_ACTION_SKILL1_LVL2 = 4
+TIME_PER_FRAME_SKILL1_LVL2 = TIME_PER_ACTION_SKILL1_LVL2 / FRAMES_PER_ACTION_SKILL1_LVL2
+
+# Skill 1 (Lvl 3)
+TIME_PER_ACTION_SKILL1_LVL3 = 0.6
+FRAMES_PER_ACTION_SKILL1_LVL3 = 6
+TIME_PER_FRAME_SKILL1_LVL3 = TIME_PER_ACTION_SKILL1_LVL3 / FRAMES_PER_ACTION_SKILL1_LVL3
+
+# Skill 2 (Lvl 1)
+TIME_PER_ACTION_SKILL2_LVL1 = 0.5
+FRAMES_PER_ACTION_SKILL2_LVL1 = 2
+TIME_PER_FRAME_SKILL2_LVL1 = TIME_PER_ACTION_SKILL2_LVL1 / FRAMES_PER_ACTION_SKILL2_LVL1
+
+# Skill 2 (Lvl 2)
+TIME_PER_ACTION_SKILL2_LVL2 = 0.6
+FRAMES_PER_ACTION_SKILL2_LVL2 = 12
+TIME_PER_FRAME_SKILL2_LVL2 = TIME_PER_ACTION_SKILL2_LVL2 / FRAMES_PER_ACTION_SKILL2_LVL2
+
+# Skill 2 (Lvl 3)
+TIME_PER_ACTION_SKILL2_LVL3 = 1.0
+FRAMES_PER_ACTION_SKILL2_LVL3 = 20
+TIME_PER_FRAME_SKILL2_LVL3 = TIME_PER_ACTION_SKILL2_LVL3 / FRAMES_PER_ACTION_SKILL2_LVL3
+
 def check_collision(a, b):
     left_a, bottom_a, right_a, top_a = a
     left_b, bottom_b, right_b, top_b = b
@@ -83,9 +114,9 @@ class Knight:
             'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
         }
 
-        self.level = 1
+        self.level = 3
         self.quests_completed = 0
-        self.current_images = self.images_lvl1
+        self.current_images = self.images_lvl3
 
         self.frame = 0
         self.frame_timer = 0.0
@@ -123,6 +154,9 @@ class Knight:
         self.hp_potions = 0
         self.mp_potions = 0
 
+        self.effect_anim_frame = 0
+        self.effect_anim_timer = 0.0
+
 
         self.death_max_frame = 7
         self.is_dead_and_animation_finished = False
@@ -144,9 +178,6 @@ class Knight:
             'skill2': 0.0,
             'skill3': 0.0
         }
-
-        self.face_dirX = 1
-        self.face_dirY = 1
 
         self.debug_mode = g.DEBUG_MODE_ON
 
@@ -216,10 +247,6 @@ class Knight:
             load_image('75661_U.png'),
             load_image('75667_U.png')
         ]
-
-        self.effect_anim_frame = 0
-        self.effect_anim_delay = 0.05
-        self.effect_anim_timer = 0.0
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -505,41 +532,51 @@ class Knight:
 
         time_since_start = get_time() - self.effect_start_time
 
+        if self.is_effect_active:
+            if self.skill_name == 'skill2':
+                if self.level == 2:
+                    self.effect_anim_timer += frame_time
+                    if self.effect_anim_timer >= TIME_PER_FRAME_SKILL2_LVL2:
+                        self.effect_anim_timer -= TIME_PER_FRAME_SKILL2_LVL2
+                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL2_LVL2
 
-        if self.skill_name == 'skill2' and self.level == 2:
-            self.effect_anim_timer += frame_time
-            if self.effect_anim_timer >= self.effect_anim_delay:
-                self.effect_anim_timer = 0.0
-                self.effect_anim_frame = (self.effect_anim_frame + 1) % 12
+                elif self.level == 3:
+                    self.effect_anim_timer += frame_time
+                    if self.effect_anim_timer >= TIME_PER_FRAME_SKILL2_LVL3:
+                        self.effect_anim_timer -= TIME_PER_FRAME_SKILL2_LVL3
+                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL2_LVL3
 
-        elif self.skill_name == 'skill2' and self.level == 3:
-            self.effect_anim_timer += frame_time
-            if self.effect_anim_timer >= self.effect_anim_delay:
-                self.effect_anim_timer = 0.0
-                self.effect_anim_frame = (self.effect_anim_frame + 1) % 20
+                elif self.level == 1:
+                    half_duration = self.effect_total_duration / 2
+                    if time_since_start < half_duration:
+                        self.effect_frame = 0
+                    elif time_since_start < self.effect_total_duration:
+                        self.effect_frame = 1
 
+            elif self.skill_name == 'skill1':
+                if self.level == 2:
+                    self.effect_anim_timer += frame_time
+                    if self.effect_anim_timer >= TIME_PER_FRAME_SKILL1_LVL2:
+                        self.effect_anim_timer -= TIME_PER_FRAME_SKILL1_LVL2
+                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL1_LVL2
 
-        elif self.skill_name == 'skill2':
-            half_duration = self.effect_total_duration / 2
-            if time_since_start < half_duration:
-                self.effect_frame = 0
-            elif time_since_start < self.effect_total_duration:
-                self.effect_frame = 1
+                elif self.level == 3:
+                    self.effect_anim_timer += frame_time
+                    if self.effect_anim_timer >= TIME_PER_FRAME_SKILL1_LVL3:
+                        self.effect_anim_timer -= TIME_PER_FRAME_SKILL1_LVL3
+                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL1_LVL3
 
-        elif self.skill_name == 'skill1'and self.level == 2:
-            self.effect_anim_timer += frame_time
-            if self.effect_anim_timer >= self.effect_anim_delay:
-                self.effect_anim_timer = 0.0
-                self.effect_anim_frame = (self.effect_anim_frame + 1) % 4
-
-        elif self.skill_name == 'skill1' and self.level == 3:
-            self.effect_anim_timer += frame_time
-            if self.effect_anim_timer >= self.effect_anim_delay:
-                self.effect_anim_timer = 0.0
-                self.effect_anim_frame = (self.effect_anim_frame + 1) % 6
+                elif self.level == 1:  # [신규] Lvl 1 (2프레임) 로직 추가
+                    half_duration = self.effect_total_duration / 2
+                    if time_since_start < half_duration:
+                        self.effect_frame = 0
+                    elif time_since_start < self.effect_total_duration:
+                        self.effect_frame = 1
 
         if time_since_start > self.effect_total_duration:
             self.is_effect_active = False
+            self.effect_anim_frame = 0
+            self.effect_frame = 0
 
         if self.state == 'attack':
             if self.frame_timer >= current_animation_speed:
@@ -643,14 +680,15 @@ class Knight:
                 self.effect_flip_direction = self.direct
                 self.state = 'attack'
                 self.frame = 0
-                if self.level == 2:
-                    self.effect_total_duration = self.effect_anim_delay * 4
-                    self.effect_anim_frame = 0
-                    self.effect_anim_timer = 0.0
-                if self.level == 3:
-                    self.effect_total_duration = self.effect_anim_delay * 6
-                    self.effect_anim_frame = 0
-                    self.effect_anim_timer = 0.0
+                self.effect_anim_frame = 0
+                self.effect_anim_timer = 0.0
+
+                if self.level == 1:
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL1
+                elif self.level == 2:
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL2
+                elif self.level == 3:
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL3
 
             elif self.skill_name == 'skill2':
                 self.is_effect_active = True
@@ -659,14 +697,15 @@ class Knight:
                 self.state = 'attack'
                 self.effect_frame = 0
                 self.frame = 0
-                if self.level == 3:
-                    self.effect_total_duration = self.effect_anim_delay * 20
-                    self.effect_anim_frame = 0
-                    self.effect_anim_timer = 0.0
+                self.effect_anim_frame = 0
+                self.effect_anim_timer = 0.0
+
+                if self.level == 1:
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL1
                 elif self.level == 2:
-                    self.effect_total_duration = self.effect_anim_delay * 12
-                    self.effect_anim_frame = 0
-                    self.effect_anim_timer = 0.0
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL2
+                elif self.level == 3:
+                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL3
 
             elif self.skill_name == 'skill3':
                 if g.projectile_image_LR or g.projectile_image_UD:
