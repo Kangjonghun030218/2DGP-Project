@@ -121,7 +121,7 @@ def load_all():
     _images['npc_boy'] = load_image('resource/Boy_idle.png')
 
     # --- 폰트 ---
-    _fonts['default'] = load_font('resource/ARIAL.ttf', 20)
+    _fonts['default'] = load_font('resource/ARIAL.ttf', 25)
 
 
 def get_image(key):
