@@ -112,11 +112,8 @@ class Monster:
 
         self.frame = 0
         self.frame_timer = 0.0
-        self.animation_speed = 0.1
         self.state = 'idle'
         self.state_dir = 'down'
-        self.face_dirX = 1
-        self.face_dirY = 1
         self.speed = MONSTER_SPEED_PPS
 
         self.aggro_range = 250
@@ -164,6 +161,20 @@ class Monster:
             self.frames_hit = FRAMES_PER_ACTION_SLIME_HIT
             self.frames_dead = FRAMES_PER_ACTION_SLIME_DEAD
 
+        self.images = {
+            'idle': self.image1,
+            'chase': self.image2,
+            'attack': self.image3,
+            'hit': self.image4,
+            'dead': self.image5
+        }
+        self.clip_y_table = {
+            'right': 0,
+            'left': 64,
+            'up': 128,
+            'down': 192
+        }
+
 
 
     def get_bb(self):
@@ -209,57 +220,19 @@ class Monster:
 
         if self.debug_mode:
             l, b, r, t = self.get_bb()
-
             screen_l, screen_b = l - cam_x, b - cam_y
             screen_r, screen_t = r - cam_x, t - cam_y
-
             draw_rectangle(screen_l, screen_b, screen_r, screen_t)
 
-        if self.state == 'idle':
-            if self.state_dir == 'right':
-                self.image1.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'left':
-                self.image1.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'up':
-                self.image1.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'down':
-                self.image1.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state == 'chase':
-            if self.state_dir == 'right':
-                self.image2.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'left':
-                self.image2.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'up':
-                self.image2.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'down':
-                self.image2.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state == 'attack':
-            if self.state_dir == 'right':
-                self.image3.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'left':
-                self.image3.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'up':
-                self.image3.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'down':
-                self.image3.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state == 'hit':
-            if self.state_dir == 'right':
-                self.image4.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'left':
-                self.image4.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'up':
-                self.image4.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'down':
-                self.image4.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
-        elif self.state == 'dead':
-            if self.state_dir == 'right':
-                    self.image5.clip_draw(self.frame * 64, 0, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'left':
-                    self.image5.clip_draw(self.frame * 64, 64, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'up':
-                    self.image5.clip_draw(self.frame * 64, 128, 64, 64, screen_x1, screen_y1, 100, 100)
-            elif self.state_dir == 'down':
-                    self.image5.clip_draw(self.frame * 64, 192, 64, 64, screen_x1, screen_y1, 100, 100)
+        if self.state in self.images:
+            image_to_draw = self.images[self.state]
+            clip_y = self.clip_y_table.get(self.state_dir, 192)
+
+            image_to_draw.clip_draw(
+                self.frame * 64, clip_y, 64, 64,
+                screen_x1, screen_y1,
+                100, 100
+            )
 
     def update(self, frame_time, knight_x=None, knight_y=None):
         self.frame_timer += frame_time
