@@ -672,9 +672,9 @@ class Knight:
                         speed=700,
                     )
                     server.world.append(new_projectile)
-                self.skill_last_used[self.skill_name] = current_time
-            else:
-                print(f"[{self.skill_name}] 쿨타임 중!")
+            self.skill_last_used[self.skill_name] = current_time
+        else:
+            print(f"[{self.skill_name}] 쿨타임 중!")
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
