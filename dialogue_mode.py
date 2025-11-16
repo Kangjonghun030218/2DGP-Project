@@ -23,4 +23,4 @@ class DialogueState(BaseState):
         if server.dialogue_message:
             font = resource_manager.get_font()
             font.draw(101, 101, server.dialogue_message, (0, 0, 0))
-            font.draw(100, 100, server.dialogue_message, (225, 180, 200))
+            font.draw(100, 100, server.dialogue_message, (225, 255, 255))
