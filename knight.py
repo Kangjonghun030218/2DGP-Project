@@ -117,7 +117,7 @@ class Knight:
             'dead': load_image('Swordsman_lvl3_Death_with_shadow.png')
         }
 
-        self.level = 3
+        self.level =3
         self.quests_completed = 0
         self.current_images = self.images_lvl3
 
@@ -330,7 +330,6 @@ class Knight:
                     if self.effect_anim_frame < 6:
                         image_to_draw = None
                         flip = ''
-                        offset_x = 0
 
                         if self.effect_flip_direction == 'left':
                             flip = 'h'
@@ -432,13 +431,13 @@ class Knight:
 
                         if self.effect_flip_direction == 'left':
                             flip = 'h'
-
                         elif self.effect_flip_direction == 'right':
                             flip = ''
+
                         image_to_draw.clip_composite_draw(
                             0, 0, image_to_draw.w, image_to_draw.h,
                             0, flip,
-                            screen_x + offset_x, screen_y, 100, 100)
+                            screen_x + offset_x, screen_y, 200, 200)
 
                 elif self.level == 1:
                     base_img1 = None
@@ -541,13 +540,13 @@ class Knight:
                     self.effect_anim_timer += frame_time
                     if self.effect_anim_timer >= TIME_PER_FRAME_SKILL2_LVL2:
                         self.effect_anim_timer -= TIME_PER_FRAME_SKILL2_LVL2
-                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL2_LVL2
+                        self.effect_anim_frame = (self.effect_anim_frame + 1)
 
                 elif self.level == 3:
                     self.effect_anim_timer += frame_time
                     if self.effect_anim_timer >= TIME_PER_FRAME_SKILL2_LVL3:
                         self.effect_anim_timer -= TIME_PER_FRAME_SKILL2_LVL3
-                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL2_LVL3
+                        self.effect_anim_frame = (self.effect_anim_frame + 1)
 
                 elif self.level == 1:
                     half_duration = self.effect_total_duration / 2
@@ -567,7 +566,7 @@ class Knight:
                     self.effect_anim_timer += frame_time
                     if self.effect_anim_timer >= TIME_PER_FRAME_SKILL1_LVL3:
                         self.effect_anim_timer -= TIME_PER_FRAME_SKILL1_LVL3
-                        self.effect_anim_frame = (self.effect_anim_frame + 1) % FRAMES_PER_ACTION_SKILL1_LVL3
+                        self.effect_anim_frame = (self.effect_anim_frame + 1)
 
                 elif self.level == 1:  # [신규] Lvl 1 (2프레임) 로직 추가
                     half_duration = self.effect_total_duration / 2
