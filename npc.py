@@ -5,10 +5,10 @@ import resource_manager
 
 class NPC:
     def __init__(self):
-        self.image1 = load_image('Old_woman_idle.png')
-        self.image2 = load_image('Old_man_idle.png')
-        self.image3 = load_image('Man_idle.png')
-        self.image4 = load_image('Boy_idle.png')
+        self.image1 = resource_manager.get_image('npc_old_woman')
+        self.image2 = resource_manager.get_image('npc_old_man')
+        self.image3 = resource_manager.get_image('npc_man')
+        self.image4 = resource_manager.get_image('npc_boy')
         self.frame = 0
 
         self.world_x1, self.world_y1 = 550 + 600, 200 + 200
