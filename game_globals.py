@@ -3,7 +3,10 @@ CANVAS_HEIGHT = 800
 
 
 cam_x, cam_y = 0, 0
-game_mode = 'menu'
+current_state = None
+change_state = None
+states = {}
+
 running = True
 
 
