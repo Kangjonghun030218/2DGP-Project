@@ -11,10 +11,10 @@ class NPC:
         self.image4 = resource_manager.get_image('npc_boy')
         self.frame = 0
 
-        self.world_x1, self.world_y1 = 550 + 600, 200 + 200
+        self.world_x1, self.world_y1 = 1540, 480
         self.world_x2, self.world_y2 = 50 + 600, 230 + 150
-        self.world_x3, self.world_y3 = 150 + 600, 400 + 200
-        self.world_x4, self.world_y4 = 300 + 550, 100 + 250
+        self.world_x3, self.world_y3 = 1040, 800
+        self.world_x4, self.world_y4 = 1120, 470
 
         self.talk_range = 50
 
