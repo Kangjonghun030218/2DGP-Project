@@ -41,9 +41,13 @@ class PlayState(BaseState):
         server.world.append(server.game_map)
 
         if map_number == 1:
+            server.knight.world_x = 1000  # 맵 1 스폰 위치
+            server.knight.world_y = 350
             npc = NPC()
             server.world.append(npc)
         elif map_number == 2:
+            server.knight.world_x = 800
+            server.knight.world_y = 500
             monster_spawn_zones = [
                 ((850, 2100, 1200, 2400), 1, 10),
                 ((2100, 1600, 2800, 1900), 2, 10),
