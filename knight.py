@@ -92,7 +92,7 @@ def check_collision(a, b):
 
 class Knight:
     def __init__(self):
-        self.world_x = 1000
+        self.world_x = 1250
         self.world_y = 350
 
         self.images_lvl1 = {
