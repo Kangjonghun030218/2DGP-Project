@@ -4,7 +4,7 @@ import resource_manager
 import menu_mode
 import config
 
-open_canvas(config.CANVAS_WIDTH, config.CANVAS_HEIGHT)
+open_canvas(config.CANVAS_WIDTH, config.CANVAS_HEIGHT, sync=True)
 
 resource_manager.load_all()
 
