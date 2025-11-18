@@ -42,7 +42,7 @@ class PlayState(BaseState):
 
         if map_number == 1:
             server.knight.world_x = 1000  # 맵 1 스폰 위치
-            server.knight.world_y = 350
+            server.knight.world_y = 300
             npc = NPC()
             server.world.append(npc)
         elif map_number == 2:
@@ -119,6 +119,8 @@ class PlayState(BaseState):
                 if server.knight: server.knight.activate_skill('skill3')
             elif event.key == SDLK_z:
                 self.pickup_item()
+            elif event.key == SDLK_p:
+                print(f"현재 좌표: {int(server.knight.world_x)}, {int(server.knight.world_y)}")
             elif event.key == SDLK_SPACE:
                 for obj in server.world:
                     if isinstance(obj, NPC):
@@ -167,7 +169,7 @@ class PlayState(BaseState):
                         potion_type = random.choice(['hp', 'mp'])
                         new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
                         server.world.append(new_potion)
-
+        self.check_portal()
         if server.knight and server.knight.is_dead_and_animation_finished:
             self.start_map_number = 1
             state_machine.change(PlayState())
@@ -240,3 +242,10 @@ class PlayState(BaseState):
         for obj in server.world:
             obj.draw(server.cam_x, server.cam_y)
         draw_ui()
+
+    def check_portal(self):
+        if server.game_map.map_number == 1:
+            if server.knight:
+                portal_box = (1174, 146, 1341, 246)
+                if check_collision(server.knight.get_bb(), portal_box):
+                    self.reset_world(2)
