@@ -456,11 +456,18 @@ class Knight:
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
-                self.world_x += self.knockback_dir_x * self.knockback_speed * frame_time
-                self.world_y += self.knockback_dir_y * self.knockback_speed * frame_time
-                if self.frame_timer >= current_animation_speed:
-                    self.frame_timer -= current_animation_speed
-                    self.frame = (self.frame + 1) % FRAMES_PER_ACTION_HIT
+                dx = self.knockback_dir_x * self.knockback_speed * frame_time
+                dy = self.knockback_dir_y * self.knockback_speed * frame_time
+
+                l, b, r, t = self.get_bb()
+                next_bb_x = (l + dx, b, r + dx, t)
+                if not any(check_collision(next_bb_x, box) for box in game_map.get_collision_boxes()):
+                    self.world_x += dx
+
+                l, b, r, t = self.get_bb()
+                next_bb_y = (l, b + dy, r, t + dy)
+                if not any(check_collision(next_bb_y, box) for box in game_map.get_collision_boxes()):
+                    self.world_y += dy
 
                 map_width = game_map.width
                 map_height = game_map.height
@@ -469,6 +476,10 @@ class Knight:
                 half_height = (t - b) / 2
                 self.world_x = max(half_width, min(self.world_x, map_width - half_width))
                 self.world_y = max(half_height, min(self.world_y, map_height - half_height))
+
+                if self.frame_timer >= current_animation_speed:
+                    self.frame_timer -= current_animation_speed
+                    self.frame = (self.frame + 1) % FRAMES_PER_ACTION_HIT
 
                 return
             else:

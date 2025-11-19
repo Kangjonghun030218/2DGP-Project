@@ -49,13 +49,13 @@ class PlayState(BaseState):
             server.knight.world_x = 800
             server.knight.world_y = 500
             monster_spawn_zones = [
-                ((850, 2100, 1200, 2400), 1, 10),
+                ((700, 2150, 1000, 2350), 1, 10),
                 ((2100, 1600, 2800, 1900), 2, 10),
-                ((3300, 2350, 3800, 2500), 3, 10),
-                ((3950, 1200, 4100, 1500), 4, 5),
+                ((3320, 2350, 3700, 2450), 3, 10),
+                ((3950, 1220, 4100, 1500), 4, 5),
                 ((4000, 1800, 4100, 2000), 4, 5),
                 ((600, 1250, 1000, 1500), 5, 10),
-                ((1400, 1050, 1750, 1200), 6, 10)
+                ((1350, 1050, 1700, 1200), 6, 10)
             ]
             for zone, m_type, count in monster_spawn_zones:
                 x_min, y_min, x_max, y_max = zone
@@ -142,9 +142,9 @@ class PlayState(BaseState):
                 obj.update(server.game_map, frame_time)
             elif isinstance(obj, Monster):
                 if server.knight:
-                    obj.update(frame_time, server.knight.world_x, server.knight.world_y)
+                    obj.update(frame_time, server.game_map, server.knight.world_x, server.knight.world_y)
                 else:
-                    obj.update(frame_time)
+                    obj.update(frame_time, server.game_map)
                 if obj.is_removable:
                     removed_objects.append(obj)
             elif isinstance(obj, Projectile):

@@ -61,6 +61,16 @@ TIME_PER_ACTION_SLIME_DEAD = 2.0
 FRAMES_PER_ACTION_SLIME_DEAD = 10
 TIME_PER_FRAME_SLIME_DEAD = TIME_PER_ACTION_SLIME_DEAD / FRAMES_PER_ACTION_SLIME_DEAD
 
+def check_collision(a, b):
+    left_a, bottom_a, right_a, top_a = a
+    left_b, bottom_b, right_b, top_b = b
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+    return True
+
 class Monster:
     def __init__(self, x, y, a):
         self.world_x1 = x
@@ -235,7 +245,7 @@ class Monster:
                 100, 100
             )
 
-    def update(self, frame_time, knight_x=None, knight_y=None):
+    def update(self, frame_time, game_map, knight_x=None, knight_y=None):
         self.frame_timer += frame_time
         if self.state == 'dead':
             if self.frame_timer >= self.time_per_frame_dead:
@@ -249,8 +259,18 @@ class Monster:
         if self.is_hit:
             current_time = get_time()
             if current_time - self.hit_start_time < self.hit_duration:
-                self.world_x1 += self.knockback_dir_x * self.knockback_speed * frame_time
-                self.world_y1 += self.knockback_dir_y * self.knockback_speed * frame_time
+                dx = self.knockback_dir_x * self.knockback_speed * frame_time
+                dy = self.knockback_dir_y * self.knockback_speed * frame_time
+
+                l, b, r, t = self.get_bb()
+                next_bb_x = (l + dx, b, r + dx, t)
+                if not any(check_collision(next_bb_x, box) for box in game_map.get_collision_boxes()):
+                    self.world_x1 += dx
+
+                l, b, r, t = self.get_bb()
+                next_bb_y = (l, b + dy, r, t + dy)
+                if not any(check_collision(next_bb_y, box) for box in game_map.get_collision_boxes()):
+                    self.world_y1 += dy
 
                 if self.frame_timer >= self.time_per_frame_hit:
                     self.frame_timer -= self.time_per_frame_hit
@@ -308,8 +328,18 @@ class Monster:
                 dir_x = dist_x / distance
                 dir_y = dist_y / distance
 
-                self.world_x1 += dir_x * self.speed * frame_time
-                self.world_y1 += dir_y * self.speed * frame_time
+                move_x = dir_x * self.speed * frame_time
+                move_y = dir_y * self.speed * frame_time
+
+                l, b, r, t = self.get_bb()
+                next_bb_x = (l + move_x, b, r + move_x, t)
+                if not any(check_collision(next_bb_x, box) for box in game_map.get_collision_boxes()):
+                    self.world_x1 += move_x
+
+                l, b, r, t = self.get_bb()
+                next_bb_y = (l, b + move_y, r, t + move_y)
+                if not any(check_collision(next_bb_y, box) for box in game_map.get_collision_boxes()):
+                    self.world_y1 += move_y
 
                 if abs(dist_x) > abs(dist_y):
                     if dist_x > 0:
