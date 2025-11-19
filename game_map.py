@@ -57,7 +57,8 @@ class GameMap:
                 (3284, 2500, 4500, 3050),  # 3. 절벽 구간 우측
                 (3726, 2200, 4500, 2500),  # 4. 절벽 구간 우측 아래
                 (4326, 1700, 4500, 2500),  # 5. 절벽 구간 우측 아래 아래
-                (49096, 1220, 4500, 1700),  # 6. 절벽 구간 우측 아래 아래 아래
+                (4326, 1220, 4500, 1700),  # 6. 절벽 구간 우측 아래 아래 아래
+                (4200, 1220, 4326,1510),  # 절벽 구간 우측 아래 아래 아래 옆
                 (3950, 920, 4500, 1220),  # 7. 절벽 구간 우측 아래 아래 아래 아래
                 (3617, 920, 3950, 1200),  # 8. 절벽 구간 우측 아래 아래 아래 아래 옆
                 (3383, 920, 3617, 1280),  # 9. 절벽 구간 우측 아래 아래 아래 아래 옆 옆
@@ -79,7 +80,6 @@ class GameMap:
         screen_y = self.world_y - cam_y
         self.image.draw(screen_x, screen_y)
         if self.map_number == 1:
-            # 월드 좌표에서 카메라 좌표를 빼서 화면 좌표(Screen Coordinate)를 구함
             p_screen_x = self.portal_x - cam_x
             p_screen_y = self.portal_y - cam_y
             self.portal_image.draw(p_screen_x, p_screen_y)
