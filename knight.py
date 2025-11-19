@@ -75,8 +75,8 @@ FRAMES_PER_ACTION_SKILL2_LVL2 = 12
 TIME_PER_FRAME_SKILL2_LVL2 = TIME_PER_ACTION_SKILL2_LVL2 / FRAMES_PER_ACTION_SKILL2_LVL2
 
 # Skill 2 (Lvl 3)
-TIME_PER_ACTION_SKILL2_LVL3 = 1.2
-FRAMES_PER_ACTION_SKILL2_LVL3 = 20
+TIME_PER_ACTION_SKILL2_LVL3 = 0.6
+FRAMES_PER_ACTION_SKILL2_LVL3 = 12
 TIME_PER_FRAME_SKILL2_LVL3 = TIME_PER_ACTION_SKILL2_LVL3 / FRAMES_PER_ACTION_SKILL2_LVL3
 
 def check_collision(a, b):
@@ -156,7 +156,7 @@ class Knight:
         self.knockback_dir_x = 0
         self.knockback_dir_y = 0
 
-
+        self.i=0
         self.hp_potions = 0
         self.mp_potions = 0
 
@@ -197,6 +197,7 @@ class Knight:
 
         self.skill1_new_sheet = resource_manager.get_image('skill1_new_sheet')
         self.skill2_new_sheet = resource_manager.get_image('skill2_new_sheet')
+        self.skill3_new_sheet = resource_manager.get_image('skill3_new_sheet')
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -369,22 +370,25 @@ class Knight:
                             screen_x + offset_x, screen_y, 100, 100)
 
 
+
+
                 elif self.level == 3:
-                    if self.effect_anim_frame < 20:
-                        sheet = self.skill2_new_sheet
+                    if self.effect_anim_frame < 12:
+                        sheet = self.skill3_new_sheet
                         fw = sheet.w // 4
-                        fh = sheet.h // 5
+                        fh = sheet.h // 3
 
-                        idx = int(self.effect_anim_frame)
-
-                        col = idx % 4  # 0, 1, 2, 3
-                        row_from_top = idx // 4  # 0, 1, 2, 3, 4
+                        idx = self.effect_anim_frame
+                        col = idx % 4
+                        row = idx // 4
 
                         rect_x = col * fw
-                        rect_y = sheet.h - (row_from_top + 1) * fh
+                        rect_y = (2 - row) * fh
 
+                        rotation = 0
                         flip = ''
                         offset_x = 0
+                        offset_y = 0
 
                         if self.effect_flip_direction == 'left':
                             flip = ''
@@ -392,12 +396,20 @@ class Knight:
                         elif self.effect_flip_direction == 'right':
                             flip = 'h'
                             offset_x = 60
+                        elif self.effect_flip_direction == 'up':
+                            flip = ''
+                            rotation = math.radians(-90)
+                            offset_y = 60
+                        elif self.effect_flip_direction == 'down':
+                            flip = ''
+                            rotation = math.radians(90)
+                            offset_y = -60
 
                         sheet.clip_composite_draw(
                             rect_x, rect_y, fw, fh,
-                            0, flip,
-                            screen_x + offset_x, screen_y,
-                            fw * 1.5, fh * 1.5
+                            rotation, flip,
+                            screen_x + offset_x, screen_y + offset_y,
+                            125, 125
                         )
 
                 elif self.level == 1:
