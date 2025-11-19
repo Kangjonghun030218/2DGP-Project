@@ -246,6 +246,6 @@ class PlayState(BaseState):
     def check_portal(self):
         if server.game_map.map_number == 1:
             if server.knight:
-                portal_box = (1174, 146, 1341, 246)
+                portal_box = (1230, 180, 1290, 230)
                 if check_collision(server.knight.get_bb(), portal_box):
                     self.reset_world(2)
