@@ -61,6 +61,7 @@ def load_all():
 
     #보류중인 이펙트
     _images['skill1_new_sheet'] = load_image('resource/skill1_sheet.png')
+    _images['skill2_new_sheet'] = load_image('resource/skill2_sheet.png')
 
     _images['skill_lvl2_R_anim'] = [
         load_image('resource/15931.png'), load_image('resource/15932.png'),

@@ -75,7 +75,7 @@ FRAMES_PER_ACTION_SKILL2_LVL2 = 12
 TIME_PER_FRAME_SKILL2_LVL2 = TIME_PER_ACTION_SKILL2_LVL2 / FRAMES_PER_ACTION_SKILL2_LVL2
 
 # Skill 2 (Lvl 3)
-TIME_PER_ACTION_SKILL2_LVL3 = 1.0
+TIME_PER_ACTION_SKILL2_LVL3 = 1.2
 FRAMES_PER_ACTION_SKILL2_LVL3 = 20
 TIME_PER_FRAME_SKILL2_LVL3 = TIME_PER_ACTION_SKILL2_LVL3 / FRAMES_PER_ACTION_SKILL2_LVL3
 
@@ -193,7 +193,10 @@ class Knight:
         self.skill1_lvl2_1_U_effect_anim = resource_manager.get_image('skill_lvl2_U_anim')
         self.skill1_lvl3_1_effect_anim = resource_manager.get_image('skill_lvl3_R_anim')
         self.skill1_lvl3_1_U_effect_anim = resource_manager.get_image('skill_lvl3_U_anim')
+
+
         self.skill1_new_sheet = resource_manager.get_image('skill1_new_sheet')
+        self.skill2_new_sheet = resource_manager.get_image('skill2_new_sheet')
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -365,22 +368,37 @@ class Knight:
                             0, flip,
                             screen_x + offset_x, screen_y, 100, 100)
 
+
                 elif self.level == 3:
                     if self.effect_anim_frame < 20:
-                        image_to_draw = self.skill1_lvl3_effect_anim[self.effect_anim_frame]
+                        sheet = self.skill2_new_sheet
+                        fw = sheet.w // 4
+                        fh = sheet.h // 5
+
+                        idx = int(self.effect_anim_frame)
+
+                        col = idx % 4  # 0, 1, 2, 3
+                        row_from_top = idx // 4  # 0, 1, 2, 3, 4
+
+                        rect_x = col * fw
+                        rect_y = sheet.h - (row_from_top + 1) * fh
 
                         flip = ''
                         offset_x = 0
 
                         if self.effect_flip_direction == 'left':
-                            flip = 'h'
-                        elif self.effect_flip_direction == 'right':
                             flip = ''
+                            offset_x = -60
+                        elif self.effect_flip_direction == 'right':
+                            flip = 'h'
+                            offset_x = 60
 
-                        image_to_draw.clip_composite_draw(
-                            0, 0, image_to_draw.w, image_to_draw.h,
+                        sheet.clip_composite_draw(
+                            rect_x, rect_y, fw, fh,
                             0, flip,
-                            screen_x + offset_x, screen_y, 200, 200)
+                            screen_x + offset_x, screen_y,
+                            fw * 1.5, fh * 1.5
+                        )
 
                 elif self.level == 1:
                     base_img1 = None
