@@ -60,8 +60,8 @@ FRAMES_PER_ACTION_SKILL1_LVL2 = 4
 TIME_PER_FRAME_SKILL1_LVL2 = TIME_PER_ACTION_SKILL1_LVL2 / FRAMES_PER_ACTION_SKILL1_LVL2
 
 # Skill 1 (Lvl 3)
-TIME_PER_ACTION_SKILL1_LVL3 = 0.6
-FRAMES_PER_ACTION_SKILL1_LVL3 = 6
+TIME_PER_ACTION_SKILL1_LVL3 = 0.4
+FRAMES_PER_ACTION_SKILL1_LVL3 = 4
 TIME_PER_FRAME_SKILL1_LVL3 = TIME_PER_ACTION_SKILL1_LVL3 / FRAMES_PER_ACTION_SKILL1_LVL3
 
 # Skill 2 (Lvl 1)
@@ -120,9 +120,9 @@ class Knight:
             'dead': resource_manager.get_image('knight_lvl3_dead')
         }
 
-        self.level =1
+        self.level =3
         self.quests_completed = 0
-        self.current_images = self.images_lvl1
+        self.current_images = self.images_lvl3
 
         self.frame = 0
         self.frame_timer = 0.0
@@ -193,6 +193,7 @@ class Knight:
         self.skill1_lvl2_1_U_effect_anim = resource_manager.get_image('skill_lvl2_U_anim')
         self.skill1_lvl3_1_effect_anim = resource_manager.get_image('skill_lvl3_R_anim')
         self.skill1_lvl3_1_U_effect_anim = resource_manager.get_image('skill_lvl3_U_anim')
+        self.skill1_new_sheet = resource_manager.get_image('skill1_new_sheet')
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -270,44 +271,38 @@ class Knight:
                                 screen_x + effect_offset_x, screen_y + effect_offset_y,
                                 effect_img_to_draw.w, effect_img_to_draw.h)
                 elif self.level == 3:
-                    if self.effect_anim_frame < 6:
-                        image_to_draw = None
-                        flip = ''
+                            if self.effect_anim_frame < 4:
+                                sheet = self.skill1_new_sheet
 
-                        if self.effect_flip_direction == 'left':
-                            flip = 'h'
-                            image_to_draw = self.skill1_lvl3_1_effect_anim[self.effect_anim_frame]
+                                fw = sheet.w // 4
+                                fh = sheet.h // 3
+                                effect_row_index = 1
 
-                        elif self.effect_flip_direction == 'right':
-                            flip = ''
-                            image_to_draw = self.skill1_lvl3_1_effect_anim[self.effect_anim_frame]
-                        elif self.effect_flip_direction == 'up':
-                            flip = ''
-                            image_to_draw = self.skill1_lvl3_1_U_effect_anim[self.effect_anim_frame]
+                                rect_x = self.effect_anim_frame * fw
+                                rect_y = effect_row_index * fh
+                                flip = ''
+                                offset_x = 0
+                                offset_y = 0
 
-                        elif self.effect_flip_direction == 'down':
-                            flip = 'v'
-                            image_to_draw = self.skill1_lvl3_1_U_effect_anim[self.effect_anim_frame]
+                                if self.effect_flip_direction == 'left':
+                                    flip = ''
+                                    offset_x = -50
+                                elif self.effect_flip_direction == 'right':
+                                    flip = 'h'
+                                    offset_x = 50
+                                elif self.effect_flip_direction == 'up':
+                                    flip = ''
+                                    offset_y = 50
+                                elif self.effect_flip_direction == 'down':
+                                    flip = 'v'
+                                    offset_y = -50
 
-                        effect_img_to_draw = image_to_draw
-                        if effect_img_to_draw:
-                            effect_offset_x = 0
-                            effect_offset_y = 0
-
-                            if self.effect_flip_direction == 'left':
-                                effect_offset_x = -30
-                            elif self.effect_flip_direction == 'right':
-                                effect_offset_x = 30
-                            elif self.effect_flip_direction == 'down':
-                                effect_offset_y = -30
-                            elif self.effect_flip_direction == 'up':
-                                effect_offset_y = 30
-
-                            effect_img_to_draw.clip_composite_draw(
-                                0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
-                                0, flip,
-                                screen_x + effect_offset_x, screen_y + effect_offset_y,
-                                effect_img_to_draw.w, effect_img_to_draw.h)
+                                sheet.clip_composite_draw(
+                                    rect_x, rect_y, fw, fh,
+                                    0, flip,
+                                    screen_x + offset_x, screen_y + offset_y,
+                                    200, 200
+                                )
                 else:
                     base_img1 = None
                     flip = ''
