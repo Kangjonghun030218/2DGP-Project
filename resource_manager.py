@@ -119,6 +119,9 @@ def load_all():
     _images['npc_old_man'] = load_image('resource/Old_man_idle.png')
     _images['npc_man'] = load_image('resource/Man_idle.png')
     _images['npc_boy'] = load_image('resource/Boy_idle.png')
+    #포탈
+    _images['portal'] = load_image('resource/portal.png')
+
 
     # --- 폰트 ---
     _fonts['default'] = load_font('resource/ARIAL.ttf', 25)

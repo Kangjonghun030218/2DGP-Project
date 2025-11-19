@@ -8,7 +8,11 @@ class GameMap:
     def __init__(self, map_number=0):
         self.map1_image = resource_manager.get_image('map_1')
         self.map2_image = resource_manager.get_image('map_2')
+
+        self.portal_image = resource_manager.get_image('portal')
         self.map_number = map_number
+        self.portal_x = 1257
+        self.portal_y = 196
         self.collision_boxes = []
 
         if self.map_number == 1:
@@ -74,7 +78,11 @@ class GameMap:
         screen_x = self.world_x - cam_x
         screen_y = self.world_y - cam_y
         self.image.draw(screen_x, screen_y)
-
+        if self.map_number == 1:
+            # 월드 좌표에서 카메라 좌표를 빼서 화면 좌표(Screen Coordinate)를 구함
+            p_screen_x = self.portal_x - cam_x
+            p_screen_y = self.portal_y - cam_y
+            self.portal_image.draw(p_screen_x, p_screen_y)
         if self.debug_mode:
             self.draw_debug_boxes(cam_x, cam_y)
 
