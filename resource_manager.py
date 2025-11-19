@@ -59,6 +59,9 @@ def load_all():
     _images['skill_lvl2_anim'] = [load_image(f'resource/lvl2-{i}.png') for i in range(1, 13)]
     _images['skill_lvl3_anim'] = [load_image(f'resource/lvl3-{i}.png') for i in range(1, 21)]
 
+    #보류중인 이펙트
+    _images['skill1_new_sheet'] = load_image('resource/skill1_sheet.png')
+
     _images['skill_lvl2_R_anim'] = [
         load_image('resource/15931.png'), load_image('resource/15932.png'),
         load_image('resource/15933.png'), load_image('resource/15934.png')
