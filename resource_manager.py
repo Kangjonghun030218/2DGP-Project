@@ -10,6 +10,7 @@ def load_all():
     _images['map_0'] = load_image('resource/map_0.png')
     _images['map_1'] = load_image('resource/map_1.png')
     _images['map_2'] = load_image('resource/map_2.png')
+    _images['map_3'] = load_image('resource/map_3.png')
 
     # --- UI 아이템 이미지 ---
     _images['bar_bg'] = load_image('resource/bar_bg.png')
