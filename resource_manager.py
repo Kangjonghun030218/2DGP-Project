@@ -133,6 +133,8 @@ def load_all():
     _images['boss_body'] = load_image('resource/body.png')
     _images['boss_arm_l'] = load_image('resource/l_hand.png')
     _images['boss_arm_r'] = load_image('resource/r_hand.png')
+    _images['boss_skill_icon'] = load_image('resource/boss_skill_icon.png')
+    _images['boss_skill_effect'] = load_image('resource/58590.png')
 
 
     # --- 폰트 ---

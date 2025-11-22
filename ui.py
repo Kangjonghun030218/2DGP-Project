@@ -2,6 +2,7 @@ import server
 import resource_manager
 import config
 from pico2d import get_time
+from boss import Boss
 
 
 def draw_ui():
@@ -105,3 +106,30 @@ def draw_ui():
         if font:
             font.draw(potion2_x - 5, key_text_y, '6', (255, 255, 0))
             font.draw(potion2_x + 10, icon_y - 15, f'{server.knight.mp_potions}', (255, 255, 255))
+
+    boss = None
+    for obj in server.world:
+        from boss import Boss
+        if isinstance(obj, Boss):
+            boss = obj
+            break
+
+    if boss and boss.current_hp > 0:
+        skill_icon = resource_manager.get_image('boss_skill_icon')
+
+        if skill_icon:
+            icon_x = config.CANVAS_WIDTH // 2 + 180
+            icon_y = config.CANVAS_HEIGHT - 100
+            icon_size = 50
+
+
+            if boss.skill_current_cooldown > 0:
+                skill_icon.opacify(0.4)
+                skill_icon.draw(icon_x, icon_y, icon_size, icon_size)
+                skill_icon.opacify(1.0)
+
+                if font:
+                    time_str = f"{boss.skill_current_cooldown:.1f}"
+                    font.draw(icon_x - 15, icon_y, time_str, (255, 50, 50))
+            else:
+                skill_icon.draw(icon_x, icon_y, icon_size, icon_size)

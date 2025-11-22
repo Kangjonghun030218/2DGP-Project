@@ -275,9 +275,16 @@ class PlayState(BaseState):
 
         for obj in server.world:
             if isinstance(obj, Boss) and obj.current_hp > 0:
-                if obj.is_attacking and (0.5 <= obj.attack_timer <= 0.7):
+                if obj.is_attacking and (0.4 <= obj.attack_timer <= 0.7):
                     if check_collision(server.knight.get_bb(), obj.get_attack_bb()):
                         server.knight.take_damage(20, obj.x, obj.y)
+
+                if obj.thunder_active and not obj.thunder_hit:
+                    if 0.4 <= obj.thunder_timer <= 0.6:
+                        thunder_bb = obj.get_thunder_bb()
+                        if thunder_bb and check_collision(server.knight.get_bb(), thunder_bb):
+                            server.knight.take_damage(50, obj.thunder_pos[0], obj.thunder_pos[1])
+                            obj.thunder_hit = True
 
     def draw(self):
         for obj in server.world:
