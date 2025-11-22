@@ -63,6 +63,23 @@ class PlayState(BaseState):
                     x = random.randint(x_min, x_max)
                     y = random.randint(y_min, y_max)
                     server.world.append(Monster(x, y, m_type))
+        elif map_number == 3:
+            server.knight.world_x = 1200
+            server.knight.world_y = 300
+            monster_spawn_zones = [
+                ((300, 600, 2400, 1200), 5, 5),
+                ((300, 800, 2400, 1400), 6, 5),
+                ((400, 1800, 2400, 2200), 1, 5),
+                ((400, 2200, 2400, 2600), 4, 5),
+                ((500, 3200, 2400, 3800), 3, 5),
+                ((600, 3800, 2400, 4100), 2, 5),
+            ]
+            for zone, m_type, count in monster_spawn_zones:
+                x_min, y_min, x_max, y_max = zone
+                for _ in range(count):
+                    x = random.randint(x_min, x_max)
+                    y = random.randint(y_min, y_max)
+                    server.world.append(Monster(x, y, m_type))
         elif map_number == 4:
             server.knight.world_x = 1200
             server.knight.world_y = 300
