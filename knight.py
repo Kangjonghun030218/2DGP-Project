@@ -75,8 +75,8 @@ FRAMES_PER_ACTION_SKILL2_LVL2 = 12
 TIME_PER_FRAME_SKILL2_LVL2 = TIME_PER_ACTION_SKILL2_LVL2 / FRAMES_PER_ACTION_SKILL2_LVL2
 
 # Skill 2 (Lvl 3)
-TIME_PER_ACTION_SKILL2_LVL3 = 0.6
-FRAMES_PER_ACTION_SKILL2_LVL3 = 12
+TIME_PER_ACTION_SKILL2_LVL3 = 0.7
+FRAMES_PER_ACTION_SKILL2_LVL3 = 14
 TIME_PER_FRAME_SKILL2_LVL3 = TIME_PER_ACTION_SKILL2_LVL3 / FRAMES_PER_ACTION_SKILL2_LVL3
 
 def check_collision(a, b):
@@ -188,16 +188,11 @@ class Knight:
         self.debug_mode = config.DEBUG_MODE_ON
 
         self.skill1_lvl2_effect_anim = resource_manager.get_image('skill_lvl2_anim')
-        self.skill1_lvl3_effect_anim = resource_manager.get_image('skill_lvl3_anim')
         self.skill1_lvl2_1_effect_anim = resource_manager.get_image('skill_lvl2_R_anim')
         self.skill1_lvl2_1_U_effect_anim = resource_manager.get_image('skill_lvl2_U_anim')
-        self.skill1_lvl3_1_effect_anim = resource_manager.get_image('skill_lvl3_R_anim')
-        self.skill1_lvl3_1_U_effect_anim = resource_manager.get_image('skill_lvl3_U_anim')
-
-
         self.skill1_new_sheet = resource_manager.get_image('skill1_new_sheet')
         self.skill2_new_sheet = resource_manager.get_image('skill2_new_sheet')
-        self.skill3_new_sheet = resource_manager.get_image('skill3_new_sheet')
+        self.effect_lvl3_skill2 = resource_manager.get_image('knight_lvl3_skill2_new')
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -368,49 +363,13 @@ class Knight:
                             0, 0, image_to_draw.w, image_to_draw.h,
                             0, flip,
                             screen_x + offset_x, screen_y, 100, 100)
-
-
-
-
                 elif self.level == 3:
-                    if self.effect_anim_frame < 12:
-                        sheet = self.skill3_new_sheet
-                        fw = sheet.w // 4
-                        fh = sheet.h // 3
-
-                        idx = self.effect_anim_frame
-                        col = idx % 4
-                        row = idx // 4
-
-                        rect_x = col * fw
-                        rect_y = (2 - row) * fh
-
-                        rotation = 0
-                        flip = ''
-                        offset_x = 0
-                        offset_y = 0
-
-                        if self.effect_flip_direction == 'left':
-                            flip = ''
-                            offset_x = -60
-                        elif self.effect_flip_direction == 'right':
-                            flip = 'h'
-                            offset_x = 60
-                        elif self.effect_flip_direction == 'up':
-                            flip = ''
-                            rotation = math.radians(-90)
-                            offset_y = 60
-                        elif self.effect_flip_direction == 'down':
-                            flip = ''
-                            rotation = math.radians(90)
-                            offset_y = -60
-
-                        sheet.clip_composite_draw(
-                            rect_x, rect_y, fw, fh,
-                            rotation, flip,
-                            screen_x + offset_x, screen_y + offset_y,
-                            125, 125
-                        )
+                    if self.effect_anim_frame < 14:
+                        if self.effect_lvl3_skill2:
+                            idx = int(self.effect_anim_frame)
+                            idx = min(idx, 13)
+                            image = self.effect_lvl3_skill2[idx]
+                            image.draw(screen_x, screen_y, 300, 300)
 
                 elif self.level == 1:
                     base_img1 = None
@@ -753,6 +712,11 @@ class Knight:
     def get_attack_bb(self):
             l, b, r, t = self.get_bb()
             attack_range = 0
+
+            if self.level == 3 and self.skill_name == 'skill2':
+                return (self.world_x - 100, self.world_y - 100,
+                        self.world_x + 100, self.world_y + 100)
+
             if self.skill_name == 'skill1':
                 attack_range = 75
             elif self.skill_name == 'skill2':

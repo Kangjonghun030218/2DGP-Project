@@ -57,14 +57,28 @@ def load_all():
     _images['effect_skill2_U1'] = load_image('resource/skill2-1_U.png')
     _images['effect_skill2_U2'] = load_image('resource/skill2-2_U.png')
 
-    # --- 스킬 Lvl 2/3 이펙트 ---
+    # --- 스킬 Lvl 2-2 이펙트  ---
     _images['skill_lvl2_anim'] = [load_image(f'resource/lvl2-{i}.png') for i in range(1, 13)]
-    _images['skill_lvl3_anim'] = [load_image(f'resource/lvl3-{i}.png') for i in range(1, 21)]
 
     #보류중인 이펙트
     _images['skill1_new_sheet'] = load_image('resource/skill1_sheet.png')
-    _images['skill2_new_sheet'] = load_image('resource/skill2_sheet.png')
-    _images['skill3_new_sheet'] = load_image('resource/skill3_sheet.png')
+    _images['knight_lvl3_skill2_new'] = [
+        load_image('resource/66680.png'),
+        load_image('resource/66681.png'),
+        load_image('resource/66682.png'),
+        load_image('resource/66683.png'),
+        load_image('resource/66684.png'),
+        load_image('resource/66685.png'),
+        load_image('resource/66686.png'),
+        load_image('resource/66687.png'),
+        load_image('resource/66688.png'),
+        load_image('resource/66697.png'),
+        load_image('resource/66698.png'),
+        load_image('resource/66699.png'),
+        load_image('resource/66700.png'),
+        load_image('resource/66701.png'),
+    ]
+
 
     _images['skill_lvl2_R_anim'] = [
         load_image('resource/15931.png'), load_image('resource/15932.png'),
