@@ -109,12 +109,37 @@ def draw_ui():
 
     boss_obj = None
     for obj in server.world:
+        from boss import Boss
         if isinstance(obj, Boss):
             boss_obj = obj
             break
 
     if boss_obj and boss_obj.current_hp > 0:
-        base_x = config.CANVAS_WIDTH // 2 + 180
+        bar_x = config.CANVAS_WIDTH // 2
+        bar_y = config.CANVAS_HEIGHT - 40
+        bar_w = 800
+        bar_h = 30
+
+        if bar_bg:
+            bar_bg.draw(bar_x, bar_y, bar_w, bar_h)
+
+        if hp_bar:
+            hp_ratio = max(0, boss_obj.current_hp / boss_obj.max_hp)
+            current_w = int(bar_w * hp_ratio)
+
+            left_edge = bar_x - (bar_w // 2)
+            draw_x = left_edge + (current_w // 2)
+
+            if current_w > 0:
+                hp_bar.draw(draw_x, bar_y, current_w, bar_h)
+
+        if font:
+            hp_text = f"{int(boss_obj.current_hp)} / {int(boss_obj.max_hp)}"
+            font.draw(bar_x - 50, bar_y, hp_text, (255, 255, 255))
+
+            font.draw(bar_x - 25, bar_y + 25, "BOSS", (255, 50, 50))
+
+        base_x = config.CANVAS_WIDTH // 2 + 200
         icon_y = config.CANVAS_HEIGHT - 100
         icon_size = 50
         gap = 60
