@@ -137,7 +137,7 @@ def draw_ui():
             hp_text = f"{int(boss_obj.current_hp)} / {int(boss_obj.max_hp)}"
             font.draw(bar_x - 50, bar_y, hp_text, (255, 255, 255))
 
-            font.draw(bar_x - 25, bar_y + 25, "BOSS", (255, 50, 50))
+            font.draw(bar_x - 25, bar_y + 25, "BOSS", (50, 255, 50))
 
         base_x = config.CANVAS_WIDTH // 2 + 200
         icon_y = config.CANVAS_HEIGHT - 100
