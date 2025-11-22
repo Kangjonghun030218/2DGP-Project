@@ -249,3 +249,7 @@ class PlayState(BaseState):
                 portal_box = (1230, 180, 1290, 230)
                 if check_collision(server.knight.get_bb(), portal_box):
                     self.reset_world(2)
+            if server.knight:
+                portal_box = (1248, 856, 1332, 912)
+                if check_collision(server.knight.get_bb(), portal_box):
+                    self.reset_world(3)

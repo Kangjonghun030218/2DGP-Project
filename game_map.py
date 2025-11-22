@@ -8,6 +8,7 @@ class GameMap:
     def __init__(self, map_number=0):
         self.map1_image = resource_manager.get_image('map_1')
         self.map2_image = resource_manager.get_image('map_2')
+        self.map3_image = resource_manager.get_image('map_3')
 
         self.portal_image = resource_manager.get_image('portal')
         self.map_number = map_number
@@ -19,6 +20,8 @@ class GameMap:
             self.image = self.map1_image
         elif self.map_number == 2:
             self.image = self.map2_image
+        elif self.map_number == 3:
+            self.image = self.map3_image
         else:
             self.image = self.map1_image
 
