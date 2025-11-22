@@ -11,6 +11,7 @@ def load_all():
     _images['map_1'] = load_image('resource/map_1.png')
     _images['map_2'] = load_image('resource/map_2.png')
     _images['map_3'] = load_image('resource/map_3.png')
+    _images['map_4'] = load_image('resource/map_4.png')
 
     # --- UI 아이템 이미지 ---
     _images['bar_bg'] = load_image('resource/bar_bg.png')
@@ -127,6 +128,7 @@ def load_all():
     _images['npc_boy'] = load_image('resource/Boy_idle.png')
     #포탈
     _images['portal'] = load_image('resource/portal.png')
+    _images['boss_portal'] = load_image('resource/boss_portal.png')
 
 
     # --- 폰트 ---

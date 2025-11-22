@@ -41,7 +41,7 @@ class PlayState(BaseState):
         server.world.append(server.game_map)
 
         if map_number == 1:
-            server.knight.world_x = 1000  # 맵 1 스폰 위치
+            server.knight.world_x = 1000
             server.knight.world_y = 300
             npc = NPC()
             server.world.append(npc)
@@ -253,3 +253,8 @@ class PlayState(BaseState):
                 portal_box = (1248, 856, 1332, 912)
                 if check_collision(server.knight.get_bb(), portal_box):
                     self.reset_world(3)
+        elif server.game_map.map_number == 3:
+            if server.knight:
+                portal_box = (1245, 4257, 1352, 4329)
+                if check_collision(server.knight.get_bb(), portal_box):
+                    self.reset_world(4)

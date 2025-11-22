@@ -9,7 +9,8 @@ class GameMap:
         self.map1_image = resource_manager.get_image('map_1')
         self.map2_image = resource_manager.get_image('map_2')
         self.map3_image = resource_manager.get_image('map_3')
-
+        self.map4_image = resource_manager.get_image('map_4')
+        self.boss_portal_image = resource_manager.get_image('boss_portal')
         self.portal_image = resource_manager.get_image('portal')
         self.map_number = map_number
         self.portal_x = 1257
@@ -22,6 +23,8 @@ class GameMap:
             self.image = self.map2_image
         elif self.map_number == 3:
             self.image = self.map3_image
+        elif self.map_number == 4:
+            self.image = self.map4_image
         else:
             self.image = self.map1_image
 
@@ -86,6 +89,10 @@ class GameMap:
             p_screen_x = self.portal_x - cam_x
             p_screen_y = self.portal_y - cam_y
             self.portal_image.draw(p_screen_x, p_screen_y)
+        elif self.map_number == 3:
+            p_screen_x = 1300 - cam_x
+            p_screen_y = 4273 - cam_y
+            self.boss_portal_image.draw(p_screen_x, p_screen_y,100,100)
         if self.debug_mode:
             self.draw_debug_boxes(cam_x, cam_y)
 
