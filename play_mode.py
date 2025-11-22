@@ -8,6 +8,7 @@ from projectile import Projectile
 from ui import draw_ui
 from potion import Potion
 import random
+from boss import Boss
 
 import server
 import config
@@ -83,6 +84,8 @@ class PlayState(BaseState):
         elif map_number == 4:
             server.knight.world_x = 1200
             server.knight.world_y = 300
+            self.boss = Boss()
+            server.world.append(self.boss)
 
         if server.knight not in server.world:
             server.world.append(server.knight)
@@ -127,6 +130,8 @@ class PlayState(BaseState):
                 self.reset_world(2)
             elif event.key == SDLK_3:
                 state_machine.push(map_view_mode.MapViewState())
+            elif event.key == SDLK_4:
+                self.reset_world(4)
             elif event.key == SDLK_5:
                 if server.knight: server.knight.use_potion('hp')
             elif event.key == SDLK_6:
@@ -172,6 +177,9 @@ class PlayState(BaseState):
                     removed_objects.append(obj)
             elif isinstance(obj, NPC):
                 obj.update(frame_time)
+            elif isinstance(obj, Boss):
+                if server.knight:
+                    obj.update(frame_time, server.game_map, server.knight)
             else:
                 if hasattr(obj, 'update'):
                     obj.update()
@@ -257,6 +265,19 @@ class PlayState(BaseState):
                     distance_sq = dist_x ** 2 + dist_y ** 2
                     if distance_sq < monster.attack_range ** 2:
                         server.knight.take_damage(5, monster.world_x1, monster.world_y1)
+
+        if knight_attack_frame:
+                knight_attack_box = server.knight.get_attack_bb()
+                for obj in server.world:
+                    if isinstance(obj, Boss) and obj.current_hp > 0:
+                        if check_collision(knight_attack_box, obj.get_bb()):
+                            obj.take_damage(50)
+
+        for obj in server.world:
+            if isinstance(obj, Boss) and obj.current_hp > 0:
+                if obj.is_attacking and (0.5 <= obj.attack_timer <= 0.7):
+                    if check_collision(server.knight.get_bb(), obj.get_attack_bb()):
+                        server.knight.take_damage(20, obj.x, obj.y)
 
     def draw(self):
         for obj in server.world:

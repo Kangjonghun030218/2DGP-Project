@@ -129,6 +129,10 @@ def load_all():
     #포탈
     _images['portal'] = load_image('resource/portal.png')
     _images['boss_portal'] = load_image('resource/boss_portal.png')
+    #보스
+    _images['boss_body'] = load_image('resource/body.png')
+    _images['boss_arm_l'] = load_image('resource/l_hand.png')
+    _images['boss_arm_r'] = load_image('resource/r_hand.png')
 
 
     # --- 폰트 ---
