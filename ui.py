@@ -107,29 +107,35 @@ def draw_ui():
             font.draw(potion2_x - 5, key_text_y, '6', (255, 255, 0))
             font.draw(potion2_x + 10, icon_y - 15, f'{server.knight.mp_potions}', (255, 255, 255))
 
-    boss = None
+    boss_obj = None
     for obj in server.world:
-        from boss import Boss
         if isinstance(obj, Boss):
-            boss = obj
+            boss_obj = obj
             break
 
-    if boss and boss.current_hp > 0:
-        skill_icon = resource_manager.get_image('boss_skill_icon')
+    if boss_obj and boss_obj.current_hp > 0:
+        base_x = config.CANVAS_WIDTH // 2 + 180
+        icon_y = config.CANVAS_HEIGHT - 100
+        icon_size = 50
+        gap = 60
 
-        if skill_icon:
-            icon_x = config.CANVAS_WIDTH // 2 + 180
-            icon_y = config.CANVAS_HEIGHT - 100
-            icon_size = 50
-
-
-            if boss.skill_current_cooldown > 0:
-                skill_icon.opacify(0.4)
-                skill_icon.draw(icon_x, icon_y, icon_size, icon_size)
-                skill_icon.opacify(1.0)
-
-                if font:
-                    time_str = f"{boss.skill_current_cooldown:.1f}"
-                    font.draw(icon_x - 15, icon_y, time_str, (255, 50, 50))
+        icon1 = resource_manager.get_image('boss_skill_icon')
+        if icon1:
+            if boss_obj.skill1_cd > 0:
+                icon1.opacify(0.4)
+                icon1.draw(base_x, icon_y, icon_size, icon_size)
+                icon1.opacify(1.0)
+                if font: font.draw(base_x - 15, icon_y, f"{boss_obj.skill1_cd:.1f}", (255, 50, 50))
             else:
-                skill_icon.draw(icon_x, icon_y, icon_size, icon_size)
+                icon1.draw(base_x, icon_y, icon_size, icon_size)
+
+        icon2 = resource_manager.get_image('boss_skill2_icon')
+        if icon2:
+            x2 = base_x + gap
+            if boss_obj.skill2_cd > 0:
+                icon2.opacify(0.4)
+                icon2.draw(x2, icon_y, icon_size, icon_size)
+                icon2.opacify(1.0)
+                if font: font.draw(x2 - 15, icon_y, f"{boss_obj.skill2_cd:.1f}", (255, 50, 50))
+            else:
+                icon2.draw(x2, icon_y, icon_size, icon_size)
