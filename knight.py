@@ -120,9 +120,9 @@ class Knight:
             'dead': resource_manager.get_image('knight_lvl3_dead')
         }
 
-        self.level =3
+        self.level =1
         self.quests_completed = 0
-        self.current_images = self.images_lvl3
+        self.current_images = self.images_lvl1
 
         self.frame = 0
         self.frame_timer = 0.0

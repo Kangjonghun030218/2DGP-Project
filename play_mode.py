@@ -63,6 +63,9 @@ class PlayState(BaseState):
                     x = random.randint(x_min, x_max)
                     y = random.randint(y_min, y_max)
                     server.world.append(Monster(x, y, m_type))
+        elif map_number == 4:
+            server.knight.world_x = 1200
+            server.knight.world_y = 300
 
         if server.knight not in server.world:
             server.world.append(server.knight)
