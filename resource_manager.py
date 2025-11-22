@@ -57,6 +57,13 @@ def load_all():
     _images['effect_skill2_U1'] = load_image('resource/skill2-1_U.png')
     _images['effect_skill2_U2'] = load_image('resource/skill2-2_U.png')
 
+    _images['knight_lvl1_skill1_new'] = [
+        load_image('resource/skill1_lv1.png'),
+        load_image('resource/skill1_lv1_2.png'),
+        load_image('resource/skill1_lv1_3.png'),
+        load_image('resource/skill1_lv1_4.png')
+    ]
+
     # --- 스킬 Lvl 2-2 이펙트  ---
     _images['skill_lvl2_anim'] = [load_image(f'resource/lvl2-{i}.png') for i in range(1, 13)]
 

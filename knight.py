@@ -50,8 +50,8 @@ TIME_PER_FRAME_DEAD = TIME_PER_ACTION_DEAD / FRAMES_PER_ACTION_DEAD
 
 ####-----------여기서 부터는 스킬 관련 시간 조정할거임-----------####
 # Skill 1 (Lvl 1)
-TIME_PER_ACTION_SKILL1_LVL1 = 0.5
-FRAMES_PER_ACTION_SKILL1_LVL1 = 2
+TIME_PER_ACTION_SKILL1_LVL1 = 0.4
+FRAMES_PER_ACTION_SKILL1_LVL1 = 4
 TIME_PER_FRAME_SKILL1_LVL1 = TIME_PER_ACTION_SKILL1_LVL1 / FRAMES_PER_ACTION_SKILL1_LVL1
 
 # Skill 1 (Lvl 2)
@@ -187,6 +187,7 @@ class Knight:
 
         self.debug_mode = config.DEBUG_MODE_ON
 
+        self.effect_lvl1_skill1_new = resource_manager.get_image('knight_lvl1_skill1_new')
         self.skill1_lvl2_effect_anim = resource_manager.get_image('skill_lvl2_anim')
         self.skill1_lvl2_1_effect_anim = resource_manager.get_image('skill_lvl2_R_anim')
         self.skill1_lvl2_1_U_effect_anim = resource_manager.get_image('skill_lvl2_U_anim')
@@ -307,43 +308,35 @@ class Knight:
                             screen_x + offset_x, screen_y + offset_y,
                             fw*2 , fh*2,
                         )
-                else:
-                    base_img1 = None
-                    flip = ''
-                    if self.effect_flip_direction == 'left':
-                        base_img1 = resource_manager.get_image('effect_skill1_R1')
-                        flip = 'h'
-                    elif self.effect_flip_direction == 'right':
-                        base_img1 = resource_manager.get_image('effect_skill1_R1')
-                        flip = ''
-                    elif self.effect_flip_direction == 'down':
-                        base_img1 = resource_manager.get_image('effect_skill1_U1')
-                        flip = 'v'
-                    elif self.effect_flip_direction == 'up':
-                        base_img1 = resource_manager.get_image('effect_skill1_U1')
-                        flip = ''
+                elif self.level == 1:
+                    if self.effect_anim_frame < 4:
+                        if self.effect_lvl1_skill1_new:
+                            idx = int(self.effect_anim_frame)
+                            idx = min(idx, 3)
+                            image = self.effect_lvl1_skill1_new[idx]
+                            flip = ''
+                            rotation = 0.0
+                            offset_x = 0
+                            offset_y = 0
+                            if self.effect_flip_direction == 'left':
+                                flip = 'h'
+                                offset_x = -50
+                            elif self.effect_flip_direction == 'right':
+                                flip = ''
+                                offset_x = 50
+                            elif self.effect_flip_direction == 'up':
+                                rotation = math.radians(90)
+                                offset_y = 50
+                            elif self.effect_flip_direction == 'down':
+                                rotation = math.radians(-90)
+                                offset_y = -50
 
-                    effect_img_to_draw = base_img1
-                    if effect_img_to_draw:
-                        effect_offset_x = 0
-                        effect_offset_y = 0
-
-                        if self.effect_flip_direction == 'left':
-                            effect_offset_x = -30
-                        elif self.effect_flip_direction == 'right':
-                            effect_offset_x = 30
-                        elif self.effect_flip_direction == 'down':
-                            effect_offset_y = -30
-                        elif self.effect_flip_direction == 'up':
-                            effect_offset_y = 30
-
-                        effect_img_to_draw.clip_composite_draw(
-                            0, 0, effect_img_to_draw.w, effect_img_to_draw.h,
-                            0, flip,
-                            screen_x + effect_offset_x, screen_y + effect_offset_y,
-                            effect_img_to_draw.w, effect_img_to_draw.h)
-
-
+                            image.clip_composite_draw(
+                                0, 0, image.w, image.h,
+                                rotation, flip,
+                                screen_x + offset_x, screen_y + offset_y,
+                                300, 150
+                            )
 
         elif self.skill_name == 'skill2':
             if self.is_effect_active:
@@ -512,11 +505,10 @@ class Knight:
                         self.effect_anim_frame = (self.effect_anim_frame + 1)
 
                 elif self.level == 1:
-                    half_duration = self.effect_total_duration / 2
-                    if time_since_start < half_duration:
-                        self.effect_frame = 0
-                    elif time_since_start < self.effect_total_duration:
-                        self.effect_frame = 1
+                    self.effect_anim_timer += frame_time
+                    if self.effect_anim_timer >= TIME_PER_FRAME_SKILL1_LVL1:
+                        self.effect_anim_timer -= TIME_PER_FRAME_SKILL1_LVL1
+                        self.effect_anim_frame = (self.effect_anim_frame + 1)
 
         if time_since_start > self.effect_total_duration:
             self.is_effect_active = False
