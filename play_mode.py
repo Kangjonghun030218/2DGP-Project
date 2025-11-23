@@ -9,6 +9,7 @@ from ui import draw_ui
 from potion import Potion
 import random
 from boss import Boss
+from princess import Princess
 
 import server
 import config
@@ -86,6 +87,11 @@ class PlayState(BaseState):
             server.knight.world_y = 300
             self.boss = Boss()
             server.world.append(self.boss)
+
+            self.princess = Princess()
+            self.princess.x = 1600
+            self.princess.y = 300
+            server.world.append(self.princess)
 
         if server.knight not in server.world:
             server.world.append(server.knight)
@@ -180,6 +186,8 @@ class PlayState(BaseState):
             elif isinstance(obj, Boss):
                 if server.knight:
                     obj.update(frame_time, server.game_map, server.knight)
+            elif isinstance(obj, Princess):
+                obj.update(frame_time)
             else:
                 if hasattr(obj, 'update'):
                     obj.update()

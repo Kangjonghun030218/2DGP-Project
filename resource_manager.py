@@ -159,6 +159,9 @@ def load_all():
     _images['boss_skill2_icon'] = load_image('resource/boss_skill_icon2.png')
     _images['boss_skill2_effect'] = load_image('resource/boss_skill2.png')
 
+    _images['princess_sheet'] = load_image('resource/princess_sheet.png')
+    _images['cage'] = load_image('resource/cage.png')
+
 
     # --- 폰트 ---
     _fonts['default'] = load_font('resource/ARIAL.ttf', 25)
