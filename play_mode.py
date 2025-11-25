@@ -10,6 +10,7 @@ from potion import Potion
 import random
 from boss import Boss
 from princess import Princess
+from portal import Portal
 
 import server
 import config
@@ -19,6 +20,10 @@ import game_framework
 import menu_mode
 import map_view_mode
 import dialogue_mode
+
+# play_mode.py 맨 위쪽
+import game_clear_state  # 방금 만든 파일 import
+from portal import Portal # 아까 만든 모듈 import
 
 PICKUP_RANGE = 50
 
@@ -45,6 +50,10 @@ class PlayState(BaseState):
         if map_number == 1:
             server.knight.world_x = 1000
             server.knight.world_y = 300
+            portal = Portal(1257, 196, 'normal')
+            server.world.append(portal)
+            portal_to_3 = Portal(1290, 884, 'map3')
+            server.world.append(portal_to_3)
             npc = NPC()
             server.world.append(npc)
         elif map_number == 2:
@@ -68,6 +77,8 @@ class PlayState(BaseState):
         elif map_number == 3:
             server.knight.world_x = 1200
             server.knight.world_y = 300
+            boss_portal = Portal(1300, 4273, 'boss')
+            server.world.append(boss_portal)
             monster_spawn_zones = [
                 ((300, 600, 2400, 1200), 5, 5),
                 ((300, 800, 2400, 1400), 6, 5),
@@ -188,6 +199,8 @@ class PlayState(BaseState):
                     obj.update(frame_time, server.game_map, server.knight)
             elif isinstance(obj, Princess):
                 obj.update(frame_time)
+            elif isinstance(obj, Portal):
+                obj.update(frame_time)
             else:
                 if hasattr(obj, 'update'):
                     obj.update()
@@ -205,6 +218,17 @@ class PlayState(BaseState):
                         potion_type = random.choice(['hp', 'mp'])
                         new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
                         server.world.append(new_potion)
+        if server.game_map.map_number == 4:
+            if self.boss and self.boss.current_hp <= 0:
+                portal_exists = False
+                for obj in server.world:
+                    if isinstance(obj, Portal) and obj.portal_type == 'boss_clear':
+                        portal_exists = True
+                        break
+                if not portal_exists:
+                    print("보스 격파! 클리어 포탈 생성")
+                    clear_portal = Portal(1600, 350, 'boss_clear')
+                    server.world.append(clear_portal)
         self.check_portal()
         if server.knight and server.knight.is_dead_and_animation_finished:
             self.start_map_number = 1
@@ -306,17 +330,20 @@ class PlayState(BaseState):
         draw_ui()
 
     def check_portal(self):
-        if server.game_map.map_number == 1:
-            if server.knight:
-                portal_box = (1230, 180, 1290, 230)
-                if check_collision(server.knight.get_bb(), portal_box):
+        portals = [obj for obj in server.world if isinstance(obj, Portal)]
+
+        if not portals: return
+
+        knight_bb = server.knight.get_bb()
+
+        for portal in portals:
+            if check_collision(knight_bb, portal.get_bb()):
+                if portal.portal_type == 'normal' and server.game_map.map_number == 1:
                     self.reset_world(2)
-            if server.knight:
-                portal_box = (1248, 856, 1332, 912)
-                if check_collision(server.knight.get_bb(), portal_box):
+                elif portal.portal_type == 'map3' and server.game_map.map_number == 1:
                     self.reset_world(3)
-        elif server.game_map.map_number == 3:
-            if server.knight:
-                portal_box = (1245, 4257, 1352, 4329)
-                if check_collision(server.knight.get_bb(), portal_box):
+                elif portal.portal_type == 'boss' and server.game_map.map_number == 3:
                     self.reset_world(4)
+                elif portal.portal_type == 'boss_clear':
+                    import game_clear_state
+                    state_machine.change(game_clear_state.GameClearState())
