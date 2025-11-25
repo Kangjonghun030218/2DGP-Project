@@ -21,9 +21,8 @@ import menu_mode
 import map_view_mode
 import dialogue_mode
 
-# play_mode.py 맨 위쪽
-import game_clear_state  # 방금 만든 파일 import
-from portal import Portal # 아까 만든 모듈 import
+
+from portal import Portal
 
 PICKUP_RANGE = 50
 
