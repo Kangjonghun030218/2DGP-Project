@@ -162,6 +162,9 @@ def load_all():
     _images['princess_sheet'] = load_image('resource/princess_sheet.png')
     _images['cage'] = load_image('resource/cage.png')
 
+    _images['boss_clear_portal'] = load_image('resource/clear_portal.png')
+    _images['game_clear_screen'] = load_image('resource/game_clear.png')
+
 
     # --- 폰트 ---
     _fonts['default'] = load_font('resource/ARIAL.ttf', 25)
