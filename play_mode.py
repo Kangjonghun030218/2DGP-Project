@@ -322,6 +322,15 @@ class PlayState(BaseState):
                         if claw_bb and check_collision(server.knight.get_bb(), claw_bb):
                             server.knight.take_damage(30, obj.skill2_pos[0], obj.skill2_pos[1])
                             obj.skill2_hit = True
+                            if obj.skill3_state == 'firing':
+                                laser_bb = obj.get_laser_bb()
+                                if laser_bb and check_collision(server.knight.get_bb(), laser_bb):
+                                    current_time = get_time()
+                                    if not hasattr(obj, 'laser_hit_timer'):
+                                        obj.laser_hit_timer = 0
+                                    if current_time - obj.laser_hit_timer > 0.2:
+                                        server.knight.take_damage(10, obj.x, obj.y)
+                                        obj.laser_hit_timer = current_time
 
     def draw(self):
         for obj in server.world:

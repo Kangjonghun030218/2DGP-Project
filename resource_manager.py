@@ -166,6 +166,15 @@ def load_all():
     _images['game_clear_screen'] = load_image('resource/game_clear.png')
 
 
+    _images['boss_skill3_icon'] = load_image('resource/boss_skill3_icon.png')
+    _images['boss_charge_anim'] = []
+    for i in range(1, 9):
+        _images['boss_charge_anim'].append(load_image(f'resource/{i:03d}.png'))
+
+    _images['boss_fire_anim'] = []
+    for i in range(1, 37):
+        _images['boss_fire_anim'].append(load_image(f'resource/{i:02d}.png'))
+
     # --- 폰트 ---
     _fonts['default'] = load_font('resource/ARIAL.ttf', 25)
 

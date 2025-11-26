@@ -20,6 +20,9 @@ class Boss:
         self.skill_icon2 = resource_manager.get_image('boss_skill2_icon')
         self.skill_effect2 = resource_manager.get_image('boss_skill2_effect')
 
+        self.charge_anim = resource_manager.get_image('boss_charge_anim')
+        self.fire_anim = resource_manager.get_image('boss_fire_anim')
+
         self.max_hp = 2000
         self.current_hp = 2000
         self.speed = 100.0
@@ -56,12 +59,37 @@ class Boss:
         self.skill2_pos = (0, 0)
         self.skill2_hit = False
 
+        self.skill3_active = False
+        self.skill3_state = 'none'
+        self.skill3_timer = 0.0
+        self.skill3_frame = 0
+        self.skill3_cd = 0
+        self.skill3_max_cd = 20.0
+
         self.w, self.h = 350, 450
         self.collision_box = (200, 300)
 
     def get_bb(self):
         return (self.x - self.collision_box[0] // 2, self.y - self.collision_box[1] // 2,
                 self.x + self.collision_box[0] // 2, self.y + self.collision_box[1] // 2)
+
+    def get_laser_bb(self):
+        if self.skill3_state != 'firing': return None
+
+        beam_len = 1000
+        beam_h = 100
+        if self.dir == 1:
+            return (self.x, self.y - beam_h // 2, self.x + beam_len, self.y + beam_h // 2)
+        else:
+            return (self.x - beam_len, self.y - beam_h // 2, self.x, self.y + beam_h // 2)
+
+    def start_skill3(self):
+        print("보스 스킬3: 차징 시작!")
+        self.skill3_active = True
+        self.skill3_state = 'charging'
+        self.skill3_timer = 0.0
+        self.skill3_frame = 0
+        self.skill3_cd = self.skill3_max_cd
 
     def get_attack_bb(self):
         box_size = 150
@@ -98,11 +126,17 @@ class Boss:
 
         if self.skill1_cd > 0: self.skill1_cd -= frame_time
         if self.skill2_cd > 0: self.skill2_cd -= frame_time
+        if self.skill3_cd > 0: self.skill3_cd -= frame_time
 
-        can_act = (not self.is_attacking and not self.skill1_active and not self.skill2_active)
+        can_act = (not self.is_attacking and
+                   not self.skill1_active and
+                   not self.skill2_active and
+                   not self.skill3_active)
 
         if can_act and distance < self.detect_range:
-            if self.skill1_cd <= 0:
+            if self.skill3_cd <= 0:
+                self.start_skill3()
+            elif self.skill1_cd <= 0:
                 self.start_skill1()
             elif self.skill2_cd <= 0:
                 self.start_skill2(player)
@@ -145,6 +179,31 @@ class Boss:
         if self.skill2_active:
             self.skill2_timer += frame_time
             if self.skill2_timer >= 0.8: self.skill2_active = False
+
+        if self.skill3_active:
+            self.skill3_timer += frame_time
+
+            if self.skill3_state == 'charging':
+                charge_speed = 0.2
+                self.skill3_frame = int(self.skill3_timer / charge_speed)
+
+                if player.world_x > self.x:
+                    self.dir = 1
+                else:
+                    self.dir = -1
+                if self.skill3_frame >= 8:
+                    print("차징 완료! 발사!")
+                    self.skill3_state = 'firing'
+                    self.skill3_timer = 0.0
+                    self.skill3_frame = 0
+
+            elif self.skill3_state == 'firing':
+                fire_speed = 0.05
+                self.skill3_frame = int(self.skill3_timer / fire_speed)
+                if self.skill3_frame >= 36:
+                    print("스킬3 종료")
+                    self.skill3_active = False
+                    self.skill3_state = 'none'
 
     def start_skill1(self):
         print("보스 스킬1: 비격진천뢰 (광역)")
@@ -284,6 +343,27 @@ class Boss:
             ty = self.skill2_pos[1] - cam_y
             self.skill_effect2.clip_draw(col * sw, row * sh, sw, sh, tx, ty + 50, 200, 200)
 
+        if self.skill3_active:
+            if self.skill3_state == 'charging':
+                if self.charge_anim:
+                    idx = min(self.skill3_frame, 7)
+                    img = self.charge_anim[idx]
+                    img.clip_composite_draw(0, 0, img.w, img.h, 0, flip, sx, sy, 400, 400)
+
+            elif self.skill3_state == 'firing':
+                if self.fire_anim:
+                    idx = min(self.skill3_frame, 35)
+                    img = self.fire_anim[idx]
+                    offset_x = 300 * self.dir
+                    img.clip_composite_draw(0, 0, img.w, img.h,
+                                            0, flip, sx + offset_x, sy, 1000, 400)
+
+        else:
+            if self.body_image:
+                self.body_image.clip_composite_draw(0, 0, self.body_image.w, self.body_image.h,
+                                                    0, flip, sx, sy, self.w * self.scale_factor,
+                                                    self.h * self.scale_factor)
+
         if config.DEBUG_MODE_ON:
             draw_rectangle(*self.get_bb_screen(cam_x, cam_y))
 
@@ -302,3 +382,6 @@ class Boss:
             if self.skill2_active and (0.3 <= self.skill2_timer <= 0.6):
                 sb = self.get_skill2_bb()
                 if sb: draw_rectangle(sb[0] - cam_x, sb[1] - cam_y, sb[2] - cam_x, sb[3] - cam_y)
+            if self.skill3_state == 'firing':
+                lb = self.get_laser_bb()
+                if lb: draw_rectangle(lb[0] - cam_x, lb[1] - cam_y, lb[2] - cam_x, lb[3] - cam_y)

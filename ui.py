@@ -164,3 +164,14 @@ def draw_ui():
                 if font: font.draw(x2 - 15, icon_y, f"{boss_obj.skill2_cd:.1f}", (255, 50, 50))
             else:
                 icon2.draw(x2, icon_y, icon_size, icon_size)
+        icon3 = resource_manager.get_image('boss_skill3_icon')
+        if icon3:
+            x3 = base_x + gap * 2
+            if boss_obj.skill3_cd > 0:
+                icon3.opacify(0.4)
+                icon3.draw(x3, icon_y, icon_size, icon_size)
+                icon3.opacify(1.0)
+                if font:
+                    font.draw(x3 - 15, icon_y, f"{boss_obj.skill3_cd:.1f}", (255, 50, 50))
+            else:
+                icon3.draw(x3, icon_y, icon_size, icon_size)
