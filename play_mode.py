@@ -328,9 +328,9 @@ class PlayState(BaseState):
                         current_time = get_time()
                         if not hasattr(obj, 'laser_hit_timer'):
                             obj.laser_hit_timer = 0
-                            if current_time - obj.laser_hit_timer > 0.01:
-                                server.knight.take_damage(10, obj.x, obj.y)
-                                obj.laser_hit_timer = current_time
+                        if current_time - obj.laser_hit_timer > 0.2:
+                            server.knight.take_damage(10, obj.x, obj.y)
+                            obj.laser_hit_timer = current_time
 
     def draw(self):
         for obj in server.world:
