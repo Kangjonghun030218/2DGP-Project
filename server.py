@@ -15,5 +15,5 @@ quest_log = {
     }
 }
 dialogue_message = None
-
+quest_board_active = True
 cam_x, cam_y = 0, 0

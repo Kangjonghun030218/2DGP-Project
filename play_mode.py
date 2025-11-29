@@ -164,6 +164,8 @@ class PlayState(BaseState):
                 if server.knight: server.knight.activate_skill('skill3')
             elif event.key == SDLK_z:
                 self.pickup_item()
+            elif event.key == SDLK_t:
+                server.quest_board_active = not server.quest_board_active
             elif event.key == SDLK_p:
                 print(f"현재 좌표: {int(server.knight.world_x)}, {int(server.knight.world_y)}")
             elif event.key == SDLK_SPACE:

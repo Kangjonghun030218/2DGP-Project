@@ -100,6 +100,8 @@ def draw_mini_map():
 
 
 def draw_quest_board():
+    if not server.quest_board_active:
+        return
     bg_image = resource_manager.get_image('quest_board')
     font = resource_manager.get_font()
 
