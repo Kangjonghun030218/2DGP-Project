@@ -71,7 +71,7 @@ def draw_mini_map():
 
         elif isinstance(obj, Monster) and obj.current_hp > 0:
             if obj.images and 'idle' in obj.images:
-                obj.images['idle'].clip_draw(0, 192, 64, 64, draw_x, draw_y, 10, 10)
+                obj.images['idle'].clip_draw(0, 192, 64, 64, draw_x, draw_y, 30, 30)
 
         elif isinstance(obj, NPC):
             if hasattr(obj, 'image1'):
@@ -85,13 +85,13 @@ def draw_mini_map():
                         nimg.clip_draw(0, 0, 48, 48, ndx, ndy, 8, 8)
 
         elif isinstance(obj, Boss) and obj.current_hp > 0:
-            if obj.body_image: obj.body_image.draw(draw_x, draw_y, 20, 20)
+            if obj.body_image: obj.body_image.draw(draw_x, draw_y, 50, 50)
         elif isinstance(obj, Portal):
-            if obj.image: obj.image.draw(draw_x, draw_y, 10, 10)
+            if obj.image: obj.image.draw(draw_x, draw_y, 20, 20)
         elif isinstance(obj, Princess):
-            if obj.image: obj.image.clip_draw(0, 0, obj.frame_width, obj.frame_height, draw_x, draw_y, 10, 10)
+            if obj.image: obj.image.clip_draw(0, 0, obj.frame_width, obj.frame_height, draw_x, draw_y, 20, 20)
         elif isinstance(obj, Potion):
-            if obj.image: obj.image.draw(draw_x, draw_y, 5, 5)
+            if obj.image: obj.image.draw(draw_x, draw_y, 20, 20)
     px = mm_x1 + (server.knight.world_x - view_left) * scale
     py = mm_y1 + (server.knight.world_y - view_bottom) * scale
 
