@@ -9,6 +9,8 @@ from monster import Monster
 from portal import Portal
 from boss import Boss
 from npc import NPC
+from princess import Princess
+from potion import Potion
 
 
 class MapViewState(BaseState):
@@ -45,7 +47,6 @@ class MapViewState(BaseState):
                 elif isinstance(obj, Boss) and obj.current_hp > 0:
                     mx = (obj.x / server.game_map.width) * config.CANVAS_WIDTH
                     my = (obj.y / server.game_map.height) * config.CANVAS_HEIGHT
-
                     if obj.body_image:
                         obj.body_image.draw(mx, my, 100, 100)
 
@@ -65,6 +66,26 @@ class MapViewState(BaseState):
                     mx4 = (obj.world_x4 / server.game_map.width) * config.CANVAS_WIDTH
                     my4 = (obj.world_y4 / server.game_map.height) * config.CANVAS_HEIGHT
                     obj.image4.clip_draw(0, 0, 48, 48, mx4, my4, 40, 40)
+
+                elif isinstance(obj, Princess):
+                    mx = (obj.x / server.game_map.width) * config.CANVAS_WIDTH
+                    my = (obj.y / server.game_map.height) * config.CANVAS_HEIGHT
+
+                    if obj.image:
+                        clip_y = 0 if obj.is_freed else obj.frame_height
+
+                        obj.image.clip_draw(
+                            0, clip_y,
+                            obj.frame_width, obj.frame_height,
+                            mx, my, 50, 50
+                        )
+
+                elif isinstance(obj, Potion):
+                    mx = (obj.world_x / server.game_map.width) * config.CANVAS_WIDTH
+                    my = (obj.world_y / server.game_map.height) * config.CANVAS_HEIGHT
+
+                    if obj.image:
+                        obj.image.draw(mx, my, 20, 20)
 
             if server.knight:
                 screen_x = (server.knight.world_x / server.game_map.width) * config.CANVAS_WIDTH
