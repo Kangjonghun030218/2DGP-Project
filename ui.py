@@ -110,14 +110,15 @@ def draw_quest_board():
     current_quest = server.quest_log.get('monster_hunt')
 
     if current_quest and current_quest['status'] == 'in_progress':
-        board_x = 150
-        board_y = config.CANVAS_HEIGHT - 250
-
+        minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
+        gap = 10
+        board_x = minimap_left_x - gap - (bg_image.w // 2)
+        minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
+        board_y = minimap_center_y
         bg_image.draw(board_x, board_y)
 
         title_text = "슬라임 사냥"
         count_text = f"{current_quest['current_kill_count']} / 10"
-
         font.draw(board_x - 50, board_y + 15, title_text, (0, 0, 0))
         font.draw(board_x - 20, board_y - 15, count_text, (200, 0, 0))
 
