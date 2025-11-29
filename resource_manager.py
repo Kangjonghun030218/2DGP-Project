@@ -176,7 +176,7 @@ def load_all():
         _images['boss_fire_anim'].append(load_image(f'resource/{i:02d}.png'))
 
     _images['quest_board'] = load_image('resource/quest.png')
-
+    _images['dialogue_bg'] = load_image('resource/quest_space.png')
 
     # --- 폰트 ---
     _fonts['default'] =  load_font('resource/malgunbd.ttf', 20)
