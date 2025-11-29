@@ -110,16 +110,26 @@ def draw_quest_board():
     current_quest = server.quest_log.get('monster_hunt')
 
     if current_quest and current_quest['status'] == 'in_progress':
+        monster_names = {
+            1: "초록 오크",
+            2: "파란 오크",
+            3: "강한 오크",
+            4: "초록 슬라임",
+            5: "파란 슬라임",
+            6: "불타는 슬라임"
+        }
+
+        target_id = current_quest.get('current_target_type', 4)
+        target_name = monster_names.get(target_id, "알 수 없는 몬스터")
         minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
         gap = 10
         board_x = minimap_left_x - gap - (bg_image.w // 2)
         minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
         board_y = minimap_center_y
         bg_image.draw(board_x, board_y)
-
-        title_text = "슬라임 사냥"
+        title_text = f"{target_name} 사냥"
         count_text = f"{current_quest['current_kill_count']} / 10"
-        font.draw(board_x - 50, board_y + 15, title_text, (0, 0, 0))
+        font.draw(board_x - 60, board_y + 15, title_text, (0, 0, 0))
         font.draw(board_x - 20, board_y - 15, count_text, (200, 0, 0))
 
 def draw_ui():
