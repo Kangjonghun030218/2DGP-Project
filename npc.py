@@ -55,15 +55,15 @@ class NPC:
 
         elif dist_to_3 < self.talk_range:
             monster_names = {
-                1: "green ork", 2: "blue orc", 3: "green strong orc",
-                4: "Green Slime", 5: "Blue Slime", 6: "Red Slime"
+                1: "초록 오크", 2: "파란 오크", 3: "강한 초록 오크",
+                4: "초록 슬라임", 5: "파란 슬라임", 6: "불타오르는 슬라임"
             }
 
             current_stage = hunt_quest['total_quest_stage']
             target_name = monster_names.get(current_stage, f"monster (type {current_stage})")
 
             if hunt_quest['status'] == 'not_started':
-                server.dialogue_message = f"hey, {target_name} 10 kill."
+                server.dialogue_message = f"이봐!, {target_name} 10마리 처치를 부탁할게."
                 hunt_quest['status'] = 'in_progress'
                 hunt_quest['current_target_type'] = 1
                 hunt_quest['current_kill_count'] = 0
@@ -74,19 +74,19 @@ class NPC:
                     hunt_quest['total_quest_stage'] += 1
 
                     if hunt_quest['total_quest_stage'] > 6:
-                        server.dialogue_message = "great, all quest clear!"
+                        server.dialogue_message = "고마워 모든 미션을 클리어 해줬어!"
                         hunt_quest['status'] = 'completed'
                     else:
                         hunt_quest['current_target_type'] = hunt_quest['total_quest_stage']
                         hunt_quest['current_kill_count'] = 0
                         next_target_name = monster_names.get(hunt_quest['current_target_type'], "next monster")
-                        server.dialogue_message = f"good! next {next_target_name} 10 kill."
+                        server.dialogue_message = f"고마워! 다음은 {next_target_name} 10마리를 처치해줘."
                 else:
                     remaining = 10 - hunt_quest['current_kill_count']
-                    server.dialogue_message = f"{target_name} {remaining}more kill."
+                    server.dialogue_message = f"이봐 아직 {target_name} {remaining}마리를 더 퇴치해야하네."
 
             elif hunt_quest['status'] == 'completed':
-                server.dialogue_message = "thanks."
+                server.dialogue_message = "고맙네 자네덕에 평화가 찾아왔어."
 
             return True
         return False
