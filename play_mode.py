@@ -26,10 +26,13 @@ from portal import Portal
 
 PICKUP_RANGE = 50
 
+RESPAWN_TIME = 5.0
+
 
 class PlayState(BaseState):
     def __init__(self):
         self.start_map_number = 1
+        self.respawn_queue = []
 
     def enter(self):
         if server.knight is None:
@@ -41,6 +44,7 @@ class PlayState(BaseState):
         pass
 
     def reset_world(self, map_number=1):
+        self.respawn_queue = []
         server.cam_x, server.cam_y = 0, 0
         server.world = []
         server.game_map = GameMap(map_number)
@@ -177,6 +181,13 @@ class PlayState(BaseState):
                 server.knight.handle_event(event)
 
     def update(self, frame_time):
+        current_time = get_time()
+        for entry in self.respawn_queue[:]:
+            monster, respawn_at = entry
+            if current_time >= respawn_at:
+                monster.respawn()
+                server.world.append(monster)
+                self.respawn_queue.remove(entry)
         removed_objects = []
         for obj in server.world:
             if obj is server.knight:
@@ -217,6 +228,7 @@ class PlayState(BaseState):
                         potion_type = random.choice(['hp', 'mp'])
                         new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
                         server.world.append(new_potion)
+                self.respawn_queue.append((obj, get_time() + RESPAWN_TIME))
         if server.game_map.map_number == 4:
             if self.boss and self.boss.current_hp <= 0:
                 portal_exists = False

@@ -75,6 +75,8 @@ class Monster:
     def __init__(self, x, y, a):
         self.world_x1 = x
         self.world_y1 = y
+        self.initial_x = x
+        self.initial_y = y
         self.monster_type = a
         if a <= 3:
             self.kinMonster = 1
@@ -244,6 +246,17 @@ class Monster:
                 screen_x1, screen_y1,
                 100, 100
             )
+
+    def respawn(self):
+        self.world_x1 = self.initial_x
+        self.world_y1 = self.initial_y
+        self.current_hp = self.max_hp
+        self.state = 'idle'
+        self.is_removable = False
+        self.is_hit = False
+        self.frame = 0
+        self.frame_timer = 0.0
+        print(f"몬스터 부활! (Type: {self.monster_type})")
 
     def update(self, frame_time, game_map, knight_x=None, knight_y=None):
         self.frame_timer += frame_time
