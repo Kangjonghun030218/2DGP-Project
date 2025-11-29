@@ -2,8 +2,101 @@ import server
 import resource_manager
 import config
 from pico2d import get_time
-from boss import Boss
+from pico2d import *
 
+
+MINIMAP_SIZE = 200
+MINIMAP_RANGE = 1200
+MINIMAP_MARGIN = 20
+MINIMAP_ALPHA = 0.5
+
+
+def draw_mini_map():
+    if not server.knight or not server.game_map:
+        return
+
+    mm_x1 = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
+    mm_y1 = config.CANVAS_HEIGHT - MINIMAP_SIZE - MINIMAP_MARGIN
+    mm_x2 = config.CANVAS_WIDTH - MINIMAP_MARGIN
+    mm_y2 = config.CANVAS_HEIGHT - MINIMAP_MARGIN
+
+    mm_center_x = mm_x1 + MINIMAP_SIZE // 2
+    mm_center_y = mm_y1 + MINIMAP_SIZE // 2
+
+    view_left = server.knight.world_x - MINIMAP_RANGE // 2
+    view_bottom = server.knight.world_y - MINIMAP_RANGE // 2
+
+    max_left = max(0, server.game_map.width - MINIMAP_RANGE)
+    max_bottom = max(0, server.game_map.height - MINIMAP_RANGE)
+
+    view_left = max(0, min(view_left, max_left))
+    view_bottom = max(0, min(view_bottom, max_bottom))
+    scale = MINIMAP_SIZE / MINIMAP_RANGE
+    draw_rectangle(mm_x1, mm_y1, mm_x2, mm_y2)
+
+    if server.game_map.image:
+        server.game_map.image.clip_draw_to_origin(
+            int(view_left), int(view_bottom),
+            MINIMAP_RANGE, MINIMAP_RANGE,
+            mm_x1, mm_y1,
+            MINIMAP_SIZE, MINIMAP_SIZE
+        )
+
+    draw_rectangle(mm_x1, mm_y1, mm_x2, mm_y2)
+
+    from monster import Monster
+    from npc import NPC
+    from portal import Portal
+    from boss import Boss
+    from princess import Princess
+    from potion import Potion
+
+    for obj in server.world:
+        ox, oy = 0, 0
+        if hasattr(obj, 'world_x'):
+            ox, oy = obj.world_x, obj.world_y
+        elif hasattr(obj, 'world_x1'):
+            ox, oy = obj.world_x1, obj.world_y1
+        elif hasattr(obj, 'x'):
+            ox, oy = obj.x, obj.y
+        else:
+            continue
+        draw_x = mm_x1 + (ox - view_left) * scale
+        draw_y = mm_y1 + (oy - view_bottom) * scale
+        if not (mm_x1 <= draw_x <= mm_x2 and mm_y1 <= draw_y <= mm_y2):
+            continue
+
+        if obj is server.knight:
+            continue
+
+        elif isinstance(obj, Monster) and obj.current_hp > 0:
+            if obj.images and 'idle' in obj.images:
+                obj.images['idle'].clip_draw(0, 192, 64, 64, draw_x, draw_y, 10, 10)
+
+        elif isinstance(obj, NPC):
+            if hasattr(obj, 'image1'):
+                obj.image1.clip_draw(0, 0, 48, 48, draw_x, draw_y, 8, 8)
+                coords = [(obj.world_x2, obj.world_y2), (obj.world_x3, obj.world_y3), (obj.world_x4, obj.world_y4)]
+                imgs = [obj.image2, obj.image3, obj.image4]
+                for (nx, ny), nimg in zip(coords, imgs):
+                    ndx = mm_x1 + (nx - view_left) * scale
+                    ndy = mm_y1 + (ny - view_bottom) * scale
+                    if mm_x1 <= ndx <= mm_x2 and mm_y1 <= ndy <= mm_y2:
+                        nimg.clip_draw(0, 0, 48, 48, ndx, ndy, 8, 8)
+
+        elif isinstance(obj, Boss) and obj.current_hp > 0:
+            if obj.body_image: obj.body_image.draw(draw_x, draw_y, 20, 20)
+        elif isinstance(obj, Portal):
+            if obj.image: obj.image.draw(draw_x, draw_y, 10, 10)
+        elif isinstance(obj, Princess):
+            if obj.image: obj.image.clip_draw(0, 0, obj.frame_width, obj.frame_height, draw_x, draw_y, 10, 10)
+        elif isinstance(obj, Potion):
+            if obj.image: obj.image.draw(draw_x, draw_y, 5, 5)
+    px = mm_x1 + (server.knight.world_x - view_left) * scale
+    py = mm_y1 + (server.knight.world_y - view_bottom) * scale
+
+    if server.knight.current_images:
+        server.knight.current_images['idle'].clip_draw(0, 192, 64, 64, px, py, 12, 12)
 
 def draw_ui():
     font = resource_manager.get_font()
@@ -175,3 +268,4 @@ def draw_ui():
                     font.draw(x3 - 15, icon_y, f"{boss_obj.skill3_cd:.1f}", (255, 50, 50))
             else:
                 icon3.draw(x3, icon_y, icon_size, icon_size)
+    draw_mini_map()
