@@ -96,7 +96,28 @@ def draw_mini_map():
     py = mm_y1 + (server.knight.world_y - view_bottom) * scale
 
     if server.knight.current_images:
-        server.knight.current_images['idle'].clip_draw(0, 192, 64, 64, px, py, 12, 12)
+        server.knight.current_images['idle'].clip_draw(0, 192, 64, 64, px, py, 40, 40)
+
+
+def draw_quest_board():
+    bg_image = resource_manager.get_image('quest_board')
+    font = resource_manager.get_font()
+
+    if bg_image is None or font is None:
+        return
+    current_quest = server.quest_log.get('monster_hunt')
+
+    if current_quest and current_quest['status'] == 'in_progress':
+        board_x = 150
+        board_y = config.CANVAS_HEIGHT - 250
+
+        bg_image.draw(board_x, board_y)
+
+        title_text = "슬라임 사냥"
+        count_text = f"{current_quest['current_kill_count']} / 10"
+
+        font.draw(board_x - 50, board_y + 15, title_text, (0, 0, 0))
+        font.draw(board_x - 20, board_y - 15, count_text, (200, 0, 0))
 
 def draw_ui():
     font = resource_manager.get_font()
@@ -268,4 +289,5 @@ def draw_ui():
                     font.draw(x3 - 15, icon_y, f"{boss_obj.skill3_cd:.1f}", (255, 50, 50))
             else:
                 icon3.draw(x3, icon_y, icon_size, icon_size)
+    draw_quest_board()
     draw_mini_map()

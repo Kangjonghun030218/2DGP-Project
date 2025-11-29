@@ -175,8 +175,12 @@ def load_all():
     for i in range(1, 37):
         _images['boss_fire_anim'].append(load_image(f'resource/{i:02d}.png'))
 
+    _images['quest_board'] = load_image('resource/quest.png')
+
+
     # --- 폰트 ---
-    _fonts['default'] = load_font('resource/ARIAL.ttf', 25)
+    _fonts['default'] =  load_font('resource/malgunbd.ttf', 20)
+
 
 
 def get_image(key):
