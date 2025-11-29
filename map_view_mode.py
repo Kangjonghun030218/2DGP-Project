@@ -5,6 +5,7 @@ import game_framework
 import server
 import config
 import menu_mode
+from monster import Monster
 
 
 class MapViewState(BaseState):
@@ -24,6 +25,12 @@ class MapViewState(BaseState):
         if server.game_map:
             server.game_map.image.draw(config.CANVAS_WIDTH // 2, config.CANVAS_HEIGHT // 2, config.CANVAS_WIDTH,
                                        config.CANVAS_HEIGHT)
+
+            for obj in server.world:
+                if isinstance(obj, Monster) and obj.current_hp > 0:
+                    mx = (obj.world_x1 / server.game_map.width) * config.CANVAS_WIDTH
+                    my = (obj.world_y1 / server.game_map.height) * config.CANVAS_HEIGHT
+                    obj.images['idle'].clip_draw(0, 192, 64, 64, mx, my, 50, 50)
             if server.knight:
                 screen_x = (server.knight.world_x / server.game_map.width) * config.CANVAS_WIDTH
                 screen_y = (server.knight.world_y / server.game_map.height) * config.CANVAS_HEIGHT
