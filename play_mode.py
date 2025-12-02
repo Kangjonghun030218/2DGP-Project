@@ -55,8 +55,9 @@ class PlayState(BaseState):
             server.knight.world_y = 300
             portal = Portal(1257, 196, 'normal')
             server.world.append(portal)
-            portal_to_3 = Portal(1290, 884, 'map3')
-            server.world.append(portal_to_3)
+            if server.quest_log['monster_hunt']['status'] == 'completed':
+                portal_to_3 = Portal(1290, 884, 'map3')
+                server.world.append(portal_to_3)
             npc = NPC()
             server.world.append(npc)
         elif map_number == 2:
@@ -230,7 +231,8 @@ class PlayState(BaseState):
                         potion_type = random.choice(['hp', 'mp'])
                         new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
                         server.world.append(new_potion)
-                self.respawn_queue.append((obj, get_time() + RESPAWN_TIME))
+                if isinstance(obj, Monster):
+                    self.respawn_queue.append((obj, get_time() + RESPAWN_TIME))
         if server.game_map.map_number == 4:
             if self.boss and self.boss.current_hp <= 0:
                 portal_exists = False
