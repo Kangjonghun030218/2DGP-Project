@@ -8,7 +8,7 @@ BASE_RES_WIDTH = 2560
 
 
 UI_SCALE = config.CANVAS_WIDTH / BASE_RES_WIDTH
-UI_SCALE = max(0.6, min(UI_SCALE, 1.2))
+UI_SCALE = max(0.8, min(UI_SCALE, 1.5))
 
 MINIMAP_SIZE = int(200 * UI_SCALE)
 MINIMAP_RANGE = 1200
@@ -134,22 +134,24 @@ def draw_quest_board():
 
         target_id = current_quest.get('current_target_type', 4)
         target_name = monster_names.get(target_id, "알 수 없는 몬스터")
-
         minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
         gap = int(10 * UI_SCALE)
+
         bg_w = bg_image.w * UI_SCALE
         bg_h = bg_image.h * UI_SCALE
+
         board_x = minimap_left_x - gap - (bg_w // 2)
+
         minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
         board_y = minimap_center_y
-
         bg_image.draw(board_x, board_y, bg_w, bg_h)
-
         title_text = f"{target_name} 사냥"
         count_text = f"{current_quest['current_kill_count']} / 10"
-        font.draw(board_x - (60 * UI_SCALE), board_y + (15 * UI_SCALE), title_text, (0, 0, 0))
-        font.draw(board_x - (20 * UI_SCALE), board_y - (15 * UI_SCALE), count_text, (200, 0, 0))
+        title_width_est = len(title_text) * 15 * UI_SCALE
+        font.draw(board_x - (title_width_est // 2), board_y + (15 * UI_SCALE), title_text, (0, 0, 0))
 
+        count_width_est = len(count_text) * 12 * UI_SCALE
+        font.draw(board_x - (count_width_est // 2), board_y - (15 * UI_SCALE), count_text, (200, 0, 0))
 
 def draw_ui():
     font = resource_manager.get_font()

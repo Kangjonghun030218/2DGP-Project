@@ -109,5 +109,5 @@ class NPC:
     def update(self, frame_time):
         self.frame_timer += frame_time
         if self.frame_timer >= self.animation_speed:
-            self.frame_timer -= self.animation_speed  # 타이머 리셋
+            self.frame_timer -= self.animation_speed
             self.frame = (self.frame + 1) % 4
