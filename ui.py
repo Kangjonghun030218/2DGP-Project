@@ -4,10 +4,15 @@ import config
 from pico2d import get_time
 from pico2d import *
 
+BASE_RES_WIDTH = 2560
 
-MINIMAP_SIZE = 200
+
+UI_SCALE = config.CANVAS_WIDTH / BASE_RES_WIDTH
+UI_SCALE = max(0.6, min(UI_SCALE, 1.2))
+
+MINIMAP_SIZE = int(200 * UI_SCALE)
 MINIMAP_RANGE = 1200
-MINIMAP_MARGIN = 20
+MINIMAP_MARGIN = int(20 * UI_SCALE)
 MINIMAP_ALPHA = 0.5
 
 
@@ -20,9 +25,6 @@ def draw_mini_map():
     mm_x2 = config.CANVAS_WIDTH - MINIMAP_MARGIN
     mm_y2 = config.CANVAS_HEIGHT - MINIMAP_MARGIN
 
-    mm_center_x = mm_x1 + MINIMAP_SIZE // 2
-    mm_center_y = mm_y1 + MINIMAP_SIZE // 2
-
     view_left = server.knight.world_x - MINIMAP_RANGE // 2
     view_bottom = server.knight.world_y - MINIMAP_RANGE // 2
 
@@ -31,7 +33,9 @@ def draw_mini_map():
 
     view_left = max(0, min(view_left, max_left))
     view_bottom = max(0, min(view_bottom, max_bottom))
+
     scale = MINIMAP_SIZE / MINIMAP_RANGE
+
     draw_rectangle(mm_x1, mm_y1, mm_x2, mm_y2)
 
     if server.game_map.image:
@@ -51,6 +55,8 @@ def draw_mini_map():
     from princess import Princess
     from potion import Potion
 
+    icon_scale = UI_SCALE
+
     for obj in server.world:
         ox, oy = 0, 0
         if hasattr(obj, 'world_x'):
@@ -61,8 +67,10 @@ def draw_mini_map():
             ox, oy = obj.x, obj.y
         else:
             continue
+
         draw_x = mm_x1 + (ox - view_left) * scale
         draw_y = mm_y1 + (oy - view_bottom) * scale
+
         if not (mm_x1 <= draw_x <= mm_x2 and mm_y1 <= draw_y <= mm_y2):
             continue
 
@@ -71,32 +79,37 @@ def draw_mini_map():
 
         elif isinstance(obj, Monster) and obj.current_hp > 0:
             if obj.images and 'idle' in obj.images:
-                obj.images['idle'].clip_draw(0, 192, 64, 64, draw_x, draw_y, 30, 30)
+                # 30 -> 30 * icon_scale
+                s = 30 * icon_scale
+                obj.images['idle'].clip_draw(0, 192, 64, 64, draw_x, draw_y, s, s)
 
         elif isinstance(obj, NPC):
             if hasattr(obj, 'image1'):
-                obj.image1.clip_draw(0, 0, 48, 48, draw_x, draw_y, 8, 8)
+                s = 8 * icon_scale
+                obj.image1.clip_draw(0, 0, 48, 48, draw_x, draw_y, s, s)
                 coords = [(obj.world_x2, obj.world_y2), (obj.world_x3, obj.world_y3), (obj.world_x4, obj.world_y4)]
                 imgs = [obj.image2, obj.image3, obj.image4]
                 for (nx, ny), nimg in zip(coords, imgs):
                     ndx = mm_x1 + (nx - view_left) * scale
                     ndy = mm_y1 + (ny - view_bottom) * scale
                     if mm_x1 <= ndx <= mm_x2 and mm_y1 <= ndy <= mm_y2:
-                        nimg.clip_draw(0, 0, 48, 48, ndx, ndy, 8, 8)
+                        nimg.clip_draw(0, 0, 48, 48, ndx, ndy, s, s)
 
         elif isinstance(obj, Boss) and obj.current_hp > 0:
-            if obj.body_image: obj.body_image.draw(draw_x, draw_y, 50, 50)
+            if obj.body_image: obj.body_image.draw(draw_x, draw_y, 50 * icon_scale, 50 * icon_scale)
         elif isinstance(obj, Portal):
-            if obj.image: obj.image.draw(draw_x, draw_y, 20, 20)
+            if obj.image: obj.image.draw(draw_x, draw_y, 20 * icon_scale, 20 * icon_scale)
         elif isinstance(obj, Princess):
-            if obj.image: obj.image.clip_draw(0, 0, obj.frame_width, obj.frame_height, draw_x, draw_y, 20, 20)
+            if obj.image: obj.image.clip_draw(0, 0, obj.frame_width, obj.frame_height, draw_x, draw_y, 20 * icon_scale,
+                                              20 * icon_scale)
         elif isinstance(obj, Potion):
-            if obj.image: obj.image.draw(draw_x, draw_y, 20, 20)
+            if obj.image: obj.image.draw(draw_x, draw_y, 20 * icon_scale, 20 * icon_scale)
+
     px = mm_x1 + (server.knight.world_x - view_left) * scale
     py = mm_y1 + (server.knight.world_y - view_bottom) * scale
 
     if server.knight.current_images:
-        server.knight.current_images['idle'].clip_draw(0, 192, 64, 64, px, py, 40, 40)
+        server.knight.current_images['idle'].clip_draw(0, 192, 64, 64, px, py, 40 * icon_scale, 40 * icon_scale)
 
 
 def draw_quest_board():
@@ -121,16 +134,22 @@ def draw_quest_board():
 
         target_id = current_quest.get('current_target_type', 4)
         target_name = monster_names.get(target_id, "알 수 없는 몬스터")
+
         minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
-        gap = 10
-        board_x = minimap_left_x - gap - (bg_image.w // 2)
+        gap = int(10 * UI_SCALE)
+        bg_w = bg_image.w * UI_SCALE
+        bg_h = bg_image.h * UI_SCALE
+        board_x = minimap_left_x - gap - (bg_w // 2)
         minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
         board_y = minimap_center_y
-        bg_image.draw(board_x, board_y)
+
+        bg_image.draw(board_x, board_y, bg_w, bg_h)
+
         title_text = f"{target_name} 사냥"
         count_text = f"{current_quest['current_kill_count']} / 10"
-        font.draw(board_x - 60, board_y + 15, title_text, (0, 0, 0))
-        font.draw(board_x - 20, board_y - 15, count_text, (200, 0, 0))
+        font.draw(board_x - (60 * UI_SCALE), board_y + (15 * UI_SCALE), title_text, (0, 0, 0))
+        font.draw(board_x - (20 * UI_SCALE), board_y - (15 * UI_SCALE), count_text, (200, 0, 0))
+
 
 def draw_ui():
     font = resource_manager.get_font()
@@ -148,14 +167,16 @@ def draw_ui():
             font.draw(20, config.CANVAS_HEIGHT - 30, "UI Load Error", (255, 0, 0))
         return
 
-    bar_max_width = 200
-    bar_height = 20
-    ui_x = 20
-    hp_bar_y = config.CANVAS_HEIGHT - 35
-    mp_bar_y = config.CANVAS_HEIGHT - 65
+    bar_max_width = int(200 * UI_SCALE)
+    bar_height = int(20 * UI_SCALE)
+    ui_x = int(20 * UI_SCALE)
+
+    hp_bar_y = config.CANVAS_HEIGHT - int(35 * UI_SCALE)
+    mp_bar_y = config.CANVAS_HEIGHT - int(65 * UI_SCALE)
 
     hp_ratio = server.knight.current_hp / server.knight.max_hp
     current_hp_width = int(bar_max_width * hp_ratio)
+
     bar_bg.draw(ui_x + bar_max_width // 2, hp_bar_y + bar_height // 2, bar_max_width, bar_height)
 
     if current_hp_width > 0:
@@ -170,10 +191,10 @@ def draw_ui():
         draw_x_mp = ui_x + current_mp_width // 2
         mp_bar.draw(draw_x_mp, mp_bar_y + bar_height // 2, current_mp_width, bar_height)
 
-    text_x = 20
+    text_x = int(20 * UI_SCALE)
     if font:
-        hp_text = f"HP: {server.knight.current_hp} / {server.knight.max_hp}"
-        mp_text = f"MP: {server.knight.current_mp} / {server.knight.max_mp}"
+        hp_text = f"HP: {int(server.knight.current_hp)} / {server.knight.max_hp}"
+        mp_text = f"MP: {int(server.knight.current_mp)} / {server.knight.max_mp}"
 
         font.draw(text_x + 6, hp_bar_y + 4, hp_text, (0, 0, 0))
         font.draw(text_x + 6, mp_bar_y + 4, mp_text, (0, 0, 0))
@@ -184,10 +205,9 @@ def draw_ui():
         return
 
     current_time = get_time()
-    icon_size = 48
-    icon_spacing = 10
-    icon_y = 40
-    key_text_y = icon_y + icon_size // 2 + 10
+    icon_size = int(48 * UI_SCALE)
+    icon_spacing = int(10 * UI_SCALE)
+    icon_y = int(40 * UI_SCALE)
 
     center_x = config.CANVAS_WIDTH // 2
     skill2_x = center_x
@@ -219,17 +239,19 @@ def draw_ui():
             image.draw(x, icon_y, icon_size, icon_size)
 
         if font:
-            key_text_y = icon_y + icon_size // 2 + 10
+            key_text_y = icon_y + icon_size // 2 + int(10 * UI_SCALE)
             font.draw(x - 5, key_text_y, keys[skill_name], (255, 255, 0))
 
     if hp_potion_img:
         hp_potion_img.draw(potion1_x, icon_y, icon_size, icon_size)
+        key_text_y = icon_y + icon_size // 2 + int(10 * UI_SCALE)
         if font:
             font.draw(potion1_x - 5, key_text_y, '5', (255, 255, 0))
             font.draw(potion1_x + 10, icon_y - 15, f'{server.knight.hp_potions}', (255, 255, 255))
 
     if mp_potion_img:
         mp_potion_img.draw(potion2_x, icon_y, icon_size, icon_size)
+        key_text_y = icon_y + icon_size // 2 + int(10 * UI_SCALE)
         if font:
             font.draw(potion2_x - 5, key_text_y, '6', (255, 255, 0))
             font.draw(potion2_x + 10, icon_y - 15, f'{server.knight.mp_potions}', (255, 255, 255))
@@ -242,10 +264,10 @@ def draw_ui():
             break
 
     if boss_obj and boss_obj.current_hp > 0:
+        bar_w = int(800 * UI_SCALE)
+        bar_h = int(30 * UI_SCALE)
         bar_x = config.CANVAS_WIDTH // 2
-        bar_y = config.CANVAS_HEIGHT - 40
-        bar_w = 800
-        bar_h = 30
+        bar_y = config.CANVAS_HEIGHT - int(40 * UI_SCALE)
 
         if bar_bg:
             bar_bg.draw(bar_x, bar_y, bar_w, bar_h)
@@ -253,23 +275,18 @@ def draw_ui():
         if hp_bar:
             hp_ratio = max(0, boss_obj.current_hp / boss_obj.max_hp)
             current_w = int(bar_w * hp_ratio)
-
-            left_edge = bar_x - (bar_w // 2)
-            draw_x = left_edge + (current_w // 2)
-
             if current_w > 0:
-                hp_bar.draw(draw_x, bar_y, current_w, bar_h)
+                hp_bar.draw(bar_x - (bar_w - current_w) // 2, bar_y, current_w, bar_h)
 
         if font:
             hp_text = f"{int(boss_obj.current_hp)} / {int(boss_obj.max_hp)}"
-            font.draw(bar_x - 50, bar_y, hp_text, (255, 255, 255))
+            font.draw(bar_x - int(50 * UI_SCALE), bar_y, hp_text, (255, 255, 255))
+            font.draw(bar_x - int(25 * UI_SCALE), bar_y + int(25 * UI_SCALE), "BOSS", (50, 255, 50))
 
-            font.draw(bar_x - 25, bar_y + 25, "BOSS", (50, 255, 50))
-
-        base_x = config.CANVAS_WIDTH // 2 + 200
-        icon_y = config.CANVAS_HEIGHT - 100
-        icon_size = 50
-        gap = 60
+        base_x = config.CANVAS_WIDTH // 2 + int(200 * UI_SCALE)
+        icon_y = config.CANVAS_HEIGHT - int(100 * UI_SCALE)
+        icon_size = int(50 * UI_SCALE)
+        gap = int(60 * UI_SCALE)
 
         icon1 = resource_manager.get_image('boss_skill_icon')
         if icon1:
@@ -291,6 +308,7 @@ def draw_ui():
                 if font: font.draw(x2 - 15, icon_y, f"{boss_obj.skill2_cd:.1f}", (255, 50, 50))
             else:
                 icon2.draw(x2, icon_y, icon_size, icon_size)
+
         icon3 = resource_manager.get_image('boss_skill3_icon')
         if icon3:
             x3 = base_x + gap * 2
@@ -302,5 +320,6 @@ def draw_ui():
                     font.draw(x3 - 15, icon_y, f"{boss_obj.skill3_cd:.1f}", (255, 50, 50))
             else:
                 icon3.draw(x3, icon_y, icon_size, icon_size)
+
     draw_quest_board()
     draw_mini_map()
