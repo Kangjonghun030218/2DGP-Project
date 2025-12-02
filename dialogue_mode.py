@@ -6,6 +6,7 @@ import server
 import resource_manager
 import config
 from ui import UI_SCALE
+import textwrap
 
 
 class DialogueState(BaseState):
@@ -35,8 +36,15 @@ class DialogueState(BaseState):
         image_left_edge = bg_x - (bg_w // 2)
 
         padding_x = int(60 * UI_SCALE)
-        padding_y = int(5 * UI_SCALE)
+        padding_y = int(20 * UI_SCALE)
 
         text_x = image_left_edge + padding_x
         text_y = bg_y + padding_y
-        font.draw(text_x, text_y, server.dialogue_message, (0, 0, 0))
+
+        lines = textwrap.wrap(server.dialogue_message, width=15)
+
+        line_height = 25 * UI_SCALE
+
+        for i, line in enumerate(lines):
+            current_line_y = text_y - (i * line_height)
+            font.draw(text_x, current_line_y, line, (0, 0, 0))
