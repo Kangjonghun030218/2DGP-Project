@@ -156,6 +156,33 @@ def draw_quest_board():
 
     if bg_image is None or font is None:
         return
+
+    minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
+    gap = int(10 * UI_SCALE)
+    bg_w = bg_image.w * UI_SCALE
+    bg_h = bg_image.h * UI_SCALE
+    board_x = minimap_left_x - gap - (bg_w // 2)
+    minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
+    board_y = minimap_center_y
+
+    if server.game_map and server.game_map.map_number == 3:
+        from monster import Monster
+
+        living_monsters = [obj for obj in server.world if isinstance(obj, Monster)]
+        count = len(living_monsters)
+
+        bg_image.draw(board_x, board_y, bg_w, bg_h)
+
+        title_text = "적들을 섬멸하라!"
+        count_text = f"남은 적: {count}마리"
+
+        title_width_est = len(title_text) * 12 * UI_SCALE
+        font.draw(board_x - (title_width_est // 2), board_y + (15 * UI_SCALE), title_text, (0, 0, 0))
+
+        count_width_est = len(count_text) * 10 * UI_SCALE
+        font.draw(board_x - (count_width_est // 2), board_y - (15 * UI_SCALE), count_text, (200, 0, 0))
+
+        return
     current_quest = server.quest_log.get('monster_hunt')
 
     if current_quest and current_quest['status'] == 'in_progress':
@@ -170,19 +197,12 @@ def draw_quest_board():
 
         target_id = current_quest.get('current_target_type', 4)
         target_name = monster_names.get(target_id, "알 수 없는 몬스터")
-        minimap_left_x = config.CANVAS_WIDTH - MINIMAP_SIZE - MINIMAP_MARGIN
-        gap = int(10 * UI_SCALE)
 
-        bg_w = bg_image.w * UI_SCALE
-        bg_h = bg_image.h * UI_SCALE
-
-        board_x = minimap_left_x - gap - (bg_w // 2)
-
-        minimap_center_y = config.CANVAS_HEIGHT - MINIMAP_MARGIN - (MINIMAP_SIZE // 2)
-        board_y = minimap_center_y
         bg_image.draw(board_x, board_y, bg_w, bg_h)
+
         title_text = f"{target_name} 사냥"
         count_text = f"{current_quest['current_kill_count']} / 10"
+
         title_width_est = len(title_text) * 15 * UI_SCALE
         font.draw(board_x - (title_width_est // 2), board_y + (15 * UI_SCALE), title_text, (0, 0, 0))
 
