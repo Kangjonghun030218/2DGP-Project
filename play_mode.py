@@ -64,7 +64,7 @@ class PlayState(BaseState):
             server.knight.world_x = 800
             server.knight.world_y = 500
 
-            village_portal = Portal(700, 500, 'village')
+            village_portal = Portal(300, 300, 'village')
             server.world.append(village_portal)
 
             monster_spawn_zones = [
