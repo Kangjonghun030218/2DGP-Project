@@ -81,6 +81,8 @@ class PlayState(BaseState):
         elif map_number == 3:
             server.knight.world_x = 1200
             server.knight.world_y = 300
+            server.map_message = "모든 몬스터들을 물리치세요, 보스 포탈이 열릴 겁니다."
+            server.map_message_start_time = get_time()
             monster_spawn_zones = [
                 ((300, 600, 2400, 1200), 5, 5),
                 ((300, 800, 2400, 1400), 6, 5),

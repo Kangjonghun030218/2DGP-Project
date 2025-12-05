@@ -17,3 +17,6 @@ quest_log = {
 dialogue_message = None
 quest_board_active = True
 cam_x, cam_y = 0, 0
+
+map_message = None
+map_message_start_time = 0.0

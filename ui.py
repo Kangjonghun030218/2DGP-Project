@@ -15,6 +15,42 @@ MINIMAP_RANGE = 1200
 MINIMAP_MARGIN = int(20 * UI_SCALE)
 MINIMAP_ALPHA = 0.5
 
+big_font = None
+
+
+def draw_map_message():
+    global big_font
+
+    if not hasattr(server, 'map_message') or not server.map_message:
+        return
+
+    current_time = get_time()
+    elapsed_time = current_time - server.map_message_start_time
+
+    wait_time = 2.0
+    fade_time = 2.0
+    total_duration = wait_time + fade_time
+
+    if elapsed_time > total_duration:
+        server.map_message = None
+        return
+
+    big_font = load_font('resource/malgunbd.ttf', 60)
+
+    if elapsed_time < wait_time:
+        intensity = 255
+    else:
+        progress = (elapsed_time - wait_time) / fade_time
+        intensity = int(255 * (1 - progress))
+        if intensity < 0: intensity = 0
+
+    text = server.map_message
+
+    text_width_estimate = len(text) * 40
+    x = (config.CANVAS_WIDTH - text_width_estimate) // 2
+    y = config.CANVAS_HEIGHT - 200
+
+    big_font.draw(x, y, text, (intensity, 0, 0))
 
 def draw_mini_map():
     if not server.knight or not server.game_map:
@@ -325,3 +361,4 @@ def draw_ui():
 
     draw_quest_board()
     draw_mini_map()
+    draw_map_message()
