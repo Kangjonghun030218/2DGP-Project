@@ -14,9 +14,9 @@ class Portal:
             self.w, self.h = 100, 100
         elif self.portal_type == 'boss':
             self.image = resource_manager.get_image('boss_portal')
-            self.w, self.h = 150, 150
+            self.w, self.h = 200, 250
         elif self.portal_type == 'map3':
-            self.image = resource_manager.get_image('portal')
+            self.image = resource_manager.get_image('boss_load_portal')
             self.w, self.h = 100, 100
         elif self.portal_type == 'boss_clear':
             self.image = resource_manager.get_image('boss_clear_portal')

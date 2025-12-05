@@ -148,8 +148,10 @@ def load_all():
     _images['npc_man'] = load_image('resource/Man_idle.png')
     _images['npc_boy'] = load_image('resource/Boy_idle.png')
     #포탈
-    _images['portal'] = load_image('resource/portal.png')
+    _images['portal'] = load_image('resource/battle_filed_portal.png')
     _images['boss_portal'] = load_image('resource/boss_portal.png')
+    _images['boss_load_portal'] = load_image('resource/boss_load_portal.png')
+    _images['village_portal'] = load_image('resource/village_portal.png')
     #보스
     _images['boss_body'] = load_image('resource/body.png')
     _images['boss_arm_l'] = load_image('resource/l_hand.png')
