@@ -764,7 +764,7 @@ class Knight:
     def respawn(self):
         print("캐릭터가 부활합니다. (마을에서 스폰)")
         self.world_x = 1000
-        self.world_y = 350
+        self.world_y = 300
         self.current_hp = self.max_hp
         self.current_mp = self.max_mp
         self.state = 'idle'
