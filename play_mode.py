@@ -11,6 +11,7 @@ import random
 from boss import Boss
 from princess import Princess
 from portal import Portal
+from effect import LevelUpEffect
 
 import server
 import config
@@ -213,6 +214,10 @@ class PlayState(BaseState):
             elif isinstance(obj, Projectile):
                 if obj.update(frame_time):
                     removed_objects.append(obj)
+            elif isinstance(obj, LevelUpEffect):
+                obj.update(frame_time)
+                if obj.is_finished:
+                    removed_objects.append(obj)
             elif isinstance(obj, NPC):
                 obj.update(frame_time)
             elif isinstance(obj, Boss):
@@ -265,13 +270,20 @@ class PlayState(BaseState):
             state_machine.change(PlayState())
             return
 
+
         if server.knight:
             hunt_quest = server.quest_log['monster_hunt']
             current_stage = hunt_quest['total_quest_stage']
+            leveled_up = False
             if current_stage == 3 and server.knight.level == 1:
                 server.knight.upgrade_level()
+                leveled_up = True
             elif current_stage == 5 and server.knight.level == 2:
                 server.knight.upgrade_level()
+                leveled_up = True
+            if leveled_up:
+                effect = LevelUpEffect(server.knight.world_x, server.knight.world_y)
+                server.world.append(effect)
 
         if server.knight and server.game_map:
             target_cam_x = server.knight.world_x - config.CANVAS_WIDTH // 2

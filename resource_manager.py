@@ -187,6 +187,14 @@ def load_all():
 
     # --- 폰트 ---
     _fonts['default'] =  load_font('resource/malgunbd.ttf', 20)
+    #레벨업 이펙트
+    _images['level_up_effect'] = [
+        load_image('resource/level_up_1.png'),
+        load_image('resource/level_up_2.png'),
+        load_image('resource/level_up_3.png'),
+        load_image('resource/level_up_4.png'),
+        load_image('resource/level_up_5.png')
+    ]
 
 
 
