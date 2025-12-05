@@ -21,6 +21,9 @@ class Portal:
         elif self.portal_type == 'boss_clear':
             self.image = resource_manager.get_image('boss_clear_portal')
             self.w, self.h = 200, 200
+        elif self.portal_type == 'village':
+            self.image = resource_manager.get_image('village_portal')
+            self.w, self.h = 100, 100
         else:
             self.image = resource_manager.get_image('portal')
             self.w, self.h = 100, 100

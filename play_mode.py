@@ -63,6 +63,10 @@ class PlayState(BaseState):
         elif map_number == 2:
             server.knight.world_x = 800
             server.knight.world_y = 500
+
+            village_portal = Portal(700, 500, 'village')
+            server.world.append(village_portal)
+
             monster_spawn_zones = [
                 ((700, 2150, 1000, 2350), 1, 10),
                 ((2100, 1600, 2800, 1900), 2, 10),
@@ -373,6 +377,8 @@ class PlayState(BaseState):
             if check_collision(knight_bb, portal.get_bb()):
                 if portal.portal_type == 'normal' and server.game_map.map_number == 1:
                     self.reset_world(2)
+                elif portal.portal_type == 'village' and server.game_map.map_number == 2:
+                    self.reset_world(1)
                 elif portal.portal_type == 'map3' and server.game_map.map_number == 1:
                     self.reset_world(3)
                 elif portal.portal_type == 'boss' and server.game_map.map_number == 3:
