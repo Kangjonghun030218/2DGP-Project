@@ -181,7 +181,9 @@ def load_all():
     _images['dialogue_bg'] = load_image('resource/quest_space.png')
 
     #퀘스트
-    _images['quest_icon'] = load_image('resource/quest_icon.png')
+    _images['quest_start'] = load_image('resource/quest_start.png')
+    _images['quest_ing'] = load_image('resource/quest_ing.png')
+    _images['quest_end'] = load_image('resource/quest_end.png')
 
     # --- 폰트 ---
     _fonts['default'] =  load_font('resource/malgunbd.ttf', 20)
