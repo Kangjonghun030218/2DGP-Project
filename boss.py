@@ -79,9 +79,9 @@ class Boss:
         beam_len = 1000
         beam_h = 100
         if self.dir == 1:
-            return (self.x, self.y - beam_h // 2, self.x + beam_len, self.y + beam_h // 2)
+            return (self.x + 100, self.y - beam_h // 2, self.x + 100 + beam_len, self.y + beam_h // 2)
         else:
-            return (self.x - beam_len, self.y - beam_h // 2, self.x, self.y + beam_h // 2)
+            return (self.x - 100 - beam_len, self.y - beam_h // 2, self.x - 100, self.y + beam_h // 2)
 
     def start_skill3(self):
         print("보스 스킬3: 차징 시작!")
@@ -354,7 +354,7 @@ class Boss:
                 if self.fire_anim:
                     idx = min(self.skill3_frame, 35)
                     img = self.fire_anim[idx]
-                    offset_x = 300 * self.dir
+                    offset_x = 600 * self.dir
                     img.clip_composite_draw(0, 0, img.w, img.h,
                                             0, flip, sx + offset_x, sy, 1000, 400)
 
