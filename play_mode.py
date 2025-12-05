@@ -105,7 +105,7 @@ class PlayState(BaseState):
 
             self.princess = Princess()
             self.princess.x = 1600
-            self.princess.y = 300
+            self.princess.y = 600
             server.world.append(self.princess)
 
         if server.knight not in server.world:
