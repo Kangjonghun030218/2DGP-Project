@@ -147,6 +147,8 @@ class PlayState(BaseState):
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
+            elif event.key == SDLK_x:
+                self.check_portal()
             elif event.key == SDLK_0:
                 state_machine.change(menu_mode.MenuState())
             elif event.key == SDLK_1:
@@ -257,7 +259,7 @@ class PlayState(BaseState):
                     print("보스 격파! 클리어 포탈 생성")
                     clear_portal = Portal(1600, 350, 'boss_clear')
                     server.world.append(clear_portal)
-        self.check_portal()
+        #self.check_portal()
         if server.knight and server.knight.is_dead_and_animation_finished:
             self.start_map_number = 1
             state_machine.change(PlayState())
