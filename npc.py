@@ -2,6 +2,7 @@ from pico2d import *
 import math
 import server
 import resource_manager
+from portal import Portal
 
 class NPC:
     def __init__(self):
@@ -59,6 +60,9 @@ class NPC:
                     if hunt_quest['total_quest_stage'] > 6:
                         server.dialogue_message = "고마워 모든 미션을 클리어 해줬어! 이제 길을 떠나도 좋아."
                         hunt_quest['status'] = 'completed'
+
+                        new_portal = Portal(1290, 884, 'map3')
+                        server.world.append(new_portal)
                     else:
                         hunt_quest['current_target_type'] = hunt_quest['total_quest_stage']
                         hunt_quest['current_kill_count'] = 0
