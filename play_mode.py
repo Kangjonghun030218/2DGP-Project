@@ -81,8 +81,6 @@ class PlayState(BaseState):
         elif map_number == 3:
             server.knight.world_x = 1200
             server.knight.world_y = 300
-            boss_portal = Portal(1300, 4273, 'boss')
-            server.world.append(boss_portal)
             monster_spawn_zones = [
                 ((300, 600, 2400, 1200), 5, 5),
                 ((300, 800, 2400, 1400), 6, 5),
@@ -153,6 +151,8 @@ class PlayState(BaseState):
                 state_machine.push(map_view_mode.MapViewState())
             elif event.key == SDLK_4:
                 self.reset_world(4)
+            elif event.key == SDLK_l:
+                self.reset_world(3)
             elif event.key == SDLK_5:
                 if server.knight: server.knight.use_potion('hp')
             elif event.key == SDLK_6:
@@ -227,12 +227,19 @@ class PlayState(BaseState):
                             obj.monster_type == hunt_quest['current_target_type']):
                         if hunt_quest['current_kill_count'] < 10:
                             hunt_quest['current_kill_count'] += 1
+                    if server.game_map.map_number == 3:
+                        remaining_monsters = [m for m in server.world if isinstance(m, Monster)]
+                        if not remaining_monsters:
+                            print("맵3 클리어! 보스 포탈 생성")
+                            boss_portal = Portal(1300, 4273, 'boss')
+                            server.world.append(boss_portal)
                     if random.random() < 0.3:
                         potion_type = random.choice(['hp', 'mp'])
                         new_potion = Potion(obj.world_x1, obj.world_y1, potion_type)
                         server.world.append(new_potion)
                 if isinstance(obj, Monster):
-                    self.respawn_queue.append((obj, get_time() + RESPAWN_TIME))
+                    if server.game_map.map_number != 3:
+                        self.respawn_queue.append((obj, get_time() + RESPAWN_TIME))
         if server.game_map.map_number == 4:
             if self.boss and self.boss.current_hp <= 0:
                 portal_exists = False
