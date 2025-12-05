@@ -26,31 +26,14 @@ class NPC:
         dist_to_2 = math.sqrt((self.world_x2 - knight_x) ** 2 + (self.world_y2 - knight_y) ** 2)
         dist_to_3 = math.sqrt((self.world_x3 - knight_x) ** 2 + (self.world_y3 - knight_y) ** 2)
 
-        check_quest = server.quest_log['check_npc']
         hunt_quest = server.quest_log['monster_hunt']
 
         if dist_to_1 < self.talk_range:
-            if check_quest['status'] == 'not_started':
-                server.dialogue_message = "hello?"
-                check_quest['status'] = 'in_progress'
-            elif check_quest['status'] == 'in_progress':
-                if check_quest['talked_to_man']:
-                    server.dialogue_message = "hi!"
-                    check_quest['status'] = 'completed'
-                else:
-                    server.dialogue_message = "nice to meet you"
-            elif check_quest['status'] == 'completed':
-                server.dialogue_message = "thank you."
+            server.dialogue_message = "안녕하세요? 날씨가 참 좋네요. 조심해서 다니세요."
             return True
 
         elif dist_to_2 < self.talk_range:
-            if check_quest['status'] == 'not_started':
-                server.dialogue_message = "hello2"
-            elif check_quest['status'] == 'in_progress':
-                server.dialogue_message = "hi2"
-                check_quest['talked_to_man'] = True
-            elif check_quest['status'] == 'completed':
-                server.dialogue_message = "thank you2."
+            server.dialogue_message = "허허, 젊은이 반갑구만. 마을 밖은 위험하다네."
             return True
 
         elif dist_to_3 < self.talk_range:
@@ -74,7 +57,7 @@ class NPC:
                     hunt_quest['total_quest_stage'] += 1
 
                     if hunt_quest['total_quest_stage'] > 6:
-                        server.dialogue_message = "고마워 모든 미션을 클리어 해줬어!"
+                        server.dialogue_message = "고마워 모든 미션을 클리어 해줬어! 이제 길을 떠나도 좋아."
                         hunt_quest['status'] = 'completed'
                     else:
                         hunt_quest['current_target_type'] = hunt_quest['total_quest_stage']
