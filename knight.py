@@ -826,6 +826,12 @@ class Knight:
         print(f"--- 장비 업그레이드! 레벨 {self.level} 달성 ---")
 
         if self.level == 2:
+            self.max_hp += 100
+            self.max_mp += 50
             self.current_images = self.images_lvl2
         elif self.level == 3:
+            self.max_hp += 150
+            self.max_mp += 50
             self.current_images = self.images_lvl3
+        self.current_hp = self.max_hp
+        self.current_mp = self.max_mp
