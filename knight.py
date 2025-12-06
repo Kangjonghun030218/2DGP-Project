@@ -751,7 +751,7 @@ class Knight:
         self.is_hit = True
         self.hit_start_time = get_time()
         self.frame = 0
-        server.world.append(DamageText(self.world_x, self.world_y + 50, amount))
+        server.world.append(DamageText(self.world_x, self.world_y + 50, amount, color=(200, 50, 255)))
         dx = self.world_x - attacker_x
         dy = self.world_y - attacker_y
         dist = math.sqrt(dx**2 + dy**2)

@@ -3,7 +3,7 @@ import resource_manager
 
 
 class DamageText:
-    def __init__(self, x, y, damage):
+    def __init__(self, x, y, damage, color=(255, 0, 0)):
         self.x, self.y = x, y
         self.damage = damage
 
@@ -15,7 +15,7 @@ class DamageText:
 
 
         self.is_finished = False
-        self.color = (255, 50, 50)
+        self.color = color
 
     def update(self, frame_time):
         self.timer += frame_time
