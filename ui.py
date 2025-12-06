@@ -276,7 +276,7 @@ def draw_ui():
 
     positions = {'skill1': skill1_x, 'skill2': skill2_x, 'skill3': skill3_x}
     images = {'skill1': skill1_img, 'skill2': skill2_img, 'skill3': skill3_img}
-    keys = {'skill1': '7', 'skill2': '8', 'skill3': '9'}
+    keys = {'skill1': 'a', 'skill2': 's', 'skill3': 'd'}
 
     for skill_name in ['skill1', 'skill2', 'skill3']:
         x = positions[skill_name]
