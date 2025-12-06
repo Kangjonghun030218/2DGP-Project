@@ -135,6 +135,8 @@ class Knight:
         self.dir_x = 0
         self.dir_y = 0
 
+        self.key_state = {'left': False, 'right': False, 'up': False, 'down': False}
+
         self.max_hp = 300
         self.current_hp = 300
         self.max_mp = 100
@@ -693,13 +695,13 @@ class Knight:
                     self.skill_name = 'normal'
                     self.hit_list = []
             elif event.key == SDLK_LEFT:
-                self.dir_x -= 1
+                self.key_state['left'] = True
             elif event.key == SDLK_RIGHT:
-                self.dir_x += 1
-            elif event.key == SDLK_DOWN:
-                self.dir_y -= 1
+                self.key_state['right'] = True
             elif event.key == SDLK_UP:
-                self.dir_y += 1
+                self.key_state['up'] = True
+            elif event.key == SDLK_DOWN:
+                self.key_state['down'] = True
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_r:
@@ -707,13 +709,16 @@ class Knight:
             elif event.key == SDLK_a:
                 self.a_key_pressed = False
             elif event.key == SDLK_LEFT:
-                self.dir_x += 1
+                self.key_state['left'] = False
             elif event.key == SDLK_RIGHT:
-                self.dir_x -= 1
-            elif event.key == SDLK_DOWN:
-                self.dir_y += 1
+                self.key_state['right'] = False
             elif event.key == SDLK_UP:
-                self.dir_y -= 1
+                self.key_state['up'] = False
+            elif event.key == SDLK_DOWN:
+                self.key_state['down'] = False
+
+        self.dir_x = int(self.key_state['right']) - int(self.key_state['left'])
+        self.dir_y = int(self.key_state['up']) - int(self.key_state['down'])
 
     def get_attack_bb(self):
         l, b, r, t = self.get_bb()
@@ -792,6 +797,7 @@ class Knight:
         self.direct = 'down'
         self.dir_x = 0
         self.dir_y = 0
+        self.reset_movement()
 
     def use_potion(self, potion_type):
         if self.state == 'dead' or self.is_hit:
@@ -846,3 +852,11 @@ class Knight:
             self.current_images = self.images_lvl3
         self.current_hp = self.max_hp
         self.current_mp = self.max_mp
+
+    def reset_movement(self):
+        self.key_state = {'left': False, 'right': False, 'up': False, 'down': False}
+        self.dir_x = 0
+        self.dir_y = 0
+        if self.state in ['move', 'run']:
+            self.state = 'idle'
+            self.frame = 0

@@ -40,7 +40,7 @@ class PlayState(BaseState):
     def enter(self):
         if server.knight is None:
             server.knight = Knight()
-
+        server.knight.reset_movement()
         self.reset_world(self.start_map_number)
 
     def exit(self):
@@ -156,12 +156,16 @@ class PlayState(BaseState):
             elif event.key == SDLK_x:
                 self.check_portal()
             elif event.key == SDLK_0:
+                server.knight.reset_movement()
                 state_machine.change(menu_mode.MenuState())
             elif event.key == SDLK_1:
                 self.reset_world(1)
+                server.knight.reset_movement()
             elif event.key == SDLK_2:
                 self.reset_world(2)
+                server.knight.reset_movement()
             elif event.key == SDLK_m:
+                server.knight.reset_movement()
                 state_machine.push(map_view_mode.MapViewState())
             elif event.key == SDLK_4:
                 self.reset_world(4)
@@ -190,6 +194,7 @@ class PlayState(BaseState):
             elif event.key == SDLK_p:
                 print(f"현재 좌표: {int(server.knight.world_x)}, {int(server.knight.world_y)}")
             elif event.key == SDLK_SPACE:
+                server.knight.reset_movement()
                 for obj in server.world:
                     if isinstance(obj, NPC):
                         if obj.interact(server.knight.world_x, server.knight.world_y):
