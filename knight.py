@@ -4,6 +4,7 @@ import resource_manager
 import config
 import math
 from projectile import Projectile
+from damage_text import DamageText
 
 
 PIXEL_PER_METER = (10.0 / 0.3)
@@ -134,8 +135,8 @@ class Knight:
         self.dir_x = 0
         self.dir_y = 0
 
-        self.max_hp = 100
-        self.current_hp = 100
+        self.max_hp = 300
+        self.current_hp = 300
         self.max_mp = 50
         self.current_mp = 50
 
@@ -750,7 +751,7 @@ class Knight:
         self.is_hit = True
         self.hit_start_time = get_time()
         self.frame = 0
-
+        server.world.append(DamageText(self.world_x, self.world_y + 50, amount))
         dx = self.world_x - attacker_x
         dy = self.world_y - attacker_y
         dist = math.sqrt(dx**2 + dy**2)
@@ -826,11 +827,11 @@ class Knight:
         print(f"--- 장비 업그레이드! 레벨 {self.level} 달성 ---")
 
         if self.level == 2:
-            self.max_hp += 100
+            self.max_hp += 200
             self.max_mp += 50
             self.current_images = self.images_lvl2
         elif self.level == 3:
-            self.max_hp += 150
+            self.max_hp += 300
             self.max_mp += 50
             self.current_images = self.images_lvl3
         self.current_hp = self.max_hp
