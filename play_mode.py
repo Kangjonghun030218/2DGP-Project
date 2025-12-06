@@ -308,11 +308,32 @@ class PlayState(BaseState):
             knight_attack_box = server.knight.get_attack_bb()
             for monster in monsters_in_world:
                 if monster.current_hp > 0 and check_collision(knight_attack_box, monster.get_bb()):
-                    damage = 100
-                    if server.knight.skill_name == 'skill1':
-                        damage = 20
-                    elif server.knight.skill_name == 'skill2':
-                        damage = 30
+                    damage = 0
+                    lvl = server.knight.level
+                    skill = server.knight.skill_name
+
+                    if skill == 'skill1':
+                        if lvl == 1:
+                            damage = 50
+                        elif lvl == 2:
+                            damage = 100
+                        elif lvl == 3:
+                            damage = 150
+                    elif skill == 'skill2':
+                        if lvl == 1:
+                            damage = 80
+                        elif lvl == 2:
+                            damage = 150
+                        elif lvl == 3:
+                            damage = 250
+                    else:
+                        if lvl == 1:
+                            damage = 30
+                        elif lvl == 2:
+                            damage = 50
+                        elif lvl == 3:
+                            damage = 80
+
                     monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
 
         projectiles_in_world = [obj for obj in server.world if isinstance(obj, Projectile)]
@@ -345,7 +366,32 @@ class PlayState(BaseState):
                 for obj in server.world:
                     if isinstance(obj, Boss) and obj.current_hp > 0:
                         if check_collision(knight_attack_box, obj.get_bb()):
-                            obj.take_damage(50)
+                            damage = 0
+                            lvl = server.knight.level
+                            skill = server.knight.skill_name
+
+                            if skill == 'skill1':
+                                if lvl == 1:
+                                    damage = 50
+                                elif lvl == 2:
+                                    damage = 100
+                                elif lvl == 3:
+                                    damage = 150
+                            elif skill == 'skill2':
+                                if lvl == 1:
+                                    damage = 80
+                                elif lvl == 2:
+                                    damage = 150
+                                elif lvl == 3:
+                                    damage = 250
+                            else:
+                                if lvl == 1:
+                                    damage = 30
+                                elif lvl == 2:
+                                    damage = 50
+                                elif lvl == 3:
+                                    damage = 80
+                            obj.take_damage(damage)
 
         for obj in server.world:
             if isinstance(obj, Boss) and obj.current_hp > 0:
