@@ -156,11 +156,11 @@ class PlayState(BaseState):
                 self.reset_world(1)
             elif event.key == SDLK_2:
                 self.reset_world(2)
-            elif event.key == SDLK_3:
+            elif event.key == SDLK_m:
                 state_machine.push(map_view_mode.MapViewState())
             elif event.key == SDLK_4:
                 self.reset_world(4)
-            elif event.key == SDLK_l:
+            elif event.key == SDLK_3:
                 self.reset_world(3)
             elif event.key == SDLK_5:
                 if server.knight: server.knight.use_potion('hp')
