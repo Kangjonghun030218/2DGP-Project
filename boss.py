@@ -23,8 +23,8 @@ class Boss:
         self.charge_anim = resource_manager.get_image('boss_charge_anim')
         self.fire_anim = resource_manager.get_image('boss_fire_anim')
 
-        self.max_hp = 2000
-        self.current_hp = 2000
+        self.max_hp = 30000
+        self.current_hp = 30000
         self.speed = 100.0
         self.detect_range = 1200
         self.attack_range_limit = 400

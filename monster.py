@@ -80,10 +80,28 @@ class Monster:
         self.monster_type = a
         if a <= 3:
             self.kinMonster = 1
-            self.max_hp = 100
         elif a > 3:
             self.kinMonster = 2
-            self.max_hp = 50
+
+        if self.monster_type == 1:
+            self.max_hp = 500
+            self.attack_range = 100
+        elif self.monster_type == 2:
+            self.max_hp = 1000
+            self.attack_range = 100
+            self.attack_range = 80
+        elif self.monster_type == 3:
+            self.max_hp = 1500
+            self.attack_range = 120
+
+        elif self.monster_type == 4:
+            self.max_hp = 150
+            self.attack_range = 80
+        elif self.monster_type == 5:
+            self.max_hp = 200
+        elif self.monster_type == 6:
+            self.max_hp = 300
+            self.attack_range = 100
         self.current_hp = self.max_hp
 
         if a == 1:
