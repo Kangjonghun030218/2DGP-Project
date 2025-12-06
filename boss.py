@@ -45,15 +45,15 @@ class Boss:
         self.rocket_target_pos = (0, 0)
         self.rocket_current_pos = [0, 0]
 
-        self.skill1_max_cd = 10.0
-        self.skill1_cd = 10.0
+        self.skill1_max_cd = 15.0
+        self.skill1_cd = 15.0
         self.skill1_active = False
         self.skill1_timer = 0.0
         self.skill1_pos = (0, 0)
         self.skill1_hit = False
 
-        self.skill2_max_cd = 7.0
-        self.skill2_cd = 5.0
+        self.skill2_max_cd = 10.0
+        self.skill2_cd = 10.0
         self.skill2_active = False
         self.skill2_timer = 0.0
         self.skill2_pos = (0, 0)
@@ -64,7 +64,7 @@ class Boss:
         self.skill3_timer = 0.0
         self.skill3_frame = 0
         self.skill3_cd = 0
-        self.skill3_max_cd = 20.0
+        self.skill3_max_cd = 25.0
 
         self.w, self.h = 350, 450
         self.collision_box = (200, 300)
