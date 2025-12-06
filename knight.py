@@ -167,6 +167,8 @@ class Knight:
         self.death_max_frame = 7
         self.is_dead_and_animation_finished = False
 
+        self.hit_list = []
+
         self.clip_y_table = {
             'down': 192,
             'left': 128,
@@ -610,7 +612,7 @@ class Knight:
 
         if current_time - last_used > cooldown:
             print(f"[{self.skill_name}] 스킬 발동!")
-
+            self.hit_list = []
             if self.skill_name == 'skill1':
                 self.is_effect_active = True
                 self.effect_start_time = current_time
@@ -678,6 +680,7 @@ class Knight:
                     self.state = 'attack'
                     self.frame = 0
                     self.skill_name = 'normal'
+                    self.hit_list = []  # [추가] 일반 공격 시작 시 타격 리스트 초기화
             elif event.key == SDLK_LEFT:
                 self.dir_x -= 1
             elif event.key == SDLK_RIGHT:

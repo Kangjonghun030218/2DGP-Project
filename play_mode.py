@@ -24,6 +24,7 @@ import dialogue_mode
 
 
 from portal import Portal
+from damage_text import DamageText
 
 PICKUP_RANGE = 50
 
@@ -218,6 +219,10 @@ class PlayState(BaseState):
                 obj.update(frame_time)
                 if obj.is_finished:
                     removed_objects.append(obj)
+            elif isinstance(obj, DamageText):
+                obj.update(frame_time)
+                if obj.is_finished:
+                    removed_objects.append(obj)
             elif isinstance(obj, NPC):
                 obj.update(frame_time)
             elif isinstance(obj, Boss):
@@ -307,6 +312,9 @@ class PlayState(BaseState):
         if knight_attack_frame:
             knight_attack_box = server.knight.get_attack_bb()
             for monster in monsters_in_world:
+                if monster in server.knight.hit_list:
+                    continue
+
                 if monster.current_hp > 0 and check_collision(knight_attack_box, monster.get_bb()):
                     damage = 0
                     lvl = server.knight.level
@@ -335,6 +343,8 @@ class PlayState(BaseState):
                             damage = 80
 
                     monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
+                    server.world.append(DamageText(monster.world_x1, monster.world_y1 + 50, damage))
+                    server.knight.hit_list.append(monster)
 
         projectiles_in_world = [obj for obj in server.world if isinstance(obj, Projectile)]
         for obj in projectiles_in_world:
@@ -365,6 +375,9 @@ class PlayState(BaseState):
                 knight_attack_box = server.knight.get_attack_bb()
                 for obj in server.world:
                     if isinstance(obj, Boss) and obj.current_hp > 0:
+                        if obj in server.knight.hit_list:
+                            continue
+
                         if check_collision(knight_attack_box, obj.get_bb()):
                             damage = 0
                             lvl = server.knight.level
@@ -392,6 +405,8 @@ class PlayState(BaseState):
                                 elif lvl == 3:
                                     damage = 80
                             obj.take_damage(damage)
+                            server.world.append(DamageText(obj.x, obj.y + 150, damage))
+                            server.knight.hit_list.append(obj)
 
         for obj in server.world:
             if isinstance(obj, Boss) and obj.current_hp > 0:
