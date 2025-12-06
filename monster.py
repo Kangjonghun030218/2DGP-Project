@@ -246,6 +246,23 @@ class Monster:
                 screen_x1, screen_y1,
                 100, 100
             )
+        if self.state != 'dead' or (self.state == 'dead' and self.frame_timer < self.time_per_frame_dead):
+            bar_bg = resource_manager.get_image('bar_bg')
+            bar_hp = resource_manager.get_image('bar_hp')
+
+            if bar_bg and bar_hp:
+                # 설정 값
+                bar_width = 60
+                bar_height = 8
+                y_offset = 50
+                hp_ratio = max(0.0, self.current_hp / self.max_hp)
+                current_bar_width = int(bar_width * hp_ratio)
+                bar_bg.draw(screen_x1, screen_y1 + y_offset, bar_width, bar_height)
+
+                if current_bar_width > 0:
+                    left_edge = screen_x1 - (bar_width / 2)
+                    new_center_x = left_edge + (current_bar_width / 2)
+                    bar_hp.draw(new_center_x, screen_y1 + y_offset, current_bar_width, bar_height)
 
     def respawn(self):
         self.world_x1 = self.initial_x
