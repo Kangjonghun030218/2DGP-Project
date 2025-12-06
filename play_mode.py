@@ -350,7 +350,18 @@ class PlayState(BaseState):
         for obj in projectiles_in_world:
             for monster in monsters_in_world:
                 if monster.current_hp > 0 and check_collision(obj.get_bb(), monster.get_bb()):
-                    monster.take_damage(15, obj.world_x, obj.world_y)
+                    damage = 0
+                    lvl = server.knight.level
+
+                    if lvl == 1:
+                        damage = 50
+                    elif lvl == 2:
+                        damage = 80
+                    elif lvl == 3:
+                        damage = 120
+
+                    monster.take_damage(damage, obj.world_x, obj.world_y)
+                    server.world.append(DamageText(monster.world_x1, monster.world_y1 + 50, damage))
                     if obj in server.world:
                         server.world.remove(obj)
                     break
