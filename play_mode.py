@@ -28,7 +28,7 @@ from damage_text import DamageText
 PICKUP_RANGE = 50
 
 RESPAWN_TIME = 5.0
-
+cheat_damage = 0
 
 class PlayState(BaseState):
     def __init__(self):
@@ -74,7 +74,7 @@ class PlayState(BaseState):
                 ((700, 2150, 1000, 2350), 6, 10),
                 ((2100, 1600, 2800, 1900), 1, 10),
                 ((3320, 2350, 3700, 2450), 3, 10),
-                ((3950, 1220, 4100, 1500), 4, 5),
+                ((3950, 1220, 4100, 1500), 2, 5),
                 ((4000, 1800, 4100, 2000), 2, 5),
                 ((600, 1250, 1000, 1500), 4, 10),
                 ((1350, 1050, 1700, 1200), 5, 10)
@@ -150,6 +150,7 @@ class PlayState(BaseState):
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
+            global cheat_damage
             if event.key == SDLK_ESCAPE:
                 game_framework.quit()
             elif event.key == SDLK_x:
@@ -166,6 +167,10 @@ class PlayState(BaseState):
                 self.reset_world(4)
             elif event.key == SDLK_3:
                 self.reset_world(3)
+            elif event.key == SDLK_8:
+                cheat_damage = 0
+            elif event.key == SDLK_9:
+                cheat_damage = 99999
             elif event.key == SDLK_h:
                 self.show_help=not self.show_help
             elif event.key == SDLK_5:
@@ -200,6 +205,7 @@ class PlayState(BaseState):
 
     def update(self, frame_time):
         current_time = get_time()
+        global cheat_damage
         for entry in self.respawn_queue[:]:
             monster, respawn_at = entry
             if current_time >= respawn_at:
@@ -339,27 +345,30 @@ class PlayState(BaseState):
                             hit_count = 8
                     for i in range(hit_count):
                         damage = 0
-                        if skill == 'skill1':
-                            if lvl == 1:
-                                damage = random.randint(50, 70)
-                            elif lvl == 2:
-                                damage = random.randint(150, 180)
-                            elif lvl == 3:
-                                damage = random.randint(300, 350)
-                        elif skill == 'skill2':
-                                if lvl == 1:
-                                    damage = random.randint(30, 50)
-                                elif lvl == 2:
-                                    damage = random.randint(120, 160)
-                                elif lvl == 3:
-                                    damage = random.randint(200, 300)
+                        if cheat_damage > 0:
+                            damage = cheat_damage
                         else:
-                            if lvl == 1:
-                                damage = random.randint(20, 30)
-                            elif lvl == 2:
-                                damage = random.randint(50, 70)
-                            elif lvl == 3:
-                                damage = random.randint(100, 120)
+                            if skill == 'skill1':
+                                if lvl == 1:
+                                    damage = random.randint(50, 70)
+                                elif lvl == 2:
+                                    damage = random.randint(150, 180)
+                                elif lvl == 3:
+                                    damage = random.randint(300, 350)
+                            elif skill == 'skill2':
+                                    if lvl == 1:
+                                        damage = random.randint(30, 50)
+                                    elif lvl == 2:
+                                        damage = random.randint(120, 160)
+                                    elif lvl == 3:
+                                        damage = random.randint(200, 300)
+                            else:
+                                if lvl == 1:
+                                    damage = random.randint(20, 30)
+                                elif lvl == 2:
+                                    damage = random.randint(50, 70)
+                                elif lvl == 3:
+                                    damage = random.randint(100, 120)
 
                         monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
                         text_y_offset = 50 + (i * 25)
@@ -371,6 +380,8 @@ class PlayState(BaseState):
             for monster in monsters_in_world:
                 if monster.current_hp > 0 and check_collision(obj.get_bb(), monster.get_bb()):
                     damage = 0
+                    if cheat_damage > 0:
+                        damage = cheat_damage
                     lvl = server.knight.level
 
                     if lvl == 1:
@@ -435,27 +446,30 @@ class PlayState(BaseState):
 
                         for i in range(hit_count):
                             damage = 0
-                            if skill == 'skill1':
-                                if lvl == 1:
-                                    damage = random.randint(50, 70)
-                                elif lvl == 2:
-                                    damage = random.randint(150, 180)
-                                elif lvl == 3:
-                                    damage = random.randint(300, 350)
-                            elif skill == 'skill2':
-                                if lvl == 1:
-                                    damage = random.randint(30, 50)
-                                elif lvl == 2:
-                                    damage = random.randint(120, 160)
-                                elif lvl == 3:
-                                    damage = random.randint(200, 300)
+                            if cheat_damage > 0:
+                                damage = cheat_damage
                             else:
-                                if lvl == 1:
-                                    damage = random.randint(20, 30)
-                                elif lvl == 2:
-                                    damage = random.randint(50, 70)
-                                elif lvl == 3:
-                                    damage = random.randint(100, 120)
+                                if skill == 'skill1':
+                                    if lvl == 1:
+                                        damage = random.randint(50, 70)
+                                    elif lvl == 2:
+                                        damage = random.randint(150, 180)
+                                    elif lvl == 3:
+                                        damage = random.randint(300, 350)
+                                elif skill == 'skill2':
+                                    if lvl == 1:
+                                        damage = random.randint(30, 50)
+                                    elif lvl == 2:
+                                        damage = random.randint(120, 160)
+                                    elif lvl == 3:
+                                        damage = random.randint(200, 300)
+                                else:
+                                    if lvl == 1:
+                                        damage = random.randint(20, 30)
+                                    elif lvl == 2:
+                                        damage = random.randint(50, 70)
+                                    elif lvl == 3:
+                                        damage = random.randint(100, 120)
 
                             obj.take_damage(damage)
                             text_y_offset = 150 + (i * 25)
