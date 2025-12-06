@@ -705,29 +705,33 @@ class Knight:
                 self.dir_y -= 1
 
     def get_attack_bb(self):
-            l, b, r, t = self.get_bb()
-            attack_range = 0
+        l, b, r, t = self.get_bb()
 
-            if self.level == 3 and self.skill_name == 'skill2':
+        base_range = 20
+
+        if self.skill_name == 'skill1':
+            attack_range = base_range + 50
+        elif self.skill_name == 'skill2':
+            if self.level == 2:
+                return (self.world_x - 50, self.world_y - 50,
+                        self.world_x + 50, self.world_y + 50)
+            elif self.level == 3:
                 return (self.world_x - 100, self.world_y - 100,
                         self.world_x + 100, self.world_y + 100)
+            attack_range = base_range + 70
+        else:
+            attack_range = base_range
 
-            if self.skill_name == 'skill1':
-                attack_range = 75
-            elif self.skill_name == 'skill2':
-                attack_range = 100
-            else:
-                attack_range = 50
+        if self.direct == 'right':
+            return (r, b, r + attack_range, t)
+        elif self.direct == 'left':
+            return (l - attack_range, b, l, t)
+        elif self.direct == 'up':
+            return (l, t, r, t + attack_range)
+        elif self.direct == 'down':
+            return (l, b - attack_range, r, b)
 
-            if self.direct == 'right':
-                return (r, b, r + attack_range, t)
-            elif self.direct == 'left':
-                return (l - attack_range, b, l, t)
-            elif self.direct == 'up':
-                return (l, t, r, t + attack_range)
-            elif self.direct == 'down':
-                return (l, b - attack_range, r, b)
-            return self.get_bb()
+        return self.get_bb()
 
     def take_damage(self, amount, attacker_x, attacker_y):
         if self.is_hit or self.state == 'dead': return
@@ -759,8 +763,8 @@ class Knight:
             self.knockback_dir_y = 0
 
     def get_bb(self):
-        half_width = 32
-        half_height = 32
+        half_width = 20
+        half_height = 25
         return (self.world_x - half_width, self.world_y - half_height,
                 self.world_x + half_width, self.world_y + half_height)
 
