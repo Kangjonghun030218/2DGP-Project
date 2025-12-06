@@ -346,7 +346,7 @@ class PlayState(BaseState):
                                 damage = random.randint(150, 180)
                             elif lvl == 3:
                                 damage = random.randint(300, 350)
-                            elif skill == 'skill2':
+                        elif skill == 'skill2':
                                 if lvl == 1:
                                     damage = random.randint(30, 50)
                                 elif lvl == 2:
