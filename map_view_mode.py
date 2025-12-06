@@ -16,7 +16,7 @@ from potion import Potion
 class MapViewState(BaseState):
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
-            if event.key == SDLK_3:
+            if event.key == SDLK_m:
                 state_machine.pop()
             elif event.key == SDLK_0:
                 state_machine.change(menu_mode.MenuState())

@@ -34,6 +34,8 @@ class PlayState(BaseState):
     def __init__(self):
         self.start_map_number = 1
         self.respawn_queue = []
+        self.show_help = True
+        self.ui_font = load_font('resource/malgunbd.ttf', 20)  # 글자 크기 20
 
     def enter(self):
         if server.knight is None:
@@ -119,6 +121,8 @@ class PlayState(BaseState):
         if server.knight.state == 'dead':
             server.knight.respawn()
 
+
+
     def pickup_item(self):
         if not server.knight:
             return
@@ -162,6 +166,8 @@ class PlayState(BaseState):
                 self.reset_world(4)
             elif event.key == SDLK_3:
                 self.reset_world(3)
+            elif event.key == SDLK_h:
+                self.show_help=not self.show_help
             elif event.key == SDLK_5:
                 if server.knight: server.knight.use_potion('hp')
             elif event.key == SDLK_6:
@@ -478,6 +484,15 @@ class PlayState(BaseState):
         for obj in server.world:
             obj.draw(server.cam_x, server.cam_y)
         draw_ui()
+
+        if self.show_help and self.ui_font:
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 95, "A: 공격", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 120, "M: 미니맵", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 145, "T: 퀘스트 로그 on/off", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 170, "x: 포탈 타기", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 195, "R: 달리기", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 220, "z: 포션 줍기", (255, 255, 255))
+            self.ui_font.draw(20, config.CANVAS_HEIGHT - 245, "h: 도우미 알림 끄기", (255, 255, 255))
 
     def check_portal(self):
         portals = [obj for obj in server.world if isinstance(obj, Portal)]
