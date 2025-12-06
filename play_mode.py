@@ -322,25 +322,25 @@ class PlayState(BaseState):
 
                     if skill == 'skill1':
                         if lvl == 1:
-                            damage = 50
+                            damage = random.randint(50, 70)
                         elif lvl == 2:
-                            damage = 100
+                            damage = random.randint(150, 180)
                         elif lvl == 3:
-                            damage = 150
+                            damage = random.randint(300, 350)
                     elif skill == 'skill2':
                         if lvl == 1:
-                            damage = 80
+                            damage = random.randint(100, 150)
                         elif lvl == 2:
-                            damage = 150
+                            damage = random.randint(300, 400)
                         elif lvl == 3:
-                            damage = 250
+                            damage = random.randint(700, 900)
                     else:
                         if lvl == 1:
-                            damage = 30
+                            damage = random.randint(20, 30)
                         elif lvl == 2:
-                            damage = 50
+                            damage = random.randint(50, 70)
                         elif lvl == 3:
-                            damage = 80
+                            damage = random.randint(100, 120)
 
                     monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
                     server.world.append(DamageText(monster.world_x1, monster.world_y1 + 50, damage))
@@ -354,11 +354,11 @@ class PlayState(BaseState):
                     lvl = server.knight.level
 
                     if lvl == 1:
-                        damage = 50
+                        damage = random.randint(50, 80)
                     elif lvl == 2:
-                        damage = 80
+                        damage = random.randint(100, 130)
                     elif lvl == 3:
-                        damage = 120
+                        damage = random.randint(150, 200)
 
                     monster.take_damage(damage, obj.world_x, obj.world_y)
                     server.world.append(DamageText(monster.world_x1, monster.world_y1 + 50, damage))
@@ -396,25 +396,25 @@ class PlayState(BaseState):
 
                             if skill == 'skill1':
                                 if lvl == 1:
-                                    damage = 50
+                                    damage = random.randint(50, 70)
                                 elif lvl == 2:
-                                    damage = 100
+                                    damage = random.randint(150, 180)
                                 elif lvl == 3:
-                                    damage = 150
+                                    damage = random.randint(300, 350)
                             elif skill == 'skill2':
                                 if lvl == 1:
-                                    damage = 80
+                                    damage = random.randint(100, 150)
                                 elif lvl == 2:
-                                    damage = 150
+                                    damage = random.randint(300, 400)
                                 elif lvl == 3:
-                                    damage = 250
+                                    damage = random.randint(700, 900)
                             else:
                                 if lvl == 1:
-                                    damage = 30
+                                    damage = random.randint(20, 30)
                                 elif lvl == 2:
-                                    damage = 50
+                                    damage = random.randint(50, 70)
                                 elif lvl == 3:
-                                    damage = 80
+                                    damage = random.randint(100, 120)
                             obj.take_damage(damage)
                             server.world.append(DamageText(obj.x, obj.y + 150, damage))
                             server.knight.hit_list.append(obj)
