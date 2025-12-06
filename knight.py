@@ -137,8 +137,8 @@ class Knight:
 
         self.max_hp = 300
         self.current_hp = 300
-        self.max_mp = 50
-        self.current_mp = 50
+        self.max_mp = 100
+        self.current_mp = 100
 
         self.skill_name = ''
         self.is_effect_active = False
@@ -186,6 +186,11 @@ class Knight:
             'skill1': 0.0,
             'skill2': 0.0,
             'skill3': 0.0
+        }
+        self.skill_mana_cost = {
+            'skill1': 5,
+            'skill2': 10,
+            'skill3': 5
         }
 
         self.debug_mode = config.DEBUG_MODE_ON
@@ -603,73 +608,78 @@ class Knight:
         self.world_x = max(half_width, min(self.world_x, map_width - half_width))
         self.world_y = max(half_height, min(self.world_y, map_height - half_height))
 
-
-
     def activate_skill(self, skill_name):
         current_time = get_time()
         cooldown = self.skill_cooldowns[skill_name]
         last_used = self.skill_last_used[skill_name]
-        self.skill_name = skill_name
+
+        mana_required = self.skill_mana_cost.get(skill_name, 0)
 
         if current_time - last_used > cooldown:
-            print(f"[{self.skill_name}] 스킬 발동!")
-            self.hit_list = []
-            if self.skill_name == 'skill1':
-                self.is_effect_active = True
-                self.effect_start_time = current_time
-                self.effect_flip_direction = self.direct
-                self.state = 'attack'
-                self.frame = 0
-                self.effect_anim_frame = 0
-                self.effect_anim_timer = 0.0
+            if self.current_mp >= mana_required:
+                self.current_mp -= mana_required
+                self.skill_name = skill_name
+                print(f"[{self.skill_name}] 스킬 발동! (MP 소모: {mana_required}, 남은 MP: {self.current_mp})")
 
-                if self.level == 1:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL1
-                elif self.level == 2:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL2
-                elif self.level == 3:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL3
+                self.hit_list = []
+                if self.skill_name == 'skill1':
+                    self.is_effect_active = True
+                    self.effect_start_time = current_time
+                    self.effect_flip_direction = self.direct
+                    self.state = 'attack'
+                    self.frame = 0
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
 
-            elif self.skill_name == 'skill2':
-                self.is_effect_active = True
-                self.effect_start_time = current_time
-                self.effect_flip_direction = self.direct
-                self.state = 'attack'
-                self.effect_frame = 0
-                self.frame = 0
-                self.effect_anim_frame = 0
-                self.effect_anim_timer = 0.0
+                    if self.level == 1:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL1
+                    elif self.level == 2:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL2
+                    elif self.level == 3:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL3
 
-                if self.level == 1:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL1
-                elif self.level == 2:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL2
-                elif self.level == 3:
-                    self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL3
+                elif self.skill_name == 'skill2':
+                    self.is_effect_active = True
+                    self.effect_start_time = current_time
+                    self.effect_flip_direction = self.direct
+                    self.state = 'attack'
+                    self.effect_frame = 0
+                    self.frame = 0
+                    self.effect_anim_frame = 0
+                    self.effect_anim_timer = 0.0
 
-            elif self.skill_name == 'skill3':
-                if resource_manager.get_image('projectile_LR') or resource_manager.get_image('projectile_UD'):
-                    offset_x = 0
-                    offset_y = 0
-                    if self.direct == 'right':
-                        offset_x = 30
-                    elif self.direct == 'left':
-                        offset_x = -30
-                    elif self.direct == 'up':
-                        offset_y = 30
-                    elif self.direct == 'down':
-                        offset_y = -30
+                    if self.level == 1:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL1
+                    elif self.level == 2:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL2
+                    elif self.level == 3:
+                        self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL3
 
-                    new_projectile = Projectile(
-                        self.world_x + offset_x,
-                        self.world_y + offset_y,
-                        self.direct,
-                        speed=700,
-                    )
-                    server.world.append(new_projectile)
-            self.skill_last_used[self.skill_name] = current_time
+                elif self.skill_name == 'skill3':
+                    if resource_manager.get_image('projectile_LR') or resource_manager.get_image('projectile_UD'):
+                        offset_x = 0
+                        offset_y = 0
+                        if self.direct == 'right':
+                            offset_x = 30
+                        elif self.direct == 'left':
+                            offset_x = -30
+                        elif self.direct == 'up':
+                            offset_y = 30
+                        elif self.direct == 'down':
+                            offset_y = -30
+
+                        new_projectile = Projectile(
+                            self.world_x + offset_x,
+                            self.world_y + offset_y,
+                            self.direct,
+                            speed=700,
+                        )
+                        server.world.append(new_projectile)
+                self.skill_last_used[self.skill_name] = current_time
+            else:
+                print(f"[{skill_name}] 마나가 부족합니다! (필요: {mana_required}, 보유: {self.current_mp})")
         else:
-            print(f"[{self.skill_name}] 쿨타임 중!")
+            print(f"[{skill_name}] 쿨타임 중!")
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
@@ -791,7 +801,7 @@ class Knight:
             if self.hp_potions > 0:
                 if self.current_hp < self.max_hp:
                     self.hp_potions -= 1
-                    self.current_hp += 50  # HP 회복량
+                    self.current_hp += 100
                     self.current_hp = min(self.max_hp, self.current_hp)
                     print(f"HP 포션 사용! 현재 HP: {self.current_hp}")
                 else:
@@ -803,7 +813,7 @@ class Knight:
             if self.mp_potions > 0:
                 if self.current_mp < self.max_mp:
                     self.mp_potions -= 1
-                    self.current_mp += 20
+                    self.current_mp += 100
                     self.current_mp = min(self.max_mp, self.current_mp)
                     print(f"MP 포션 사용! 현재 MP: {self.current_mp}")
                 else:
