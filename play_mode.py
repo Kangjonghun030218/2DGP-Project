@@ -22,7 +22,6 @@ import menu_mode
 import map_view_mode
 import dialogue_mode
 
-
 from portal import Portal
 from damage_text import DamageText
 
@@ -269,12 +268,11 @@ class PlayState(BaseState):
                     print("보스 격파! 클리어 포탈 생성")
                     clear_portal = Portal(1600, 350, 'boss_clear')
                     server.world.append(clear_portal)
-        #self.check_portal()
+        # self.check_portal()
         if server.knight and server.knight.is_dead_and_animation_finished:
             self.start_map_number = 1
             state_machine.change(PlayState())
             return
-
 
         if server.knight:
             hunt_quest = server.quest_log['monster_hunt']
@@ -306,44 +304,60 @@ class PlayState(BaseState):
             return
 
         monsters_in_world = [obj for obj in server.world if isinstance(obj, Monster)]
-        knight_attack_frame = (
-                    server.knight.state == 'attack' and (server.knight.frame == 3 or server.knight.frame == 4))
 
-        if knight_attack_frame:
+        is_attack_active = False
+        if server.knight.state == 'attack':
+            if server.knight.skill_name == 'skill2':
+                if server.knight.frame >= 0:
+                    is_attack_active = True
+            else:
+                if server.knight.frame in [3, 4]:
+                    is_attack_active = True
+
+        if is_attack_active:
             knight_attack_box = server.knight.get_attack_bb()
             for monster in monsters_in_world:
                 if monster in server.knight.hit_list:
                     continue
 
                 if monster.current_hp > 0 and check_collision(knight_attack_box, monster.get_bb()):
-                    damage = 0
                     lvl = server.knight.level
                     skill = server.knight.skill_name
+                    hit_count = 1
+                    if skill == 'skill2':
+                        if lvl == 1:
+                            hit_count = 2
+                        elif lvl == 2:
+                            hit_count = 4
+                        elif lvl == 3:
+                            hit_count = 8
+                    for i in range(hit_count):
+                        damage = 0
+                        if skill == 'skill1':
+                            if lvl == 1:
+                                damage = random.randint(50, 70)
+                            elif lvl == 2:
+                                damage = random.randint(150, 180)
+                            elif lvl == 3:
+                                damage = random.randint(300, 350)
+                            elif skill == 'skill2':
+                                if lvl == 1:
+                                    damage = random.randint(30, 50)
+                                elif lvl == 2:
+                                    damage = random.randint(120, 160)
+                                elif lvl == 3:
+                                    damage = random.randint(200, 300)
+                        else:
+                            if lvl == 1:
+                                damage = random.randint(20, 30)
+                            elif lvl == 2:
+                                damage = random.randint(50, 70)
+                            elif lvl == 3:
+                                damage = random.randint(100, 120)
 
-                    if skill == 'skill1':
-                        if lvl == 1:
-                            damage = random.randint(50, 70)
-                        elif lvl == 2:
-                            damage = random.randint(150, 180)
-                        elif lvl == 3:
-                            damage = random.randint(300, 350)
-                    elif skill == 'skill2':
-                        if lvl == 1:
-                            damage = random.randint(100, 150)
-                        elif lvl == 2:
-                            damage = random.randint(300, 400)
-                        elif lvl == 3:
-                            damage = random.randint(700, 900)
-                    else:
-                        if lvl == 1:
-                            damage = random.randint(20, 30)
-                        elif lvl == 2:
-                            damage = random.randint(50, 70)
-                        elif lvl == 3:
-                            damage = random.randint(100, 120)
-
-                    monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
-                    server.world.append(DamageText(monster.world_x1, monster.world_y1 + 50, damage))
+                        monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
+                        text_y_offset = 50 + (i * 25)
+                        server.world.append(DamageText(monster.world_x1, monster.world_y1 + text_y_offset, damage))
                     server.knight.hit_list.append(monster)
 
         projectiles_in_world = [obj for obj in server.world if isinstance(obj, Projectile)]
@@ -382,18 +396,28 @@ class PlayState(BaseState):
                     if distance_sq < monster.attack_range ** 2:
                         server.knight.take_damage(5, monster.world_x1, monster.world_y1)
 
-        if knight_attack_frame:
-                knight_attack_box = server.knight.get_attack_bb()
-                for obj in server.world:
-                    if isinstance(obj, Boss) and obj.current_hp > 0:
-                        if obj in server.knight.hit_list:
-                            continue
+        if is_attack_active:
+            knight_attack_box = server.knight.get_attack_bb()
+            for obj in server.world:
+                if isinstance(obj, Boss) and obj.current_hp > 0:
+                    if obj in server.knight.hit_list:
+                        continue
 
-                        if check_collision(knight_attack_box, obj.get_bb()):
+                    if check_collision(knight_attack_box, obj.get_bb()):
+                        lvl = server.knight.level
+                        skill = server.knight.skill_name
+
+                        hit_count = 1
+                        if skill == 'skill2':
+                            if lvl == 1:
+                                hit_count = 2
+                            elif lvl == 2:
+                                hit_count = 4
+                            elif lvl == 3:
+                                hit_count = 8
+
+                        for i in range(hit_count):
                             damage = 0
-                            lvl = server.knight.level
-                            skill = server.knight.skill_name
-
                             if skill == 'skill1':
                                 if lvl == 1:
                                     damage = random.randint(50, 70)
@@ -403,11 +427,11 @@ class PlayState(BaseState):
                                     damage = random.randint(300, 350)
                             elif skill == 'skill2':
                                 if lvl == 1:
-                                    damage = random.randint(100, 150)
+                                    damage = random.randint(30, 50)
                                 elif lvl == 2:
-                                    damage = random.randint(300, 400)
+                                    damage = random.randint(120, 160)
                                 elif lvl == 3:
-                                    damage = random.randint(700, 900)
+                                    damage = random.randint(200, 300)
                             else:
                                 if lvl == 1:
                                     damage = random.randint(20, 30)
@@ -415,9 +439,12 @@ class PlayState(BaseState):
                                     damage = random.randint(50, 70)
                                 elif lvl == 3:
                                     damage = random.randint(100, 120)
+
                             obj.take_damage(damage)
-                            server.world.append(DamageText(obj.x, obj.y + 150, damage))
-                            server.knight.hit_list.append(obj)
+                            text_y_offset = 150 + (i * 25)
+                            server.world.append(DamageText(obj.x, obj.y + text_y_offset, damage))
+
+                        server.knight.hit_list.append(obj)
 
         for obj in server.world:
             if isinstance(obj, Boss) and obj.current_hp > 0:
