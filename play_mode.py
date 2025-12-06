@@ -35,7 +35,7 @@ class PlayState(BaseState):
         self.start_map_number = 1
         self.respawn_queue = []
         self.show_help = True
-        self.ui_font = load_font('resource/malgunbd.ttf', 20)  # 글자 크기 20
+        self.ui_font = load_font('resource/malgunbd.ttf', 20)
 
     def enter(self):
         if server.knight is None:
@@ -395,12 +395,21 @@ class PlayState(BaseState):
                 elif monster.kinMonster == 2 and monster.frame == 5:
                     damage_frame = True
 
-                if damage_frame:
-                    dist_x = server.knight.world_x - monster.world_x1
-                    dist_y = server.knight.world_y - monster.world_y1
-                    distance_sq = dist_x ** 2 + dist_y ** 2
-                    if distance_sq < monster.attack_range ** 2:
-                        server.knight.take_damage(5, monster.world_x1, monster.world_y1)
+                dist_x = server.knight.world_x - monster.world_x1
+                dist_y = server.knight.world_y - monster.world_y1
+                distance_sq = dist_x ** 2 + dist_y ** 2
+                if distance_sq < monster.attack_range ** 2:
+                    monster_damage = 5
+                    m_type = monster.monster_type
+
+                    if  m_type in [5,6]:
+                        monster_damage = random.randint(3, 6)
+                    elif m_type in [1,2]:
+                        monster_damage = random.randint(30, 40)
+                    elif m_type in [3,4]:
+                        monster_damage = random.randint(9, 17)
+
+                    server.knight.take_damage(monster_damage, monster.world_x1, monster.world_y1)
 
         if is_attack_active:
             knight_attack_box = server.knight.get_attack_bb()
