@@ -40,16 +40,24 @@ class NPC:
             return True
         elif dist_to_3 < self.talk_range:
             monster_names = {
-                1: "초록 오크", 2: "파란 오크", 3: "강한 초록 오크",
-                4: "초록 슬라임", 5: "파란 슬라임", 6: "불타오르는 슬라임"
+                1: "초록 오크", 2: "파란 오크", 3: "강한 오크",
+                4: "초록 슬라임", 5: "파란 슬라임", 6: "불타는 슬라임"
             }
+
+            quest_order = [4, 5, 6, 1, 2, 3]
+
             current_stage = hunt_quest['total_quest_stage']
-            target_name = monster_names.get(current_stage, f"monster (type {current_stage})")
+
+            if hunt_quest['status'] == 'not_started':
+                current_target_id = quest_order[0]
+            else:
+                current_target_id = hunt_quest.get('current_target_type', quest_order[0])
+            target_name = monster_names.get(current_target_id, "알 수 없는 몬스터")
 
             if hunt_quest['status'] == 'not_started':
                 server.dialogue_message = f"이봐!, {target_name} 10마리 처치를 부탁할게."
                 hunt_quest['status'] = 'in_progress'
-                hunt_quest['current_target_type'] = 1
+                hunt_quest['current_target_type'] = quest_order[0]
                 hunt_quest['current_kill_count'] = 0
                 hunt_quest['total_quest_stage'] = 1
 
@@ -57,17 +65,18 @@ class NPC:
                 if hunt_quest['current_kill_count'] >= 10:
                     hunt_quest['total_quest_stage'] += 1
 
-                    if hunt_quest['total_quest_stage'] > 6:
+                    if hunt_quest['total_quest_stage'] > len(quest_order):
                         server.dialogue_message = "고마워 모든 미션을 클리어 해줬어! 이제 길을 떠나도 좋아."
                         hunt_quest['status'] = 'completed'
                         new_portal = Portal(1290, 884, 'map3')
                         server.world.append(new_portal)
                         hunt_quest['reward_claimed'] = True
-
                     else:
-                        hunt_quest['current_target_type'] = hunt_quest['total_quest_stage']
+                        next_type_id = quest_order[hunt_quest['total_quest_stage'] - 1]
+                        hunt_quest['current_target_type'] = next_type_id
                         hunt_quest['current_kill_count'] = 0
-                        next_target_name = monster_names.get(hunt_quest['current_target_type'], "next monster")
+
+                        next_target_name = monster_names.get(next_type_id, "다음 몬스터")
                         server.dialogue_message = f"고마워! 다음은 {next_target_name} 10마리를 처치해줘."
 
                 else:
