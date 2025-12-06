@@ -680,7 +680,7 @@ class Knight:
                     self.state = 'attack'
                     self.frame = 0
                     self.skill_name = 'normal'
-                    self.hit_list = []  # [추가] 일반 공격 시작 시 타격 리스트 초기화
+                    self.hit_list = []
             elif event.key == SDLK_LEFT:
                 self.dir_x -= 1
             elif event.key == SDLK_RIGHT:

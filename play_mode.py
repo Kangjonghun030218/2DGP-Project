@@ -167,11 +167,11 @@ class PlayState(BaseState):
                 if server.knight: server.knight.use_potion('hp')
             elif event.key == SDLK_6:
                 if server.knight: server.knight.use_potion('mp')
-            elif event.key == SDLK_a:
-                if server.knight: server.knight.activate_skill('skill1')
             elif event.key == SDLK_s:
-                if server.knight: server.knight.activate_skill('skill2')
+                if server.knight: server.knight.activate_skill('skill1')
             elif event.key == SDLK_d:
+                if server.knight: server.knight.activate_skill('skill2')
+            elif event.key == SDLK_f:
                 if server.knight: server.knight.activate_skill('skill3')
             elif event.key == SDLK_z:
                 self.pickup_item()
