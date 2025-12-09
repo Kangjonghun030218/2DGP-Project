@@ -401,6 +401,28 @@ class PlayState(BaseState):
                     if obj in server.world:
                         server.world.remove(obj)
                     break
+            if obj not in server.world: continue
+
+            for game_obj in server.world:
+                if isinstance(game_obj, Boss) and game_obj.current_hp > 0:
+                    if check_collision(obj.get_bb(), game_obj.get_bb()):
+                        damage = 0
+                        if cheat_damage > 0:
+                            damage = cheat_damage
+                        lvl = server.knight.level
+                        if lvl == 1:
+                            damage = random.randint(50, 80)
+                        elif lvl == 2:
+                            damage = random.randint(100, 130)
+                        elif lvl == 3:
+                            damage = random.randint(150, 200)
+
+                        game_obj.take_damage(damage)
+                        server.world.append(DamageText(game_obj.x, game_obj.y + 50, damage))
+
+                        if obj in server.world:
+                            server.world.remove(obj)
+                        break
 
         for monster in monsters_in_world:
             if monster.current_hp <= 0: continue
