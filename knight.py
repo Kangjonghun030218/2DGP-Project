@@ -180,9 +180,9 @@ class Knight:
         }
 
         self.skill_cooldowns = {
-            'skill1': 5.0,
-            'skill2': 8.0,
-            'skill3': 10.0
+            'skill1': 1.5,
+            'skill2': 3.0,
+            'skill3': 2.0
         }
         self.skill_last_used = {
             'skill1': 0.0,
