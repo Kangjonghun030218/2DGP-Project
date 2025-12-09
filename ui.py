@@ -382,3 +382,20 @@ def draw_ui():
     draw_quest_board()
     draw_mini_map()
     draw_map_message()
+
+class StartButton:
+    def __init__(self, x, y):
+        self.image = resource_manager.get_image('start_button')
+        self.x, self.y = x, y
+        self.w, self.h = self.image.w, self.image.h
+
+    def draw(self):
+        self.image.draw(self.x, self.y)
+
+    def handle_event(self, event):
+        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            mouse_y = config.CANVAS_HEIGHT - event.y
+            if (self.x - self.w / 2 < event.x < self.x + self.w / 2) and \
+               (self.y - self.h / 2 < mouse_y < self.y + self.h / 2):
+                return True
+        return False

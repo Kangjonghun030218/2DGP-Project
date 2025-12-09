@@ -195,6 +195,7 @@ def load_all():
         load_image('resource/level_up_4.png'),
         load_image('resource/level_up_5.png')
     ]
+    _images['start_button'] = load_image('resource/start_button.png')
 
 
 
