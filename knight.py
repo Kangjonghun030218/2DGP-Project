@@ -190,9 +190,9 @@ class Knight:
             'skill3': 0.0
         }
         self.skill_mana_cost = {
-            'skill1': 5,
-            'skill2': 10,
-            'skill3': 5
+            'skill1': 2,
+            'skill2': 5,
+            'skill3': 3
         }
 
         self.debug_mode = config.DEBUG_MODE_ON
