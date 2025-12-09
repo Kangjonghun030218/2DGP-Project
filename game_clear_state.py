@@ -10,7 +10,7 @@ import menu_mode
 class GameClearState(BaseState):
     def __init__(self):
         self.bg_image = resource_manager.get_image('game_clear_screen')
-        self.font = resource_manager.get_font()
+        self.font = load_font('resource/malgunbd.ttf', 50)
 
     def enter(self):
         print("--- GAME CLEAR ---")
@@ -27,10 +27,9 @@ class GameClearState(BaseState):
                                config.CANVAS_WIDTH, config.CANVAS_HEIGHT)
 
         if self.font:
-            self.font.draw(config.CANVAS_WIDTH // 2 - 100, 100,
-                           "Press ESC to Menu", (255, 255, 255))
+            self.font.draw(config.CANVAS_WIDTH // 2 - 500, 1100,
+                           "아무 키를 입력하여 게임 종료!!! 고생하셨습니다.", (255, 0, 0))
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
-            if event.key == SDLK_ESCAPE:
-                state_machine.change(menu_mode.MenuState())
+            game_framework.quit()
