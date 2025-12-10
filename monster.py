@@ -221,13 +221,14 @@ class Monster:
 
         self.current_hp -= amount
         print(f"몬스터 HP: {self.current_hp}")
+
+        if self.kinMonster == 1:
+            sfx = resource_manager.get_sound('orc_death')
+            if sfx: sfx.play()
+        elif self.kinMonster == 2:
+            sfx = resource_manager.get_sound('slime_death')
+            if sfx: sfx.play()
         if self.current_hp <= 0:
-            if self.kinMonster == 1:
-                sfx = resource_manager.get_sound('orc_death')
-                if sfx: sfx.play()
-            elif self.kinMonster == 2:
-                sfx = resource_manager.get_sound('slime_death')
-                if sfx: sfx.play()
             self.state = 'dead'
             return
 
