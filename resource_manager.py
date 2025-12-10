@@ -1,8 +1,9 @@
-from pico2d import load_image, load_font, load_music
+from pico2d import load_image, load_font, load_music, load_wav
 
 _images = {}
 _fonts = {}
 _music = {}
+_sounds = {}
 
 
 def load_all():
@@ -206,6 +207,9 @@ def load_all():
     _music['boss_room_bgm'] = load_music('Sound/보스방소리.mp3')
     _music['clear_bgm'] = load_music('Sound/클리어화면소리.mp3')
 
+    _sounds['orc_death'] = load_wav('Sound/오크죽는소리.wav')
+    _sounds['slime_death'] = load_wav('Sound/슬라임죽는소리.wav')
+
     for music in _music.values():
         music.set_volume(64)
 
@@ -220,3 +224,6 @@ def get_font(key='default'):
 
 def get_music(key):
     return _music.get(key)
+
+def get_sound(key):
+    return _sounds.get(key)
