@@ -12,6 +12,7 @@ from boss import Boss
 from princess import Princess
 from portal import Portal
 from effect import LevelUpEffect
+import resource_manager
 
 import server
 import config
@@ -36,6 +37,7 @@ class PlayState(BaseState):
         self.respawn_queue = []
         self.show_help = True
         self.ui_font = load_font('resource/malgunbd.ttf', 20)
+        self.bgm = None
 
     def enter(self):
         if server.knight is None:
@@ -44,9 +46,12 @@ class PlayState(BaseState):
         self.reset_world(self.start_map_number)
 
     def exit(self):
-        pass
+        if self.bgm:
+            self.bgm.stop()
 
     def reset_world(self, map_number=1):
+        if self.bgm:
+            self.bgm.stop()
         self.respawn_queue = []
         server.cam_x, server.cam_y = 0, 0
         server.world = []
@@ -54,6 +59,7 @@ class PlayState(BaseState):
         server.world.append(server.game_map)
 
         if map_number == 1:
+            self.bgm = resource_manager.get_music('village_bgm')
             server.knight.world_x = 1000
             server.knight.world_y = 300
             portal = Portal(1257, 196, 'normal')
@@ -64,6 +70,7 @@ class PlayState(BaseState):
             npc = NPC()
             server.world.append(npc)
         elif map_number == 2:
+            self.bgm = resource_manager.get_music('battle_bgm')
             server.knight.world_x = 800
             server.knight.world_y = 500
 
@@ -86,6 +93,7 @@ class PlayState(BaseState):
                     y = random.randint(y_min, y_max)
                     server.world.append(Monster(x, y, m_type))
         elif map_number == 3:
+            self.bgm = resource_manager.get_music('boss_path_bgm')
             server.knight.world_x = 1200
             server.knight.world_y = 300
             server.map_message = "모든 몬스터들을 물리치세요, 보스 포탈이 열릴 겁니다."
@@ -105,6 +113,7 @@ class PlayState(BaseState):
                     y = random.randint(y_min, y_max)
                     server.world.append(Monster(x, y, m_type))
         elif map_number == 4:
+            self.bgm = resource_manager.get_music('boss_room_bgm')
             server.knight.world_x = 1200
             server.knight.world_y = 300
             self.boss = Boss()
@@ -114,6 +123,9 @@ class PlayState(BaseState):
             self.princess.x = 1600
             self.princess.y = 600
             server.world.append(self.princess)
+
+        if self.bgm:
+            self.bgm.repeat_play()
 
         if server.knight not in server.world:
             server.world.append(server.knight)

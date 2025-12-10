@@ -1,7 +1,8 @@
-from pico2d import load_image, load_font
+from pico2d import load_image, load_font, load_music
 
 _images = {}
 _fonts = {}
+_music = {}
 
 
 def load_all():
@@ -197,6 +198,17 @@ def load_all():
     ]
     _images['start_button'] = load_image('resource/start_button.png')
 
+    #SOund!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    _music['menu_bgm'] = load_music('Sound/메인화면소리.mp3')
+    _music['village_bgm'] = load_music('Sound/마을소리.mp3')
+    _music['battle_bgm'] = load_music('Sound/전장소리.mp3')
+    _music['boss_path_bgm'] = load_music('Sound/보스길소리.mp3')
+    _music['boss_room_bgm'] = load_music('Sound/보스방소리.mp3')
+    _music['clear_bgm'] = load_music('Sound/클리어화면소리.mp3')
+
+    for music in _music.values():
+        music.set_volume(64)
+
 
 
 def get_image(key):
@@ -205,3 +217,6 @@ def get_image(key):
 
 def get_font(key='default'):
     return _fonts.get(key)
+
+def get_music(key):
+    return _music.get(key)

@@ -11,12 +11,17 @@ class GameClearState(BaseState):
     def __init__(self):
         self.bg_image = resource_manager.get_image('game_clear_screen')
         self.font = load_font('resource/malgunbd.ttf', 50)
+        self.bgm = None
 
     def enter(self):
         print("--- GAME CLEAR ---")
+        self.bgm = resource_manager.get_music('clear_bgm')
+        if self.bgm:
+            self.bgm.repeat_play()
 
     def exit(self):
-        pass
+        if self.bgm:
+            self.bgm.stop()
 
     def update(self, frame_time):
         pass
