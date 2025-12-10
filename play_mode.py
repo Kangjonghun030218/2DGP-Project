@@ -60,6 +60,7 @@ class PlayState(BaseState):
 
         if map_number == 1:
             self.bgm = resource_manager.get_music('village_bgm')
+            if self.bgm: self.bgm.set_volume(40)
             server.knight.world_x = 1000
             server.knight.world_y = 300
             portal = Portal(1257, 196, 'normal')
@@ -71,6 +72,7 @@ class PlayState(BaseState):
             server.world.append(npc)
         elif map_number == 2:
             self.bgm = resource_manager.get_music('battle_bgm')
+            if self.bgm: self.bgm.set_volume(40)
             server.knight.world_x = 800
             server.knight.world_y = 500
 
@@ -94,6 +96,7 @@ class PlayState(BaseState):
                     server.world.append(Monster(x, y, m_type))
         elif map_number == 3:
             self.bgm = resource_manager.get_music('boss_path_bgm')
+            if self.bgm: self.bgm.set_volume(50)
             server.knight.world_x = 1200
             server.knight.world_y = 300
             server.map_message = "모든 몬스터들을 물리치세요, 보스 포탈이 열릴 겁니다."
@@ -114,6 +117,7 @@ class PlayState(BaseState):
                     server.world.append(Monster(x, y, m_type))
         elif map_number == 4:
             self.bgm = resource_manager.get_music('boss_room_bgm')
+            if self.bgm: self.bgm.set_volume(15)
             server.knight.world_x = 1200
             server.knight.world_y = 300
             self.boss = Boss()
