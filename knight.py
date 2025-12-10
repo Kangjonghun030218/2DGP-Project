@@ -121,7 +121,7 @@ class Knight:
             'dead': resource_manager.get_image('knight_lvl3_dead')
         }
 
-        self.level =1
+        self.level =3
         self.quests_completed = 0
         self.current_images = self.images_lvl1
 
@@ -204,6 +204,9 @@ class Knight:
         self.skill1_new_sheet = resource_manager.get_image('skill1_new_sheet')
         self.skill2_new_sheet = resource_manager.get_image('skill2_new_sheet')
         self.effect_lvl3_skill2 = resource_manager.get_image('knight_lvl3_skill2_new')
+
+        self.sound_queue = []
+        self.skill_start_time = 0.0
 
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
@@ -444,6 +447,18 @@ class Knight:
                 self.frame = self.death_max_frame - 1
                 self.is_dead_and_animation_finished = True
             return
+        if self.sound_queue:
+            current_time = get_time()
+            elapsed_time = current_time - self.skill_start_time
+            for schedule in self.sound_queue[:]:
+                trigger_time, sound_name = schedule
+
+                if elapsed_time >= trigger_time:
+                    sfx = resource_manager.get_sound(sound_name)
+                    if sfx: sfx.play()
+                    self.sound_queue.remove(schedule)
+        if self.state in ['hit', 'dead'] and self.sound_queue:
+            self.sound_queue = []
 
         if self.is_hit:
             current_time = get_time()
@@ -624,6 +639,28 @@ class Knight:
                 print(f"[{self.skill_name}] 스킬 발동! (MP 소모: {mana_required}, 남은 MP: {self.current_mp})")
 
                 self.hit_list = []
+                if current_time - last_used > cooldown:
+                    if self.current_mp >= mana_required:
+                        if skill_name == 'skill2':
+                            self.sound_queue = []
+                            self.skill_start_time = current_time
+                            if self.level == 1:
+                                self.sound_queue.append((0.0, 'p_skill2_slash'))
+                                self.sound_queue.append((0.2, 'p_skill2_slash'))
+                            elif self.level == 2:
+                                self.sound_queue.append((0.0, 'p_skill2_slash'))
+                                self.sound_queue.append((0.15, 'p_skill2_slash'))
+                                self.sound_queue.append((0.3, 'p_skill2_slash'))
+                                self.sound_queue.append((0.45, 'p_skill2_slash'))
+                            elif self.level == 3:
+                                self.sound_queue.append((0.0, 'p_skill2_slash'))
+                                self.sound_queue.append((0.1, 'p_skill2_slash'))
+                                self.sound_queue.append((0.2, 'p_skill2_slash'))
+                                self.sound_queue.append((0.3, 'p_skill2_slash'))
+                                self.sound_queue.append((0.5, 'p_skill2_slash'))
+                                self.sound_queue.append((0.6, 'p_skill2_slash'))
+                                self.sound_queue.append((0.9, 'p_skill2_bomb'))
+
                 if self.skill_name == 'skill1':
                     self.is_effect_active = True
                     self.effect_start_time = current_time
@@ -719,6 +756,8 @@ class Knight:
 
         self.dir_x = int(self.key_state['right']) - int(self.key_state['left'])
         self.dir_y = int(self.key_state['up']) - int(self.key_state['down'])
+
+
 
     def get_attack_bb(self):
         l, b, r, t = self.get_bb()

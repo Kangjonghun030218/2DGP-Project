@@ -215,11 +215,18 @@ def load_all():
     _sounds['boss_thunder'] = load_wav('Sound/보스_번개소리.wav')
     _sounds['boss_laser'] = load_wav('Sound/보스_레이져소리.wav')
     _sounds['boss_homing'] = load_wav('Sound/보스_유도스킬소리.wav')
+    _sounds['p_skill2_slash'] = load_wav('Sound/플레이어_skill2.wav')
+    _sounds['p_skill2_bomb'] = load_wav('Sound/플레이어_skill2_bomb.wav')
 
-    _sounds['orc_death'].set_volume(20)
+    _sounds['orc_death'].set_volume(30)
+    _sounds['slime_death'].set_volume(30)
     _sounds['boss_thunder'].set_volume(80)
     _sounds['boss_laser'].set_volume(80)
     _sounds['boss_homing'].set_volume(80)
+    _sounds['p_skill2_slash'].set_volume(50)
+    _sounds['p_skill2_bomb'].set_volume(80)
+    _sounds['p_skill2_slash'].set_volume(80)
+    _sounds['p_skill2_bomb'].set_volume(100)
 
     for music in _music.values():
         music.set_volume(64)
