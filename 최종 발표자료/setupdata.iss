@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; Non-commercial use only
 
-#define MyAppName "princess_rescue_2022182001"
+#define MyAppName "Princess_rescue_2022182001"
 #define MyAppVersion "1.5"
 #define MyAppPublisher "My Company, Inc."
 #define MyAppURL "https://www.example.com/"
@@ -11,7 +11,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{93CFCEA8-896B-4BA5-A3F0-5B08B2DD00A0}
+AppId={{E1B4A829-625D-486C-9D59-04B6C23045AA}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -34,7 +34,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=C:\Users\PC\Desktop\공주님 구하기\2DGP-Project\최종 발표자료
-OutputBaseFilename=princess_rescue_2022182001_Setup
+OutputBaseFilename=Princess_rescue_2022182001_Setup
 SolidCompression=yes
 WizardStyle=modern dark
 
