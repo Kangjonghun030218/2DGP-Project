@@ -160,6 +160,9 @@ class PlayState(BaseState):
             server.world.remove(closest_potion)
             print(f"{closest_potion.potion_type.upper()} 포션을 주웠습니다.")
 
+            sfx = resource_manager.get_sound('item_pickup')
+            if sfx: sfx.play()
+
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
             global cheat_damage
@@ -316,6 +319,8 @@ class PlayState(BaseState):
             if leveled_up:
                 effect = LevelUpEffect(server.knight.world_x, server.knight.world_y)
                 server.world.append(effect)
+                sfx = resource_manager.get_sound('level_up')
+                if sfx: sfx.play()
 
         if server.knight and server.game_map:
             target_cam_x = server.knight.world_x - config.CANVAS_WIDTH // 2

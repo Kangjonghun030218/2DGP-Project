@@ -207,8 +207,11 @@ def load_all():
     _music['boss_room_bgm'] = load_music('Sound/보스방소리.mp3')
     _music['clear_bgm'] = load_music('Sound/클리어화면소리.mp3')
 
+    #effect sound!!!!
     _sounds['orc_death'] = load_wav('Sound/오크죽는소리.wav')
     _sounds['slime_death'] = load_wav('Sound/슬라임죽는소리.wav')
+    _sounds['item_pickup'] = load_wav('Sound/아이템줍기소리.wav')
+    _sounds['level_up'] = load_wav('Sound/레벨업_소리.wav')
 
     _sounds['orc_death'].set_volume(20)
 
