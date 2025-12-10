@@ -212,8 +212,14 @@ def load_all():
     _sounds['slime_death'] = load_wav('Sound/슬라임죽는소리.wav')
     _sounds['item_pickup'] = load_wav('Sound/아이템줍기소리.wav')
     _sounds['level_up'] = load_wav('Sound/레벨업_소리.wav')
+    _sounds['boss_thunder'] = load_wav('Sound/보스_번개소리.wav')
+    _sounds['boss_laser'] = load_wav('Sound/보스_레이져소리.wav')
+    _sounds['boss_homing'] = load_wav('Sound/보스_유도스킬소리.wav')
 
     _sounds['orc_death'].set_volume(20)
+    _sounds['boss_thunder'].set_volume(80)
+    _sounds['boss_laser'].set_volume(80)
+    _sounds['boss_homing'].set_volume(80)
 
     for music in _music.values():
         music.set_volume(64)

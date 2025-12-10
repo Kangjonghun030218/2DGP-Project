@@ -193,6 +193,8 @@ class Boss:
                     self.dir = -1
                 if self.skill3_frame >= 8:
                     print("차징 완료! 발사!")
+                    sfx = resource_manager.get_sound('boss_laser')
+                    if sfx: sfx.play()
                     self.skill3_state = 'firing'
                     self.skill3_timer = 0.0
                     self.skill3_frame = 0
@@ -212,6 +214,8 @@ class Boss:
         self.skill1_timer = 0.0
         self.skill1_hit = False
         self.skill1_pos = (self.x, self.y)
+        sfx = resource_manager.get_sound('boss_thunder')
+        if sfx: sfx.play()
 
     def start_skill2(self, player):
         print("보스 스킬2: 암흑 발톱 (유도)")
@@ -220,6 +224,8 @@ class Boss:
         self.skill2_timer = 0.0
         self.skill2_hit = False
         self.skill2_pos = (player.world_x, player.world_y)
+        sfx = resource_manager.get_sound('boss_homing')
+        if sfx: sfx.play()
 
     def start_attack(self, type, player=None):
         self.is_attacking = True
