@@ -121,7 +121,7 @@ class Knight:
             'dead': resource_manager.get_image('knight_lvl3_dead')
         }
 
-        self.level =3
+        self.level =1
         self.quests_completed = 0
         self.current_images = self.images_lvl1
 
@@ -669,13 +669,18 @@ class Knight:
                     self.frame = 0
                     self.effect_anim_frame = 0
                     self.effect_anim_timer = 0.0
+                    self.sound_queue = []  # 큐 초기화
+                    self.skill_start_time = current_time
 
                     if self.level == 1:
                         self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL1
+                        self.sound_queue.append((0.0, 'p_skill1_lv1'))
                     elif self.level == 2:
                         self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL2
+                        self.sound_queue.append((0.0, 'p_skill1_lv2'))
                     elif self.level == 3:
                         self.effect_total_duration = TIME_PER_ACTION_SKILL1_LVL3
+                        self.sound_queue.append((0.0, 'p_skill1_lv3'))
 
                 elif self.skill_name == 'skill2':
                     self.is_effect_active = True
