@@ -210,6 +210,8 @@ def load_all():
     _sounds['orc_death'] = load_wav('Sound/오크죽는소리.wav')
     _sounds['slime_death'] = load_wav('Sound/슬라임죽는소리.wav')
 
+    _sounds['orc_death'].set_volume(20)
+
     for music in _music.values():
         music.set_volume(64)
 
