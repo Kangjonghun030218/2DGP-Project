@@ -82,7 +82,7 @@ class GameMap:
         screen_x = self.world_x - cam_x
         screen_y = self.world_y - cam_y
         self.image.draw(screen_x, screen_y)
-        if self.debug_mode:
+        if config.DEBUG_MODE_ON:
             self.draw_debug_boxes(cam_x, cam_y)
 
     def get_collision_boxes(self):

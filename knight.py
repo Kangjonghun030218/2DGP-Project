@@ -211,7 +211,7 @@ class Knight:
     def draw(self, cam_x, cam_y):
         screen_x = self.world_x - cam_x
         screen_y = self.world_y - cam_y
-        if self.debug_mode:
+        if config.DEBUG_MODE_ON:
             l, b, r, t = self.get_bb()
 
             screen_l, screen_b = l - cam_x, b - cam_y

@@ -190,6 +190,10 @@ class PlayState(BaseState):
                 self.reset_world(4)
             elif event.key == SDLK_3:
                 self.reset_world(3)
+            elif event.key == SDLK_6:
+                config.DEBUG_MODE_ON=True
+            elif event.key == SDLK_7:
+                config.DEBUG_MODE_ON=False
             elif event.key == SDLK_8:
                 cheat_damage = 0
             elif event.key == SDLK_9:
