@@ -369,6 +369,7 @@ class PlayState(BaseState):
                             hit_count = 4
                         elif lvl == 3:
                             hit_count = 8
+                    total_damage = 0
                     for i in range(hit_count):
                         damage = 0
                         if cheat_damage > 0:
@@ -396,9 +397,13 @@ class PlayState(BaseState):
                                 elif lvl == 3:
                                     damage = random.randint(100, 120)
 
-                        monster.take_damage(damage, server.knight.world_x, server.knight.world_y)
-                        text_y_offset = 50 + (i * 25)
-                        server.world.append(DamageText(monster.world_x1, monster.world_y1 + text_y_offset, damage))
+
+                        total_damage += damage
+                        text_y_offset = 50 + (i * 30)
+                        server.world.append(
+                        DamageText(monster.world_x1, monster.world_y1 + text_y_offset, damage))
+
+                    monster.take_damage(total_damage, server.knight.world_x, server.knight.world_y)
                     server.knight.hit_list.append(monster)
 
         projectiles_in_world = [obj for obj in server.world if isinstance(obj, Projectile)]
@@ -491,7 +496,6 @@ class PlayState(BaseState):
                                 hit_count = 4
                             elif lvl == 3:
                                 hit_count = 8
-
                         for i in range(hit_count):
                             damage = 0
                             if cheat_damage > 0:
