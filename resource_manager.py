@@ -217,6 +217,7 @@ def load_all():
     _sounds['boss_homing'] = load_wav('Sound/보스_유도스킬소리.wav')
     _sounds['p_skill2_slash'] = load_wav('Sound/플레이어_skill2.wav')
     _sounds['p_skill2_bomb'] = load_wav('Sound/플레이어_skill2_bomb.wav')
+    _sounds['portal'] = load_wav('Sound/포탈.wav')
 
     _sounds['p_skill1_lv1'] = load_wav('Sound/랩1_skill1.wav')
     _sounds['p_skill1_lv2'] = load_wav('Sound/랩2_skill1.wav')

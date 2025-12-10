@@ -580,6 +580,9 @@ class PlayState(BaseState):
 
         for portal in portals:
             if check_collision(knight_bb, portal.get_bb()):
+                sfx = resource_manager.get_sound('portal')
+                if sfx: sfx.play()
+
                 if portal.portal_type == 'normal' and server.game_map.map_number == 1:
                     self.reset_world(2)
                 elif portal.portal_type == 'village' and server.game_map.map_number == 2:
