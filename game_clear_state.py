@@ -10,7 +10,7 @@ import menu_mode
 class GameClearState(BaseState):
     def __init__(self):
         self.bg_image = resource_manager.get_image('game_clear_screen')
-        self.font = load_font('resource/malgunbd.ttf', 50)
+        self.font = load_font('resource/malgunbd.ttf', 30)
         self.bgm = None
 
     def enter(self):
@@ -32,7 +32,7 @@ class GameClearState(BaseState):
                                config.CANVAS_WIDTH, config.CANVAS_HEIGHT)
 
         if self.font:
-            self.font.draw(config.CANVAS_WIDTH // 2 - 500, 1100,
+            self.font.draw(config.CANVAS_WIDTH // 2 - 300, 800,
                            "아무 키를 입력하여 게임 종료!!! 고생하셨습니다.", (255, 0, 0))
 
     def handle_event(self, event):

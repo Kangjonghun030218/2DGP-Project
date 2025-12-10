@@ -35,7 +35,7 @@ def draw_map_message():
         server.map_message = None
         return
 
-    big_font = load_font('resource/malgunbd.ttf', 60)
+    big_font = load_font('resource/malgunbd.ttf', 40)
 
     if elapsed_time < wait_time:
         intensity = 255
@@ -48,7 +48,7 @@ def draw_map_message():
 
     text_width_estimate = len(text) * 40
     x = (config.CANVAS_WIDTH - text_width_estimate) // 2
-    y = config.CANVAS_HEIGHT - 200
+    y = config.CANVAS_HEIGHT - 400
 
     big_font.draw(x, y, text, (intensity, 0, 0))
 
@@ -387,15 +387,15 @@ class StartButton:
     def __init__(self, x, y):
         self.image = resource_manager.get_image('start_button')
         self.x, self.y = x, y
-        self.w, self.h = self.image.w, self.image.h
+        self.w, self.h = 300, 150
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.image.draw(self.x, self.y, self.w, self.h)
 
     def handle_event(self, event):
         if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             mouse_y = config.CANVAS_HEIGHT - event.y
             if (self.x - self.w / 2 < event.x < self.x + self.w / 2) and \
-               (self.y - self.h / 2 < mouse_y < self.y + self.h / 2):
+                    (self.y - self.h / 2 < mouse_y < self.y + self.h / 2):
                 return True
         return False

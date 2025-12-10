@@ -10,7 +10,7 @@ import config
 class MenuState(BaseState):
     def enter(self):
         self.menu_image = resource_manager.get_image('map_0')
-        self.start_button = StartButton(config.CANVAS_WIDTH // 2+800, 500)
+        self.start_button = StartButton(config.CANVAS_WIDTH // 2+400, 500)
         self.bgm = resource_manager.get_music('menu_bgm')
         if self.bgm:
             self.bgm.repeat_play()
