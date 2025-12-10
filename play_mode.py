@@ -80,13 +80,13 @@ class PlayState(BaseState):
             server.world.append(village_portal)
 
             monster_spawn_zones = [
-                ((700, 2150, 1000, 2350), 6, 10),
-                ((2100, 1600, 2800, 1900), 1, 10),
-                ((3320, 2350, 3700, 2450), 3, 10),
-                ((3950, 1250, 4100, 1500), 2, 5),
-                ((4000, 1800, 4100, 2000), 2, 5),
-                ((600, 1250, 1000, 1500), 4, 10),
-                ((1350, 1050, 1700, 1200), 5, 10)
+                ((700, 2150, 1000, 2350), 6, 5),
+                ((2100, 1600, 2800, 1900), 1, 5),
+                ((3320, 2350, 3700, 2450), 3, 5),
+                ((3950, 1250, 4100, 1500), 2, 3),
+                ((4000, 1800, 4100, 2000), 2, 3),
+                ((600, 1250, 1000, 1500), 4, 5),
+                ((1350, 1050, 1700, 1200), 5, 5)
             ]
             for zone, m_type, count in monster_spawn_zones:
                 x_min, y_min, x_max, y_max = zone
@@ -529,13 +529,13 @@ class PlayState(BaseState):
             if isinstance(obj, Boss) and obj.current_hp > 0:
                 if obj.is_attacking and (0.4 <= obj.attack_timer <= 0.7):
                     if check_collision(server.knight.get_bb(), obj.get_attack_bb()):
-                        server.knight.take_damage(20, obj.x, obj.y)
+                        server.knight.take_damage(50, obj.x, obj.y)
 
                 if obj.skill1_active and not obj.skill1_hit:
                     if 0.4 <= obj.skill1_timer <= 0.6:
                         thunder_bb = obj.get_thunder_bb()
                         if thunder_bb and check_collision(server.knight.get_bb(), thunder_bb):
-                            server.knight.take_damage(50, obj.x, obj.y)
+                            server.knight.take_damage(100, obj.x, obj.y)
                             obj.skill1_hit = True
                 if obj.skill2_active and not obj.skill2_hit:
                     if 0.3 <= obj.skill2_timer <= 0.6:
@@ -550,7 +550,7 @@ class PlayState(BaseState):
                         if not hasattr(obj, 'laser_hit_timer'):
                             obj.laser_hit_timer = 0
                         if current_time - obj.laser_hit_timer > 0.2:
-                            server.knight.take_damage(10, obj.x, obj.y)
+                            server.knight.take_damage(20, obj.x, obj.y)
                             obj.laser_hit_timer = current_time
 
     def draw(self):

@@ -137,10 +137,10 @@ class Knight:
 
         self.key_state = {'left': False, 'right': False, 'up': False, 'down': False}
 
-        self.max_hp = 300
-        self.current_hp = 300
-        self.max_mp = 100
-        self.current_mp = 100
+        self.max_hp = 500
+        self.current_hp = 500
+        self.max_mp = 200
+        self.current_mp = 200
 
         self.skill_name = ''
         self.is_effect_active = False
@@ -890,11 +890,11 @@ class Knight:
         print(f"--- 장비 업그레이드! 레벨 {self.level} 달성 ---")
 
         if self.level == 2:
-            self.max_hp += 200
+            self.max_hp += 300
             self.max_mp += 50
             self.current_images = self.images_lvl2
         elif self.level == 3:
-            self.max_hp += 300
+            self.max_hp += 500
             self.max_mp += 50
             self.current_images = self.images_lvl3
         self.current_hp = self.max_hp
