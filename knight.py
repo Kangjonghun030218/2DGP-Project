@@ -669,7 +669,7 @@ class Knight:
                     self.frame = 0
                     self.effect_anim_frame = 0
                     self.effect_anim_timer = 0.0
-                    self.sound_queue = []  # 큐 초기화
+                    self.sound_queue = []
                     self.skill_start_time = current_time
 
                     if self.level == 1:
