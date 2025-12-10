@@ -221,6 +221,7 @@ def load_all():
     _sounds['p_skill1_lv1'] = load_wav('Sound/랩1_skill1.wav')
     _sounds['p_skill1_lv2'] = load_wav('Sound/랩2_skill1.wav')
     _sounds['p_skill1_lv3'] = load_wav('Sound/랩3_skill1.wav')
+    _sounds['p_skill3'] = load_wav('Sound/스킬3.wav')
 
     _sounds['orc_death'].set_volume(30)
     _sounds['slime_death'].set_volume(30)
@@ -234,6 +235,7 @@ def load_all():
     _sounds['p_skill1_lv1'].set_volume(60)
     _sounds['p_skill1_lv2'].set_volume(70)
     _sounds['p_skill1_lv3'].set_volume(60)
+    _sounds['p_skill3'].set_volume(80)
 
     for music in _music.values():
         music.set_volume(64)

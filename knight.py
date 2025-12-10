@@ -700,6 +700,9 @@ class Knight:
                         self.effect_total_duration = TIME_PER_ACTION_SKILL2_LVL3
 
                 elif self.skill_name == 'skill3':
+                    self.sound_queue = []
+                    self.skill_start_time = current_time
+                    self.sound_queue.append((0.0, 'p_skill3'))
                     if resource_manager.get_image('projectile_LR') or resource_manager.get_image('projectile_UD'):
                         offset_x = 0
                         offset_y = 0
